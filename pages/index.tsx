@@ -3,6 +3,7 @@ import type { NextPage } from 'next';
 import { useEffect, useRef, useState } from 'react';
 import { unzip } from 'unzipit';
 import cls from 'classnames';
+import Head from 'next/head';
 
 const Home: NextPage = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -44,12 +45,15 @@ const Home: NextPage = () => {
       const resp = await fetch(`/api/luma/getInfo?url=${encodeURIComponent(url)}`);
       const json = await resp.json();
       const lightFieldZipUrl = json.props.pageProps.artifacts.light_field;
+      const zipFileName = lightFieldZipUrl.split('/').pop()!;
+      const zipDownloadUrl = `/luma/lightfield/${zipFileName}`;
       console.log(lightFieldZipUrl);
+      console.log(zipDownloadUrl);
 
       // download and unzip the light field photos
       setStatus('fetchingZip');
       setMessage('Downloading light field photos, this may take a while ...');
-      const zipResp = await fetch(lightFieldZipUrl);
+      const zipResp = await fetch(zipDownloadUrl);
       const zipFileSize = parseInt(zipResp.headers.get('Content-Length') || '0') / 1024 / 1024;
       const zipFileSizeInMB = zipFileSize ? `${zipFileSize.toFixed(2)} MB` : 'unknown size';
       setMessage(`Downloading light field photos (${zipFileSizeInMB}), this may take a while ...`);
@@ -107,60 +111,65 @@ const Home: NextPage = () => {
   }, [trigger]);
 
   return (
-    <article className="prose">
-      <h1>Luma2Quilt</h1>
-      <p>I can convert LumaAI NeRF into Quilt image, which you can use on a Looking Glass or Blocks Hologram.</p>
+    <>
+      <Head>
+        <title>Luma 2 Quilt</title>
+      </Head>
+      <article className="prose">
+        <h1>Luma2Quilt</h1>
+        <p>I can convert LumaAI NeRF into Quilt image, which you can use on a Looking Glass or Blocks Hologram.</p>
 
-      {/* luma page url input */}
-      <div className="form-control w-full">
-        <label className="label">
-          <span className="label-text">Paste URL to the LumaAI NeRF here:</span>
-        </label>
-        <div className="flex gap-2">
-          <input
-            type="text"
-            disabled={status !== 'idle' && status !== 'done'}
-            placeholder="LumaAI NeRF URL"
-            className="input input-bordered grow"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-          />
-          <button
-            className="btn btn-info"
-            disabled={!url || (status !== 'idle' && status !== 'done')}
-            onClick={() => setTrigger((value) => value + 1)}
-          >
-            Start
-          </button>
-        </div>
-
-        {status !== 'idle' && (
+        {/* luma page url input */}
+        <div className="form-control w-full">
           <label className="label">
-            <span className="label-text-alt">{message}</span>
-            {status !== 'done' && (
-              <span className="label-text-alt">
-                <progress className="progress w-24"></progress>
-              </span>
-            )}
+            <span className="label-text">Paste URL to the LumaAI NeRF here:</span>
           </label>
-        )}
-      </div>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              disabled={status !== 'idle' && status !== 'done'}
+              placeholder="LumaAI NeRF URL"
+              className="input input-bordered grow"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+            />
+            <button
+              className="btn btn-info"
+              disabled={!url || (status !== 'idle' && status !== 'done')}
+              onClick={() => setTrigger((value) => value + 1)}
+            >
+              Start
+            </button>
+          </div>
 
-      <div className={cls(status === 'done' ? 'visible' : 'hidden')}>
-        <canvas ref={canvasRef} className="max-w-full rounded-lg shadow" />
-      </div>
-
-      {status === 'done' && (
-        <div className="flex gap-2">
-          <button className="btn btn-success" onClick={downloadQuilt}>
-            Download
-          </button>
-          <a className="btn btn-accent" href="https://blocks.glass/manage" target="_blank" rel="noreferrer">
-            Goto LG Blocks
-          </a>
+          {status !== 'idle' && (
+            <label className="label">
+              <span className="label-text-alt">{message}</span>
+              {status !== 'done' && (
+                <span className="label-text-alt">
+                  <progress className="progress w-24"></progress>
+                </span>
+              )}
+            </label>
+          )}
         </div>
-      )}
-    </article>
+
+        <div className={cls(status === 'done' ? 'visible' : 'hidden')}>
+          <canvas ref={canvasRef} className="max-w-full rounded-lg shadow" />
+        </div>
+
+        {status === 'done' && (
+          <div className="flex gap-2">
+            <button className="btn btn-success" onClick={downloadQuilt}>
+              Download
+            </button>
+            <a className="btn btn-accent" href="https://blocks.glass/manage" target="_blank" rel="noreferrer">
+              Goto LG Blocks
+            </a>
+          </div>
+        )}
+      </article>
+    </>
   );
 };
 
