@@ -13,7 +13,7 @@ const Home: NextPage = () => {
 
   // light field photos related
   const [url, setUrl] = useState('https://captures.lumalabs.ai/unreal-overtake-o-32417');
-  const [frames, setFrames] = useState<{ [key: string]: ZipEntry } | undefined>(undefined);
+  const [frames, setFrames] = useState<Blob[] | undefined>(undefined);
   const [totalNumberOfFrames, setTotalNumberOfFrames] = useState(0);
 
   // quilt image options
@@ -50,8 +50,15 @@ const Home: NextPage = () => {
     setMessage(`Downloading light field photos (${zipFileSizeInMB}), this may take a while ...`);
     const zipFile = await zipResp.arrayBuffer();
     const { entries } = await unzip(zipFile);
-    setFrames(entries);
-    setTotalNumberOfFrames(Object.keys(entries).length);
+
+    const names = Object.keys(entries).sort().reverse();
+    const frames: Blob[] = [];
+    for (const name of names) {
+      frames.push(await entries[name].blob('image/jpg'));
+    }
+    setFrames(frames);
+
+    setTotalNumberOfFrames(names.length);
 
     setMessage('Downloaded');
     setStatus('done');
@@ -73,20 +80,10 @@ const Home: NextPage = () => {
     if (!frames) return;
 
     // get image size
-    const firstFrame = await loadImageFromBlob(await frames['000000.jpg'].blob('image/jpg'));
+    const firstFrame = await loadImageFromBlob(frames[0]);
     const { naturalWidth: imageWidth, naturalHeight: imageHeight } = firstFrame.img;
     ratio.current = imageWidth / imageHeight;
     URL.revokeObjectURL(firstFrame.url);
-
-    // calculate the frame range to generate the quilt image
-    const frameNames = Object.keys(frames).sort().reverse();
-    const totalFrames = frameNames.length;
-    const frameStep = Math.floor(totalFrames / frameCount);
-    const frameStart = Math.max(0, Math.floor((totalFrames - frameCount * frameStep) / 2));
-    console.log('total frames:', totalFrames);
-    console.log('frame count:', frameCount);
-    console.log('frame step:', frameStep);
-    console.log('frame start:', frameStart);
 
     cols.current = 8;
     rows.current = frameCount / cols.current;
@@ -104,17 +101,18 @@ const Home: NextPage = () => {
 
     // draw all the frames onto a canvas
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-    for (let i = frameStart; i < frameStart + frameCount * frameStep; i += frameStep) {
-      const frameName = frameNames[i];
-      console.log('drawing frame', i, frameName);
-      const frame = await loadImageFromBlob(await frames[frameName].blob('image/jpg'));
-      const col = ((i - frameStart) / frameStep) % cols.current;
-      const row = rows.current - 1 - Math.floor((i - frameStart) / frameStep / cols.current);
+    const indexOfLastFrame = indexOfFirstFrame + frameCount + skipFrames * (frameCount - 1);
+    const step = skipFrames + 1;
+    for (let i = indexOfFirstFrame; i < indexOfLastFrame; i += step) {
+      console.log('drawing frame', i);
+      const image = await loadImageFromBlob(frames[i]);
+      const col = ((i - indexOfFirstFrame) / step) % cols.current;
+      const row = rows.current - 1 - Math.floor((i - indexOfFirstFrame) / step / cols.current);
       const x = col * frameWidth;
       const y = row * frameHeight;
-      ctx.drawImage(frame.img, 0, 0, imageWidth, imageHeight, x, y, frameWidth, frameHeight);
+      ctx.drawImage(image.img, 0, 0, imageWidth, imageHeight, x, y, frameWidth, frameHeight);
       ctx.fillText(i.toString(), x + 20, y + 100);
-      URL.revokeObjectURL(frame.url);
+      URL.revokeObjectURL(image.url);
     }
   }
 
@@ -132,10 +130,17 @@ const Home: NextPage = () => {
     downloadAndUnzipLightFieldFromLuma(url);
   }, [trigger]);
 
+  // calculate index of first frame
+  useEffect(() => {
+    const totalNeededFrames = frameCount + skipFrames * (frameCount - 1);
+    const index = Math.floor((totalNumberOfFrames - totalNeededFrames) / 2);
+    setIndexOfFirstFrame(Math.max(0, index));
+  }, [totalNumberOfFrames, frameCount, skipFrames]);
+
   // update quilt image when frames are downloaded or options are changed
   useEffect(() => {
     drawQuiltImage();
-  }, [frames]);
+  }, [frames, indexOfFirstFrame]);
 
   return (
     <>
@@ -183,7 +188,7 @@ const Home: NextPage = () => {
         </div>
 
         {/* options */}
-        <h2>Quilt Image Options</h2>
+        <h2>Options</h2>
         <div className="flex gap-4">
           {/* total number of frames */}
           <div className="form-control w-32">
@@ -191,37 +196,37 @@ const Home: NextPage = () => {
               <span className="label-text">Number of frames</span>
             </label>
             <select
-              className="select select-bordered w-full"
+              className="select select-bordered"
               value={frameCount}
               onChange={(e) => setFrameCount(parseInt(e.target.value))}
             >
-              <option value="48">48</option>
-              <option value="96">96</option>
+              <option value={48}>48</option>
+              <option value={96}>96</option>
             </select>
           </div>
 
-          {/* index of 1st frame */}
-          <div className="form-control w-32">
-            <label className="label">
-              <span className="label-text">1st frame index</span>
-            </label>
-            <select className="select select-bordered w-full">
-              <option value="0">0</option>
-            </select>
-          </div>
-
-          {/* skip how many frames per step */}
+          {/* skip frames */}
           <div className="form-control w-32">
             <label className="label">
               <span className="label-text">Skip</span>
             </label>
-            <select className="select select-bordered w-full">
-              <option value="0">0</option>
+            <select
+              className="select select-bordered"
+              value={skipFrames}
+              onChange={(e) => setSkipFrames(parseInt(e.target.value))}
+            >
+              <option value={0}>0</option>
+              <option value={1}>1</option>
+              <option value={2}>2</option>
+              <option value={3}>3</option>
+              <option value={4}>4</option>
+              <option value={5}>5</option>
             </select>
           </div>
         </div>
 
         {/* canvas for drawing the quilt image */}
+        <h2>Preview</h2>
         <div className={cls('mt-4', status === 'done' ? 'visible' : 'hidden')}>
           <canvas ref={canvasRef} className="max-w-full rounded-lg shadow" />
         </div>
