@@ -4,15 +4,18 @@ import { useEffect, useRef, useState } from 'react';
 import { unzip, ZipEntry } from 'unzipit';
 import cls from 'classnames';
 import Head from 'next/head';
+import { QuiltPreview } from '@components/QuiltPreview';
+
+const cols = 8;
 
 const Home: NextPage = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const cols = useRef(0);
-  const rows = useRef(0);
-  const ratio = useRef(0);
+  const [rows, setRows] = useState(0);
+  const [ratio, setRatio] = useState(0);
 
   // light field photos related
-  const [url, setUrl] = useState('https://captures.lumalabs.ai/unreal-overtake-o-32417');
+  const [url, setUrl] = useState('');
+  // const [url, setUrl] = useState('https://captures.lumalabs.ai/unreal-overtake-o-32417');
   const [frames, setFrames] = useState<Blob[] | undefined>(undefined);
   const [totalNumberOfFrames, setTotalNumberOfFrames] = useState(0);
 
@@ -26,20 +29,26 @@ const Home: NextPage = () => {
   const [message, setMessage] = useState('');
   const [status, setStatus] = useState<'idle' | 'fetchingPage' | 'fetchingZip' | 'done'>('idle');
 
-  async function downloadAndUnzipLightFieldFromLuma(lumaPageUrl: string) {
+  function reset() {
+    setRows(0);
+    setRatio(0);
     setFrames(undefined);
     setTotalNumberOfFrames(0);
+  }
+
+  async function downloadAndUnzipLightFieldFromLuma(lumaPageUrl: string) {
+    reset();
 
     // fetch luma page
-    // setStatus('fetchingPage');
-    // setMessage('Fetching info ...');
-    // const resp = await fetch(`/api/luma/getInfo?url=${encodeURIComponent(lumaPageUrl)}`);
-    // const json = await resp.json();
-    // const lightFieldZipUrl = json.props.pageProps.artifacts.light_field;
-    // const zipFileName = lightFieldZipUrl.split('/').pop()!;
-    // const zipDownloadUrl = `/luma/lightfield/${zipFileName}`;
-    // console.log(zipDownloadUrl);
-    const zipDownloadUrl = '/test/cdcd228cc8dd02c536d5d0e191b521d4f5f74d7a21a45259d83d1ab4cddc2c99.zip';
+    setStatus('fetchingPage');
+    setMessage('Fetching info ...');
+    const resp = await fetch(`/api/luma/getInfo?url=${encodeURIComponent(lumaPageUrl)}`);
+    const json = await resp.json();
+    const lightFieldZipUrl = json.props.pageProps.artifacts.light_field;
+    const zipFileName = lightFieldZipUrl.split('/').pop()!;
+    const zipDownloadUrl = `/luma/lightfield/${zipFileName}`;
+    console.log(zipDownloadUrl);
+    // const zipDownloadUrl = '/test/cdcd228cc8dd02c536d5d0e191b521d4f5f74d7a21a45259d83d1ab4cddc2c99.zip';
 
     // download and unzip the light field photos
     setStatus('fetchingZip');
@@ -82,15 +91,14 @@ const Home: NextPage = () => {
     // get image size
     const firstFrame = await loadImageFromBlob(frames[0]);
     const { naturalWidth: imageWidth, naturalHeight: imageHeight } = firstFrame.img;
-    ratio.current = imageWidth / imageHeight;
+    const newRatio = imageWidth / imageHeight;
     URL.revokeObjectURL(firstFrame.url);
 
-    cols.current = 8;
-    rows.current = frameCount / cols.current;
+    const newRows = frameCount / cols;
     const canvasWidth = 4000;
-    const frameWidth = canvasWidth / cols.current;
-    const frameHeight = frameWidth / ratio.current;
-    const canvasHeight = frameHeight * rows.current;
+    const frameWidth = canvasWidth / cols;
+    const frameHeight = frameWidth / newRatio;
+    const canvasHeight = frameHeight * newRows;
 
     canvasRef.current!.width = canvasWidth;
     canvasRef.current!.height = canvasHeight;
@@ -104,22 +112,24 @@ const Home: NextPage = () => {
     const indexOfLastFrame = indexOfFirstFrame + frameCount + skipFrames * (frameCount - 1);
     const step = skipFrames + 1;
     for (let i = indexOfFirstFrame; i < indexOfLastFrame; i += step) {
-      console.log('drawing frame', i);
       const image = await loadImageFromBlob(frames[i]);
-      const col = ((i - indexOfFirstFrame) / step) % cols.current;
-      const row = rows.current - 1 - Math.floor((i - indexOfFirstFrame) / step / cols.current);
+      const col = ((i - indexOfFirstFrame) / step) % cols;
+      const row = newRows - 1 - Math.floor((i - indexOfFirstFrame) / step / cols);
       const x = col * frameWidth;
       const y = row * frameHeight;
       ctx.drawImage(image.img, 0, 0, imageWidth, imageHeight, x, y, frameWidth, frameHeight);
-      ctx.fillText(i.toString(), x + 20, y + 100);
+      // ctx.fillText(i.toString(), x + 20, y + 100);
       URL.revokeObjectURL(image.url);
     }
+
+    setRows(newRows);
+    setRatio(newRatio);
   }
 
   // save result to local file system
   function saveQuiltImage() {
     const a = document.createElement('a');
-    a.download = `${Date.now()}-qs${cols.current}x${rows.current}a${ratio.current.toFixed(2)}.jpg`;
+    a.download = `${Date.now()}-qs${cols}x${rows}a${ratio.toFixed(2)}.jpg`;
     a.href = canvasRef.current!.toDataURL('image/jpeg', 1);
     a.click();
   }
@@ -227,8 +237,11 @@ const Home: NextPage = () => {
 
         {/* canvas for drawing the quilt image */}
         <h2>Preview</h2>
-        <div className={cls('mt-4', status === 'done' ? 'visible' : 'hidden')}>
-          <canvas ref={canvasRef} className="max-w-full rounded-lg shadow" />
+        <div className={cls('flex flex-row items-start gap-4 my-4', status === 'done' ? 'visible' : 'hidden')}>
+          <canvas ref={canvasRef} className="max-w-full rounded-lg" />
+          {canvasRef.current && rows && (
+            <QuiltPreview quiltCanvas={canvasRef.current} canvasWidth={300} cols={cols} rows={rows} ratio={ratio} />
+          )}
         </div>
 
         {/* download button */}
@@ -248,5 +261,3 @@ const Home: NextPage = () => {
 };
 
 export default Home;
-
-// @zip.js/zip.js
