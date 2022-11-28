@@ -27,7 +27,8 @@ const Home: NextPage = () => {
   const [indexOfFirstFrame, setIndexOfFirstFrame] = useState(0);
   const [frameCount, setFrameCount] = useState(48);
   const [skipFrames, setSkipFrames] = useState(0);
-  const getIndexOfLastFrame = (count: number, first: number, skip: number) => first + count + skip * (count - 1);
+  const totalRequiredFrames = frameCount + skipFrames * (frameCount - 1);
+  const indexOfLastFrame = indexOfFirstFrame + totalRequiredFrames;
 
   // other UI states
   const [trigger, setTrigger] = useState(0);
@@ -121,7 +122,6 @@ const Home: NextPage = () => {
 
     // draw all the frames onto a canvas
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-    const indexOfLastFrame = getIndexOfLastFrame(frameCount, indexOfFirstFrame, skipFrames);
     const step = skipFrames + 1;
     for (let i = indexOfFirstFrame; i < indexOfLastFrame; i += step) {
       const col = ((i - indexOfFirstFrame) / step) % cols;
@@ -216,6 +216,26 @@ const Home: NextPage = () => {
         {/* options */}
         <h2>Options</h2>
         <div className="flex gap-4">
+          {/* index of first frame */}
+          <div className="form-control w-32">
+            <label className="label">
+              <span className="label-text">1st frame index</span>
+            </label>
+            <select
+              className="select select-bordered"
+              value={indexOfFirstFrame}
+              onChange={(e) => setIndexOfFirstFrame(parseInt(e.target.value))}
+            >
+              {Array(totalNumberOfFrames)
+                .fill(0)
+                .map((_, i) => (
+                  <option key={i} value={i} disabled={i > totalNumberOfFrames - totalRequiredFrames}>
+                    {i}
+                  </option>
+                ))}
+            </select>
+          </div>
+
           {/* skip frames */}
           <div className="form-control w-32">
             <label className="label">
