@@ -35,6 +35,8 @@ const Home: NextPage = () => {
   const [message, setMessage] = useState('');
   const [status, setStatus] = useState<'idle' | 'fetchingPage' | 'fetchingZip' | 'done'>('idle');
 
+  const triggerDownload = () => setTrigger((value) => value + 1);
+
   function reset() {
     if (frames) {
       for (const frame of frames) {
@@ -199,11 +201,14 @@ const Home: NextPage = () => {
               className="input input-bordered grow"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') triggerDownload();
+              }}
             />
             <button
               className="btn btn-info"
               disabled={!url || (status !== 'idle' && status !== 'done')}
-              onClick={() => setTrigger((value) => value + 1)}
+              onClick={triggerDownload}
             >
               Start
             </button>
