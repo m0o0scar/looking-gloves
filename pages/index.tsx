@@ -1,12 +1,17 @@
 /* eslint-disable @next/next/no-img-element */
 import type { NextPage } from 'next';
 import { useEffect, useRef, useState } from 'react';
-import { unzip, ZipEntry } from 'unzipit';
+import { unzip } from 'unzipit';
 import cls from 'classnames';
 import Head from 'next/head';
 import { QuiltPreview } from '@components/QuiltPreview';
 
 const cols = 8;
+
+interface Frame {
+  img: HTMLImageElement;
+  url: string;
+}
 
 const Home: NextPage = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -16,13 +21,14 @@ const Home: NextPage = () => {
   // light field photos related
   const [url, setUrl] = useState('');
   // const [url, setUrl] = useState('https://captures.lumalabs.ai/unreal-overtake-o-32417');
-  const [frames, setFrames] = useState<Blob[] | undefined>(undefined);
+  const [frames, setFrames] = useState<Frame[] | undefined>(undefined);
   const [totalNumberOfFrames, setTotalNumberOfFrames] = useState(0);
 
   // quilt image options
-  const [frameCount, setFrameCount] = useState(48);
   const [indexOfFirstFrame, setIndexOfFirstFrame] = useState(0);
+  const [frameCount, setFrameCount] = useState(48);
   const [skipFrames, setSkipFrames] = useState(0);
+  const getIndexOfLastFrame = (count: number, first: number, skip: number) => first + count + skip * (count - 1);
 
   // other UI states
   const [trigger, setTrigger] = useState(0);
@@ -30,6 +36,12 @@ const Home: NextPage = () => {
   const [status, setStatus] = useState<'idle' | 'fetchingPage' | 'fetchingZip' | 'done'>('idle');
 
   function reset() {
+    if (frames) {
+      for (const frame of frames) {
+        URL.revokeObjectURL(frame.url);
+      }
+    }
+
     setRows(0);
     setRatio(0);
     setFrames(undefined);
@@ -61,19 +73,21 @@ const Home: NextPage = () => {
     const { entries } = await unzip(zipFile);
 
     const names = Object.keys(entries).sort().reverse();
-    const frames: Blob[] = [];
+    const frames: Frame[] = [];
     for (const name of names) {
-      frames.push(await entries[name].blob('image/jpg'));
+      const blob = await entries[name].blob('image/jpg');
+      const frame = await loadImageFromBlob(blob);
+      frames.push(frame);
     }
     setFrames(frames);
 
     setTotalNumberOfFrames(names.length);
 
-    setMessage('Downloaded');
+    setMessage(`Downloaded. There are ${names.length} frames in total.`);
     setStatus('done');
   }
 
-  function loadImageFromBlob(blob: Blob) {
+  function loadImageFromBlob(blob: Blob): Promise<Frame> {
     return new Promise<{ img: HTMLImageElement; url: string }>((resolve, reject) => {
       const url = URL.createObjectURL(blob);
       const img = new Image();
@@ -85,14 +99,13 @@ const Home: NextPage = () => {
     });
   }
 
-  async function drawQuiltImage() {
-    if (!frames) return;
+  async function drawQuiltImage(showFrameIndex: boolean = false) {
+    if (!frames || !frames.length) return;
 
     // get image size
-    const firstFrame = await loadImageFromBlob(frames[0]);
-    const { naturalWidth: imageWidth, naturalHeight: imageHeight } = firstFrame.img;
+    const { naturalWidth: imageWidth, naturalHeight: imageHeight } = frames[0].img;
     const newRatio = imageWidth / imageHeight;
-    URL.revokeObjectURL(firstFrame.url);
+    URL.revokeObjectURL(frames[0].url);
 
     const newRows = frameCount / cols;
     const canvasWidth = 4000;
@@ -109,17 +122,16 @@ const Home: NextPage = () => {
 
     // draw all the frames onto a canvas
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-    const indexOfLastFrame = indexOfFirstFrame + frameCount + skipFrames * (frameCount - 1);
+    const indexOfLastFrame = getIndexOfLastFrame(frameCount, indexOfFirstFrame, skipFrames);
     const step = skipFrames + 1;
     for (let i = indexOfFirstFrame; i < indexOfLastFrame; i += step) {
-      const image = await loadImageFromBlob(frames[i]);
       const col = ((i - indexOfFirstFrame) / step) % cols;
       const row = newRows - 1 - Math.floor((i - indexOfFirstFrame) / step / cols);
       const x = col * frameWidth;
       const y = row * frameHeight;
-      ctx.drawImage(image.img, 0, 0, imageWidth, imageHeight, x, y, frameWidth, frameHeight);
-      // ctx.fillText(i.toString(), x + 20, y + 100);
-      URL.revokeObjectURL(image.url);
+      ctx.drawImage(frames[i].img, 0, 0, imageWidth, imageHeight, x, y, frameWidth, frameHeight);
+      showFrameIndex && ctx.fillText(i.toString(), x + 20, y + 100);
+      URL.revokeObjectURL(frames[i].url);
     }
 
     setRows(newRows);
@@ -128,10 +140,15 @@ const Home: NextPage = () => {
 
   // save result to local file system
   function saveQuiltImage() {
+    // hide frame indexes before saving
+    drawQuiltImage(false);
+
     const a = document.createElement('a');
     a.download = `${Date.now()}-qs${cols}x${rows}a${ratio.toFixed(2)}.jpg`;
     a.href = canvasRef.current!.toDataURL('image/jpeg', 1);
     a.click();
+
+    drawQuiltImage(true);
   }
 
   // download light field photos when user provided url and click start button
@@ -149,7 +166,7 @@ const Home: NextPage = () => {
 
   // update quilt image when frames are downloaded or options are changed
   useEffect(() => {
-    drawQuiltImage();
+    drawQuiltImage(true);
   }, [frames, indexOfFirstFrame]);
 
   return (
