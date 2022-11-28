@@ -5,6 +5,7 @@ import { unzip } from 'unzipit';
 import cls from 'classnames';
 import Head from 'next/head';
 import { QuiltPreview } from '@components/QuiltPreview';
+import Slider from '@mui/material/Slider';
 
 interface Frame {
   img: HTMLImageElement;
@@ -24,11 +25,10 @@ const Home: NextPage = () => {
   const [totalNumberOfFrames, setTotalNumberOfFrames] = useState(0);
 
   // quilt image options
-  const [indexOfFirstFrame, setIndexOfFirstFrame] = useState(0);
+  const [frameRange, setFrameRange] = useState([0, 0]);
   const [frameCount, setFrameCount] = useState(48);
   const [skipFrames, setSkipFrames] = useState(0);
   const totalRequiredFrames = frameCount + skipFrames * (frameCount - 1);
-  const indexOfLastFrame = indexOfFirstFrame + totalRequiredFrames;
 
   // other UI states
   const [trigger, setTrigger] = useState(0);
@@ -127,9 +127,10 @@ const Home: NextPage = () => {
     // draw all the frames onto a canvas
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
     const step = skipFrames + 1;
-    for (let i = indexOfFirstFrame; i < indexOfLastFrame; i += step) {
-      const col = ((i - indexOfFirstFrame) / step) % cols;
-      const row = newRows - 1 - Math.floor((i - indexOfFirstFrame) / step / cols);
+    for (let i = frameRange[0]; i < frameRange[1]; i += step) {
+      if (!frames[i]) continue;
+      const col = ((i - frameRange[0]) / step) % cols;
+      const row = newRows - 1 - Math.floor((i - frameRange[0]) / step / cols);
       const x = col * frameWidth;
       const y = row * frameHeight;
       ctx.drawImage(frames[i].img, 0, 0, imageWidth, imageHeight, x, y, frameWidth, frameHeight);
@@ -160,6 +161,29 @@ const Home: NextPage = () => {
     drawQuiltImage(true);
   }
 
+  function onFrameRangeChange(e: Event, newValue: number | number[]) {
+    if (newValue instanceof Array) {
+      let [newStart, newEnd] = newValue;
+
+      if (newStart !== frameRange[0]) {
+        newEnd = newStart + totalRequiredFrames;
+      } else {
+        newStart = newEnd - totalRequiredFrames;
+      }
+
+      if (newStart < 0) {
+        newEnd += -newStart;
+        newStart = 0;
+      }
+      if (newEnd > totalNumberOfFrames - 1) {
+        newStart -= newEnd - (totalNumberOfFrames - 1);
+        newEnd = totalNumberOfFrames - 1;
+      }
+
+      setFrameRange([newStart, newEnd]);
+    }
+  }
+
   // download light field photos when user provided url and click start button
   useEffect(() => {
     if (!url) return;
@@ -168,22 +192,21 @@ const Home: NextPage = () => {
 
   // calculate index of first frame
   useEffect(() => {
-    const totalNeededFrames = frameCount + skipFrames * (frameCount - 1);
-    const index = Math.floor((totalNumberOfFrames - totalNeededFrames) / 2);
-    setIndexOfFirstFrame(Math.max(0, index));
+    const index = Math.floor((totalNumberOfFrames - totalRequiredFrames) / 2);
+    setFrameRange([index, index + totalRequiredFrames]);
   }, [totalNumberOfFrames, frameCount, skipFrames]);
 
   // update quilt image when frames are downloaded or options are changed
   useEffect(() => {
     drawQuiltImage(true);
-  }, [frames, indexOfFirstFrame]);
+  }, [frames, frameRange]);
 
   return (
     <>
       <Head>
         <title>Luma 2 Quilt</title>
       </Head>
-      <article className="prose max-w-full">
+      <article className="prose max-w-full overflow-x-hidden">
         <h1>Luma2Quilt</h1>
         <p>I can convert LumaAI NeRF into Quilt image, which you can use on a Looking Glass or Blocks Hologram.</p>
 
@@ -230,45 +253,50 @@ const Home: NextPage = () => {
         {status === 'done' && (
           <>
             <h2>Options</h2>
-            <div className="flex gap-4">
-              {/* index of first frame */}
-              <div className="form-control w-32">
-                <label className="label">
-                  <span className="label-text">1st frame index</span>
-                </label>
-                <select
-                  className="select select-bordered"
-                  value={indexOfFirstFrame}
-                  onChange={(e) => setIndexOfFirstFrame(parseInt(e.target.value))}
-                >
-                  {Array(totalNumberOfFrames)
-                    .fill(0)
-                    .map((_, i) => (
-                      <option key={i} value={i} disabled={i > totalNumberOfFrames - totalRequiredFrames}>
-                        {i}
-                      </option>
-                    ))}
-                </select>
+            <div>
+              <div className="flex gap-4 mb-4">
+                {/* number of frames */}
+                <div className="form-control w-32">
+                  <label className="label">
+                    <span className="label-text">No. of frames</span>
+                  </label>
+                  <select
+                    className="select select-bordered"
+                    value={frameCount}
+                    onChange={(e) => setFrameCount(parseInt(e.target.value))}
+                  >
+                    <option value={48}>48</option>
+                    <option value={96}>96</option>
+                  </select>
+                </div>
+
+                {/* skip frames */}
+                <div className="form-control w-32">
+                  <label className="label">
+                    <span className="label-text">Skip</span>
+                  </label>
+                  <select
+                    className="select select-bordered"
+                    value={skipFrames}
+                    onChange={(e) => setSkipFrames(parseInt(e.target.value))}
+                  >
+                    <option value={0}>0</option>
+                    <option value={1}>1</option>
+                    <option value={2}>2</option>
+                    <option value={3}>3</option>
+                    <option value={4}>4</option>
+                    <option value={5}>5</option>
+                  </select>
+                </div>
               </div>
 
-              {/* skip frames */}
-              <div className="form-control w-32">
-                <label className="label">
-                  <span className="label-text">Skip</span>
-                </label>
-                <select
-                  className="select select-bordered"
-                  value={skipFrames}
-                  onChange={(e) => setSkipFrames(parseInt(e.target.value))}
-                >
-                  <option value={0}>0</option>
-                  <option value={1}>1</option>
-                  <option value={2}>2</option>
-                  <option value={3}>3</option>
-                  <option value={4}>4</option>
-                  <option value={5}>5</option>
-                </select>
-              </div>
+              <Slider
+                min={0}
+                max={totalNumberOfFrames}
+                value={frameRange}
+                onChange={onFrameRangeChange}
+                valueLabelDisplay="auto"
+              />
             </div>
 
             {/* canvas for drawing the quilt image */}
