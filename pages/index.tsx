@@ -154,7 +154,7 @@ const Home: NextPage = () => {
 
     const a = document.createElement('a');
     a.download = `${Date.now()}-qs${cols}x${rows}a${ratio.toFixed(2)}.jpg`;
-    a.href = canvasRef.current!.toDataURL('image/jpeg', 1);
+    a.href = canvasRef.current!.toDataURL('image/jpeg', 0.95);
     a.click();
 
     drawQuiltImage(true);
