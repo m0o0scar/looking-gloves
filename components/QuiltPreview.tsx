@@ -52,5 +52,5 @@ export const QuiltPreview: FC<QuiltPreviewProps> = ({ quiltCanvas, canvasWidth, 
 
   if (!rows) return null;
 
-  return <canvas className="rounded-lg" ref={canvasRef} />;
+  return <canvas className="w-1/4 rounded-lg drop-shadow-lg" ref={canvasRef} />;
 };

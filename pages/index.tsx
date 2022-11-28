@@ -173,7 +173,7 @@ const Home: NextPage = () => {
       <Head>
         <title>Luma 2 Quilt</title>
       </Head>
-      <article className="prose">
+      <article className="prose max-w-full">
         <h1>Luma2Quilt</h1>
         <p>I can convert LumaAI NeRF into Quilt image, which you can use on a Looking Glass or Blocks Hologram.</p>
 
@@ -206,7 +206,7 @@ const Home: NextPage = () => {
               <span className="label-text-alt">{message}</span>
               {status !== 'done' && (
                 <span className="label-text-alt">
-                  <progress className="progress w-24"></progress>
+                  <progress className="progress" style={{ width: 76 }}></progress>
                 </span>
               )}
             </label>
@@ -214,67 +214,69 @@ const Home: NextPage = () => {
         </div>
 
         {/* options */}
-        <h2>Options</h2>
-        <div className="flex gap-4">
-          {/* index of first frame */}
-          <div className="form-control w-32">
-            <label className="label">
-              <span className="label-text">1st frame index</span>
-            </label>
-            <select
-              className="select select-bordered"
-              value={indexOfFirstFrame}
-              onChange={(e) => setIndexOfFirstFrame(parseInt(e.target.value))}
-            >
-              {Array(totalNumberOfFrames)
-                .fill(0)
-                .map((_, i) => (
-                  <option key={i} value={i} disabled={i > totalNumberOfFrames - totalRequiredFrames}>
-                    {i}
-                  </option>
-                ))}
-            </select>
-          </div>
-
-          {/* skip frames */}
-          <div className="form-control w-32">
-            <label className="label">
-              <span className="label-text">Skip</span>
-            </label>
-            <select
-              className="select select-bordered"
-              value={skipFrames}
-              onChange={(e) => setSkipFrames(parseInt(e.target.value))}
-            >
-              <option value={0}>0</option>
-              <option value={1}>1</option>
-              <option value={2}>2</option>
-              <option value={3}>3</option>
-              <option value={4}>4</option>
-              <option value={5}>5</option>
-            </select>
-          </div>
-        </div>
-
-        {/* canvas for drawing the quilt image */}
-        <h2>Preview</h2>
-        <div className={cls('flex flex-row items-start gap-4 my-4', status === 'done' ? 'visible' : 'hidden')}>
-          <canvas ref={canvasRef} className="max-w-full rounded-lg" />
-          {canvasRef.current && rows && (
-            <QuiltPreview quiltCanvas={canvasRef.current} canvasWidth={300} cols={cols} rows={rows} ratio={ratio} />
-          )}
-        </div>
-
-        {/* download button */}
         {status === 'done' && (
-          <div className="flex gap-2">
-            <button className="btn btn-success" onClick={saveQuiltImage}>
-              Download
-            </button>
-            <a className="btn btn-accent" href="https://blocks.glass/manage" target="_blank" rel="noreferrer">
-              Goto LG Blocks
-            </a>
-          </div>
+          <>
+            <h2>Options</h2>
+            <div className="flex gap-4">
+              {/* index of first frame */}
+              <div className="form-control w-32">
+                <label className="label">
+                  <span className="label-text">1st frame index</span>
+                </label>
+                <select
+                  className="select select-bordered"
+                  value={indexOfFirstFrame}
+                  onChange={(e) => setIndexOfFirstFrame(parseInt(e.target.value))}
+                >
+                  {Array(totalNumberOfFrames)
+                    .fill(0)
+                    .map((_, i) => (
+                      <option key={i} value={i} disabled={i > totalNumberOfFrames - totalRequiredFrames}>
+                        {i}
+                      </option>
+                    ))}
+                </select>
+              </div>
+
+              {/* skip frames */}
+              <div className="form-control w-32">
+                <label className="label">
+                  <span className="label-text">Skip</span>
+                </label>
+                <select
+                  className="select select-bordered"
+                  value={skipFrames}
+                  onChange={(e) => setSkipFrames(parseInt(e.target.value))}
+                >
+                  <option value={0}>0</option>
+                  <option value={1}>1</option>
+                  <option value={2}>2</option>
+                  <option value={3}>3</option>
+                  <option value={4}>4</option>
+                  <option value={5}>5</option>
+                </select>
+              </div>
+            </div>
+
+            {/* canvas for drawing the quilt image */}
+            <h2>Preview</h2>
+            <div className={cls('flex flex-row items-start gap-4 my-4', status === 'done' ? 'visible' : 'hidden')}>
+              <canvas ref={canvasRef} className="rounded-lg drop-shadow-lg grow min-w-0" />
+              {canvasRef.current && rows && (
+                <QuiltPreview quiltCanvas={canvasRef.current} canvasWidth={300} cols={cols} rows={rows} ratio={ratio} />
+              )}
+            </div>
+
+            {/* download button */}
+            <div className="flex gap-2">
+              <button className="btn btn-success" onClick={saveQuiltImage}>
+                Download
+              </button>
+              <a className="btn btn-accent" href="https://blocks.glass/manage" target="_blank" rel="noreferrer">
+                Goto LG Blocks
+              </a>
+            </div>
+          </>
         )}
       </article>
     </>
