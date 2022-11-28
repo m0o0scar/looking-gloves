@@ -117,8 +117,10 @@ const Home: NextPage = () => {
     canvasRef.current!.height = canvasHeight;
     const ctx = canvasRef.current!.getContext('2d')!;
 
-    ctx.font = '100px Arial';
-    ctx.fillStyle = 'black';
+    ctx.font = '80px Arial';
+    ctx.strokeStyle = 'black';
+    ctx.fillStyle = 'white';
+    ctx.lineWidth = 10;
 
     // draw all the frames onto a canvas
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
@@ -129,7 +131,13 @@ const Home: NextPage = () => {
       const x = col * frameWidth;
       const y = row * frameHeight;
       ctx.drawImage(frames[i].img, 0, 0, imageWidth, imageHeight, x, y, frameWidth, frameHeight);
-      showFrameIndex && ctx.fillText(i.toString(), x + 20, y + 100);
+      if (showFrameIndex) {
+        const text = i.toString();
+        const tx = x + 20;
+        const ty = y + 100;
+        ctx.strokeText(text, tx, ty);
+        ctx.fillText(text, tx, ty);
+      }
       URL.revokeObjectURL(frames[i].url);
     }
 
