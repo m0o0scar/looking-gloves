@@ -6,8 +6,6 @@ import cls from 'classnames';
 import Head from 'next/head';
 import { QuiltPreview } from '@components/QuiltPreview';
 
-const cols = 8;
-
 interface Frame {
   img: HTMLImageElement;
   url: string;
@@ -15,6 +13,7 @@ interface Frame {
 
 const Home: NextPage = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [cols, setCols] = useState(8);
   const [rows, setRows] = useState(0);
   const [ratio, setRatio] = useState(0);
 
@@ -217,21 +216,6 @@ const Home: NextPage = () => {
         {/* options */}
         <h2>Options</h2>
         <div className="flex gap-4">
-          {/* total number of frames */}
-          <div className="form-control w-32">
-            <label className="label">
-              <span className="label-text">Number of frames</span>
-            </label>
-            <select
-              className="select select-bordered"
-              value={frameCount}
-              onChange={(e) => setFrameCount(parseInt(e.target.value))}
-            >
-              <option value={48}>48</option>
-              <option value={96}>96</option>
-            </select>
-          </div>
-
           {/* skip frames */}
           <div className="form-control w-32">
             <label className="label">
