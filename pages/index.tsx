@@ -6,7 +6,7 @@ import cls from 'classnames';
 import Head from 'next/head';
 import { QuiltPreview } from '@components/QuiltPreview';
 import Slider from '@mui/material/Slider';
-
+import { toast } from 'react-toastify';
 interface Frame {
   img: HTMLImageElement;
   url: string;
@@ -26,6 +26,7 @@ const Home: NextPage = () => {
   // const [url, setUrl] = useState('https://captures.lumalabs.ai/unreal-overtake-o-32417');
   const [frames, setFrames] = useState<Frame[] | undefined>(undefined);
   const [totalNumberOfFrames, setTotalNumberOfFrames] = useState(0);
+  const [title, setTitle] = useState('');
 
   // quilt image options
   const [frameRange, setFrameRange] = useState(defaultFrameRange);
@@ -48,6 +49,7 @@ const Home: NextPage = () => {
     setRatio(0);
     setFrames(undefined);
     setTotalNumberOfFrames(0);
+    setTitle('');
     setFrameRange(defaultFrameRange);
     setFrameCount(defaultFrameCount);
   }
@@ -60,7 +62,12 @@ const Home: NextPage = () => {
     setMessage('Fetching info ...');
     const resp = await fetch(`/api/luma/getInfo?url=${encodeURIComponent(lumaPageUrl)}`);
     const json = await resp.json();
-    const lightFieldZipUrl = json.props.pageProps.artifacts.light_field;
+
+    // get luma page title
+    setTitle(json.title);
+
+    // download light field photos zip
+    const lightFieldZipUrl = json.pageProps.props.pageProps.artifacts.light_field;
     const zipFileName = lightFieldZipUrl.split('/').pop()!;
     const zipDownloadUrl = `/luma/lightfield/${zipFileName}`;
     console.log(zipDownloadUrl);
@@ -158,6 +165,11 @@ const Home: NextPage = () => {
     a.click();
 
     drawQuiltImage(true);
+  }
+
+  async function copyTitle() {
+    await navigator.clipboard.writeText(title);
+    toast.success(`"${title}" copied to clipboard`);
   }
 
   function onFrameRangeChange(e: Event, newValue: number | number[]) {
@@ -314,6 +326,9 @@ const Home: NextPage = () => {
 
             {/* download button */}
             <div className="flex gap-2">
+              <button className="btn" onClick={copyTitle}>
+                Copy Title
+              </button>
               <button className="btn btn-success" onClick={saveQuiltImage}>
                 Download
               </button>
