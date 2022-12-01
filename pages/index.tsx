@@ -12,6 +12,9 @@ interface Frame {
   url: string;
 }
 
+const defaultFrameRange = [0, 0];
+const defaultFrameCount = 48;
+
 const Home: NextPage = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [cols, setCols] = useState(8);
@@ -25,10 +28,8 @@ const Home: NextPage = () => {
   const [totalNumberOfFrames, setTotalNumberOfFrames] = useState(0);
 
   // quilt image options
-  const [frameRange, setFrameRange] = useState([0, 0]);
-  const [frameCount, setFrameCount] = useState(48);
-  const [skipFrames, setSkipFrames] = useState(0);
-  const totalRequiredFrames = frameCount + skipFrames * (frameCount - 1);
+  const [frameRange, setFrameRange] = useState(defaultFrameRange);
+  const [frameCount, setFrameCount] = useState(defaultFrameCount);
 
   // other UI states
   const [trigger, setTrigger] = useState(0);
@@ -44,10 +45,11 @@ const Home: NextPage = () => {
       }
     }
 
-    setRows(0);
     setRatio(0);
     setFrames(undefined);
     setTotalNumberOfFrames(0);
+    setFrameRange(defaultFrameRange);
+    setFrameCount(defaultFrameCount);
   }
 
   async function downloadAndUnzipLightFieldFromLuma(lumaPageUrl: string) {
@@ -109,11 +111,10 @@ const Home: NextPage = () => {
     const newRatio = imageWidth / imageHeight;
     URL.revokeObjectURL(frames[0].url);
 
-    const newRows = frameCount / cols;
     const canvasWidth = 4000;
     const frameWidth = canvasWidth / cols;
     const frameHeight = frameWidth / newRatio;
-    const canvasHeight = frameHeight * newRows;
+    const canvasHeight = frameHeight * rows;
 
     canvasRef.current!.width = canvasWidth;
     canvasRef.current!.height = canvasHeight;
@@ -126,11 +127,10 @@ const Home: NextPage = () => {
 
     // draw all the frames onto a canvas
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-    const step = skipFrames + 1;
-    for (let i = frameRange[0]; i < frameRange[1]; i += step) {
+    for (let i = frameRange[0]; i < frameRange[1]; i += 1) {
       if (!frames[i]) continue;
-      const col = ((i - frameRange[0]) / step) % cols;
-      const row = newRows - 1 - Math.floor((i - frameRange[0]) / step / cols);
+      const col = (i - frameRange[0]) % cols;
+      const row = rows - 1 - Math.floor((i - frameRange[0]) / cols);
       const x = col * frameWidth;
       const y = row * frameHeight;
       ctx.drawImage(frames[i].img, 0, 0, imageWidth, imageHeight, x, y, frameWidth, frameHeight);
@@ -144,7 +144,6 @@ const Home: NextPage = () => {
       URL.revokeObjectURL(frames[i].url);
     }
 
-    setRows(newRows);
     setRatio(newRatio);
   }
 
@@ -166,9 +165,9 @@ const Home: NextPage = () => {
       let [newStart, newEnd] = newValue;
 
       if (newStart !== frameRange[0]) {
-        newEnd = newStart + totalRequiredFrames;
+        newEnd = newStart + frameCount;
       } else {
-        newStart = newEnd - totalRequiredFrames;
+        newStart = newEnd - frameCount;
       }
 
       if (newStart < 0) {
@@ -190,11 +189,32 @@ const Home: NextPage = () => {
     downloadAndUnzipLightFieldFromLuma(url);
   }, [trigger]);
 
+  // update number of cols & rows when frame count change
+  useEffect(() => {
+    switch (frameCount) {
+      case 80: {
+        setCols(10);
+        setRows(8);
+        break;
+      }
+      case 96: {
+        setCols(12);
+        setRows(8);
+        break;
+      }
+      default: {
+        setCols(8);
+        setRows(frameCount / cols);
+        break;
+      }
+    }
+  }, [frameCount]);
+
   // calculate index of first frame
   useEffect(() => {
-    const index = Math.floor((totalNumberOfFrames - totalRequiredFrames) / 2);
-    setFrameRange([index, index + totalRequiredFrames]);
-  }, [totalNumberOfFrames, frameCount, skipFrames]);
+    const index = Math.floor((totalNumberOfFrames - frameCount) / 2);
+    setFrameRange([index, index + frameCount]);
+  }, [totalNumberOfFrames, frameCount]);
 
   // update quilt image when frames are downloaded or options are changed
   useEffect(() => {
@@ -265,27 +285,11 @@ const Home: NextPage = () => {
                     value={frameCount}
                     onChange={(e) => setFrameCount(parseInt(e.target.value))}
                   >
-                    <option value={48}>48</option>
-                    <option value={96}>96</option>
-                  </select>
-                </div>
-
-                {/* skip frames */}
-                <div className="form-control w-32">
-                  <label className="label">
-                    <span className="label-text">Skip</span>
-                  </label>
-                  <select
-                    className="select select-bordered"
-                    value={skipFrames}
-                    onChange={(e) => setSkipFrames(parseInt(e.target.value))}
-                  >
-                    <option value={0}>0</option>
-                    <option value={1}>1</option>
-                    <option value={2}>2</option>
-                    <option value={3}>3</option>
-                    <option value={4}>4</option>
-                    <option value={5}>5</option>
+                    {[48, 64, 80, 96].map((value) => (
+                      <option key={value} value={value} disabled={value > totalNumberOfFrames}>
+                        {value}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>

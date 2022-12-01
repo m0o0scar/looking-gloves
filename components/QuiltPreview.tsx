@@ -44,11 +44,11 @@ export const QuiltPreview: FC<QuiltPreviewProps> = ({ quiltCanvas, canvasWidth, 
 
   useEffect(() => {
     currentFrame.current = 0;
-    if (rows) {
+    if (cols && rows) {
       drawFrameInterval.current = window.setInterval(drawFrame, 30);
     }
     return () => clearInterval(drawFrameInterval.current);
-  }, [rows]);
+  }, [cols, rows]);
 
   if (!rows) return null;
 
