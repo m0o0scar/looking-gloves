@@ -13,7 +13,7 @@ interface Frame {
 }
 
 const defaultFrameRange = [0, 0];
-const defaultFrameCount = 48;
+const defaultFrameCount = 96;
 
 const Home: NextPage = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -284,28 +284,8 @@ const Home: NextPage = () => {
         {/* options */}
         {status === 'done' && (
           <>
-            <h2>Options</h2>
+            <h2>Frame Range</h2>
             <div>
-              <div className="flex gap-4 mb-4">
-                {/* number of frames */}
-                <div className="form-control w-32">
-                  <label className="label">
-                    <span className="label-text">No. of frames</span>
-                  </label>
-                  <select
-                    className="select select-bordered"
-                    value={frameCount}
-                    onChange={(e) => setFrameCount(parseInt(e.target.value))}
-                  >
-                    {[48, 64, 80, 96].map((value) => (
-                      <option key={value} value={value} disabled={value > totalNumberOfFrames}>
-                        {value}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
               <Slider
                 min={0}
                 max={totalNumberOfFrames}
