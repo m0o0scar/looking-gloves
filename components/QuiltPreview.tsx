@@ -6,9 +6,17 @@ export interface QuiltPreviewProps {
   cols: number;
   rows: number;
   ratio: number;
+  animationTrigger: any;
 }
 
-export const QuiltPreview: FC<QuiltPreviewProps> = ({ quiltCanvas, canvasWidth, cols, rows, ratio }) => {
+export const QuiltPreview: FC<QuiltPreviewProps> = ({
+  quiltCanvas,
+  canvasWidth,
+  cols,
+  rows,
+  ratio,
+  animationTrigger,
+}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const currentFrame = useRef(0);
@@ -44,11 +52,9 @@ export const QuiltPreview: FC<QuiltPreviewProps> = ({ quiltCanvas, canvasWidth, 
 
   useEffect(() => {
     currentFrame.current = 0;
-    if (cols && rows) {
-      drawFrameInterval.current = window.setInterval(drawFrame, 30);
-    }
+    drawFrameInterval.current = window.setInterval(drawFrame, 30);
     return () => clearInterval(drawFrameInterval.current);
-  }, [cols, rows]);
+  }, [animationTrigger]);
 
   if (!rows) return null;
 
