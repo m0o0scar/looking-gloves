@@ -120,7 +120,6 @@ const Home: NextPage = () => {
 
     const frames: Frame[] = [];
     let duration = 0;
-    const step = 1 / 30;
 
     const drawFrame = () => {
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -140,12 +139,12 @@ const Home: NextPage = () => {
     video.onseeked = () => {
       drawFrame();
       if (video.currentTime < duration) {
-        video.currentTime += step;
+        video.currentTime += duration / frameCount;
 
         const progress = Math.round((video.currentTime / duration) * 100);
         setProcessVideoProgress(progress);
       } else {
-        setProcessVideoMessage('All frames extracted.');
+        setProcessVideoMessage(`All ${frames.length} frames extracted.`);
         setProcessVideoProgress(100);
         setFrames(frames);
         setTotalNumberOfFrames(frames.length);
