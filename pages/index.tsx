@@ -103,6 +103,7 @@ const Home: NextPage = () => {
   function extractFramesFromVideo(file?: File) {
     if (!file) return;
 
+    reset();
     setStatus('fetchingFrames');
     setProcessVideoMessage('Extracting frames from video ...');
     setProcessVideoProgress(0);
