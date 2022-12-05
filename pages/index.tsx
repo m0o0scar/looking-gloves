@@ -349,14 +349,19 @@ const Home: NextPage = () => {
         {status === 'done' && (
           <>
             <h2>Frame Range</h2>
-            <div>
-              <Slider
-                min={0}
-                max={totalNumberOfFrames}
-                value={frameRange}
-                onChange={onFrameRangeChange}
-                valueLabelDisplay="auto"
-              />
+            <div className="flex gap-4 items-center">
+              <div className="grow">
+                <Slider
+                  min={0}
+                  max={totalNumberOfFrames}
+                  value={frameRange}
+                  onChange={onFrameRangeChange}
+                  valueLabelDisplay="auto"
+                />
+              </div>
+              <button className="btn" onClick={() => setFrames((frames = []) => [...frames].reverse())}>
+                Flip
+              </button>
             </div>
 
             {/* canvas for drawing the quilt image */}
