@@ -36,15 +36,15 @@ export class QuiltCanvas {
     const { x, y } = this.colRowToXY(col, row);
     this.ctx.drawImage(source, 0, 0, this.sourceWidth, this.sourceHeight, x, y, this.frameWidth, this.frameHeight);
 
-    const text = i.toString();
-    const tx = x + 20;
-    const ty = y + 100;
-    this.ctx.font = '80px Arial';
-    this.ctx.strokeStyle = 'black';
-    this.ctx.fillStyle = 'white';
-    this.ctx.lineWidth = 10;
-    this.ctx.strokeText(text, tx, ty);
-    this.ctx.fillText(text, tx, ty);
+    // const text = i.toString();
+    // const tx = x + 20;
+    // const ty = y + 100;
+    // this.ctx.font = '80px Arial';
+    // this.ctx.strokeStyle = 'black';
+    // this.ctx.fillStyle = 'white';
+    // this.ctx.lineWidth = 10;
+    // this.ctx.strokeText(text, tx, ty);
+    // this.ctx.fillText(text, tx, ty);
   }
 
   private indexToColRow(i: number) {

@@ -6,6 +6,7 @@ export interface VideoDecoderProps {
   numberOfCols?: number;
   numberOfRows?: number;
   onFileSelected?: (file: File) => void;
+  onMetadataLoaded?: (video: HTMLVideoElement) => void;
   onProgress?: (progress: number) => void;
   onFramesExtracted?: (quiltCanvas?: QuiltCanvas) => void;
 }
@@ -14,6 +15,7 @@ export const VideoDecoder: FC<VideoDecoderProps> = ({
   numberOfCols = 8,
   numberOfRows = 12,
   onFileSelected,
+  onMetadataLoaded,
   onProgress,
   onFramesExtracted,
 }) => {
@@ -29,14 +31,16 @@ export const VideoDecoder: FC<VideoDecoderProps> = ({
   const numberOfFrames = numberOfCols * numberOfRows;
 
   const onVideoMetadataLoaded = () => {
+    onMetadataLoaded?.(videoRef.current!);
+
     // create quilt canvas
     quiltCanvasRef.current = new QuiltCanvas(
       numberOfCols,
       numberOfRows,
       videoRef.current!.videoWidth,
       videoRef.current!.videoHeight,
-      300,
-      400
+      600,
+      800
     );
 
     // start extracting frames from the beginning
