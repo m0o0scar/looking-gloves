@@ -1,12 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
-import type { NextPage } from 'next';
-import { useEffect, useRef, useState } from 'react';
-import { unzip } from 'unzipit';
-import cls from 'classnames';
-import Head from 'next/head';
-import { QuiltPreview } from '@components/QuiltPreview';
 import Slider from '@mui/material/Slider';
+import cls from 'classnames';
+import type { NextPage } from 'next';
+import Head from 'next/head';
+import { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
+import { unzip } from 'unzipit';
+
+import { QuiltPreview } from '@components/QuiltPreview';
+
 interface Frame {
   img: HTMLImageElement;
   url?: string;

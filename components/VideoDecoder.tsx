@@ -1,4 +1,5 @@
 import React, { FC, useState, useEffect, useRef } from 'react';
+
 import { QuiltCanvas } from './QuiltCanvas';
 
 export interface VideoDecoderProps {
