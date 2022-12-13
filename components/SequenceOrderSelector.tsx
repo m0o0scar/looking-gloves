@@ -9,21 +9,23 @@ const StyledFramesContainer = styled.div`
   }
 `;
 
-export interface FirstAndLastFrameProps {
-  frames?: HTMLCanvasElement[];
-  onFirstFrameSelected?: (shouldReverse: boolean) => void;
+export interface SequenceOrderSelectorProps {
+  firstFrame?: HTMLCanvasElement;
+  lastFrame?: HTMLCanvasElement;
+  onOrderSelected?: (shouldReverse: boolean) => void;
 }
 
-export const FirstAndLastFrame: FC<FirstAndLastFrameProps> = ({
-  frames,
-  onFirstFrameSelected,
+export const SequenceOrderSelector: FC<SequenceOrderSelectorProps> = ({
+  firstFrame,
+  lastFrame,
+  onOrderSelected,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const onClick = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     const attr = (e.target as HTMLElement).getAttribute('data-frame-index');
-    if (attr === 'first') onFirstFrameSelected?.(false);
-    if (attr === 'last') onFirstFrameSelected?.(true);
+    if (attr === 'first') onOrderSelected?.(false);
+    if (attr === 'last') onOrderSelected?.(true);
   };
 
   useEffect(() => {
@@ -31,23 +33,19 @@ export const FirstAndLastFrame: FC<FirstAndLastFrameProps> = ({
 
     containerRef.current.innerHTML = '';
 
-    if (frames && frames.length > 1) {
-      const firstFrame = frames[0];
-      const lastFrame = frames[frames.length - 1];
-
+    if (firstFrame && lastFrame) {
       firstFrame.setAttribute('data-frame-index', 'first');
       lastFrame.setAttribute('data-frame-index', 'last');
-
       containerRef.current.appendChild(firstFrame);
       containerRef.current.appendChild(lastFrame);
     }
-  }, [frames]);
+  }, [firstFrame, lastFrame]);
 
-  if (!frames?.length) return null;
+  if (!firstFrame || !lastFrame) return null;
 
   return (
-    <div>
-      <h1>Choose the first frame</h1>
+    <div className="flex flex-col items-center">
+      <h1>Choose the beginning frame</h1>
       <p>
         Please click on the frame in which your target appears on the right
         side.

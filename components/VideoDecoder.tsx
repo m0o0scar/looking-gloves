@@ -103,19 +103,13 @@ export const VideoDecoder: FC<VideoDecoderProps> = ({
   return (
     <div>
       <h1>Select a video file</h1>
-      <div className="flex gap-2">
-        {/* button for triggering file picker */}
-        <button className="btn" onClick={() => inputRef.current?.click()}>
-          Select Video File
-        </button>
-      </div>
 
       {/* file input for selecting video file */}
       <input
         ref={inputRef}
         type="file"
         accept="video/*"
-        className="file-input hidden"
+        className="file-input"
         onChange={(e) => setFiles(e.target.files)}
       />
 
