@@ -13,7 +13,7 @@ const LumaPage: NextPage = () => {
   return (
     <PageContainer>
       <Head>
-        <title>Lamu - Luma NeRF to Quilt</title>
+        <title>👓 Nerfglass - Luma NeRF to Quilt</title>
       </Head>
 
       <HomeBtn />

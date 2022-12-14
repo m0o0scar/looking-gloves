@@ -14,7 +14,7 @@ const VideoPage: NextPage = () => {
   return (
     <PageContainer>
       <Head>
-        <title>Lamu - Video to Quilt</title>
+        <title>👓 Nerfglass - Video to Quilt</title>
       </Head>
 
       <HomeBtn />

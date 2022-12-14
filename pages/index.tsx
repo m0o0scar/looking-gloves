@@ -9,20 +9,28 @@ const HomePage: NextPage = () => {
   return (
     <PageContainer className="justify-center">
       <Head>
-        <title>Lamu</title>
+        <title>👓 Nerfglass</title>
       </Head>
 
-      <h1>
-        <mark>Lamu</mark> - NeRF ➡️ Looking Glass
+      <h1 className="hidden md:block">
+        <mark>👓 Nerfglass</mark> - NeRF ➡️ Looking Glass
       </h1>
+
+      <div className="block md:hidden">
+        <h1>
+          <mark>👓 Nerfglass</mark>
+        </h1>
+        <h2 className="mt-0">NeRF ➡️ Looking Glass</h2>
+      </div>
+
       <p className="max-w-3xl">
-        Hi there! Welcome to Lamu, a webapp for converting NeRF (Neural Radiance
-        Fields) into Looking Glass hologram. I&lsquo;m glad you&lsquo;re here
-        and hope you enjoy using this tool. Let me know if you have any
-        questions or feedback{' '}
+        Hi there! Welcome to Nerfglass, a webapp for converting NeRF (Neural
+        Radiance Fields) into Looking Glass hologram. I&lsquo;m glad
+        you&lsquo;re here and hope you enjoy using this tool. Let me know if you
+        have any questions or feedback{' '}
         <a
           className="no-underline"
-          href="mailto:moscartong@gmail.com?subject=Lamu Feedback"
+          href="mailto:moscartong@gmail.com?subject=Nerfglass Feedback"
         >
           💬
         </a>
