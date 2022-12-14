@@ -3,7 +3,7 @@ import { FC, useState, useEffect, useRef } from 'react';
 
 const StyledFramesContainer = styled.div`
   > canvas {
-    max-width: 200px;
+    max-width: min(200px, 50%);
     border-radius: 8px;
     cursor: pointer;
   }
@@ -52,7 +52,7 @@ export const SequenceOrderSelector: FC<SequenceOrderSelectorProps> = ({
       </p>
       <StyledFramesContainer
         ref={containerRef}
-        className="flex gap-4"
+        className="flex gap-4 justify-center"
         onClick={onClick}
       ></StyledFramesContainer>
     </>

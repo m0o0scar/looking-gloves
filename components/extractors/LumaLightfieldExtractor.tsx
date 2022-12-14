@@ -113,8 +113,8 @@ export const LumaLightfieldExtractor: FC<LumaLightfieldExtractorProps> = ({
     <>
       <h2>Please provide Luma NeRF URL</h2>
 
-      <div className="flex gap-2">
-        <div className="form-control w-96">
+      <div className="flex gap-2 w-full sm:w-auto">
+        <div className="form-control grow w-auto sm:w-96">
           <input
             type="url"
             placeholder="Luma NeRF URL"

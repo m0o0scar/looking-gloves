@@ -29,8 +29,8 @@ const HomePage: NextPage = () => {
         . Happy converting 😀!
       </p>
 
-      <div className="flex gap-5">
-        <div className="card w-96 bg-base-100 shadow-xl overflow-hidden">
+      <div className="flex flex-col sm:flex-row gap-5 max-w-full">
+        <div className="card w-96 max-w-full bg-base-100 shadow-xl overflow-hidden">
           <video
             src="/assets/cover-lightfield.mov"
             poster="/assets/cover-video.png"
@@ -66,7 +66,7 @@ const HomePage: NextPage = () => {
           </div>
         </div>
 
-        <div className="card w-96 bg-base-100 shadow-xl overflow-hidden">
+        <div className="card w-96 max-w-full bg-base-100 shadow-xl overflow-hidden">
           <div className="relative flex">
             <img
               src="/assets/cover-video.png"
