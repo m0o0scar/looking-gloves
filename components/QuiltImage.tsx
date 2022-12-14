@@ -6,6 +6,7 @@ export interface QuiltImageProps extends HTMLAttributes<HTMLCanvasElement> {
   numberOfCols: number;
   numberOfRows: number;
   frameWidth: number;
+  onRendered?: (canvas: HTMLCanvasElement) => void;
 }
 
 export const QuiltImage: FC<QuiltImageProps> = ({
@@ -14,6 +15,7 @@ export const QuiltImage: FC<QuiltImageProps> = ({
   numberOfRows,
   frameWidth,
   className,
+  onRendered,
   ...props
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -49,6 +51,8 @@ export const QuiltImage: FC<QuiltImageProps> = ({
           frameHeight
         );
       }
+
+      onRendered?.(canvasRef.current!);
     }
   }, [frames, numberOfCols, numberOfRows, frameWidth]);
 

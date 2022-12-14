@@ -1,4 +1,4 @@
-import { FC, ReactNode, useEffect, useState } from 'react';
+import { FC, ReactNode, useEffect, useRef, useState } from 'react';
 
 import { ExtractingFramesProgress } from '@components/ExtractingFramesProgress';
 import { QuiltImage } from '@components/QuiltImage';
@@ -23,17 +23,21 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({
   frameWidth,
   sequenceDecoder,
 }) => {
+  // extraction progress
   const [progress, setProgress] = useState(0);
 
+  // frames
   const [frames, setFrames] = useState<HTMLCanvasElement[] | undefined>();
   const reverseFrames = () =>
     setFrames((value) => (value ? [...value].reverse() : undefined));
 
+  // sequence order
   const [firstAndLastFrame, setFirstAndLastFrame] = useState<
     [HTMLCanvasElement, HTMLCanvasElement] | undefined
   >();
-
   const [sequenceOrderConfirmed, setSequenceOrderConfirmed] = useState(false);
+
+  const renderedCanvasRef = useRef<HTMLCanvasElement>();
 
   const hasFrames = (frames?.length || 0) > 0;
 
@@ -43,11 +47,29 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({
     setSequenceOrderConfirmed(true);
   };
 
+  const saveQuiltImage = () => {
+    if (!renderedCanvasRef.current) return;
+
+    // Quilt image file name conventions:
+    // https://docs.lookingglassfactory.com/keyconcepts/quilts#file-naming-conventions
+    const frameWidth = renderedCanvasRef.current.width / cols;
+    const frameHeight = renderedCanvasRef.current.height / rows;
+    const aspectRatio = frameWidth / frameHeight;
+    const name = Date.now();
+    const filename = `${name}_qs${cols}x${rows}a${aspectRatio.toFixed(2)}.jpg`;
+
+    const a = document.createElement('a');
+    a.href = renderedCanvasRef.current.toDataURL('image/jpeg', 0.9);
+    a.download = filename;
+    a.click();
+  };
+
   useEffect(() => {
     if (!hasFrames) {
       // reset sequence order when user selects a new video
       setSequenceOrderConfirmed(false);
       setFirstAndLastFrame(undefined);
+      renderedCanvasRef.current = undefined;
     }
 
     if (hasFrames && !firstAndLastFrame) {
@@ -94,7 +116,9 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({
 
             {/* download quilt image */}
             <div className="tooltip" data-tip="Download quilt image">
-              <button className="btn btn-success">Download</button>
+              <button className="btn btn-success" onClick={saveQuiltImage}>
+                Download
+              </button>
             </div>
           </div>
 
@@ -107,6 +131,7 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({
             numberOfRows={rows}
             frameWidth={frameWidth}
             frames={frames}
+            onRendered={(canvas) => (renderedCanvasRef.current = canvas)}
           />
         </>
       )}
