@@ -7,7 +7,17 @@ export interface ExtractingFramesProgressProps {
 export const ExtractingFramesProgress: FC<ExtractingFramesProgressProps> = ({
   progress = 0,
 }) => {
-  if (progress <= 0 || progress >= 1) return null;
+  if (progress === 0 || progress >= 1) return null;
+
+  // Indeterminate progress
+  if (progress < 0) {
+    return (
+      <>
+        <div>Extracting frames ...</div>
+        <progress className="progress w-72"></progress>
+      </>
+    );
+  }
 
   return (
     <>

@@ -4,16 +4,12 @@ const NoFrames: HTMLCanvasElement[] = [];
 
 export interface VideoFramesExtractorProps {
   numberOfFrames: number;
-  onFileSelected?: (file: File) => void;
-  onMetadataLoaded?: (video: HTMLVideoElement) => void;
   onProgress?: (progress: number) => void;
   onFramesExtracted?: (frames?: HTMLCanvasElement[]) => void;
 }
 
 export const VideoFramesExtractor: FC<VideoFramesExtractorProps> = ({
   numberOfFrames,
-  onFileSelected,
-  onMetadataLoaded,
   onProgress,
   onFramesExtracted,
 }) => {
@@ -29,8 +25,6 @@ export const VideoFramesExtractor: FC<VideoFramesExtractorProps> = ({
 
   // start seeking frames when video loaded
   const onVideoMetadataLoaded = () => {
-    onMetadataLoaded?.(videoRef.current!);
-
     // start extracting frames from the beginning
     frameIndexRef.current = 0;
     videoRef.current!.currentTime = 0;
@@ -83,8 +77,6 @@ export const VideoFramesExtractor: FC<VideoFramesExtractorProps> = ({
       onProgress?.(0);
 
       const file = files[0];
-      onFileSelected?.(file);
-
       const url = URL.createObjectURL(file);
       videoRef.current!.src = url;
     }
