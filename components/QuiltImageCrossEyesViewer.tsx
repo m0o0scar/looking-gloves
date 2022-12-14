@@ -64,7 +64,7 @@ export const QuiltImageCrossEyesViewer: FC<QuiltImageCrossEyesViewerProps> = ({
   return (
     <div
       ref={containerRef}
-      className="flex rounded-lg max-w-2xl overflow-hidden"
+      className="flex rounded-lg max-w-2xl overflow-hidden drop-shadow-lg"
     >
       <canvas ref={leftCanvasRef} className="w-1/2 pointer-events-none" />
       <canvas ref={rightCanvasRef} className="w-1/2 pointer-events-none" />
