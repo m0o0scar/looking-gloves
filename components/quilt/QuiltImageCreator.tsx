@@ -122,7 +122,6 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({
             </div>
           </div>
 
-          <h3>Cross-eyes Preview</h3>
           <QuiltImageCrossEyesViewer frames={frames} />
 
           <h3>Quilt image ({cols * rows} frames)</h3>

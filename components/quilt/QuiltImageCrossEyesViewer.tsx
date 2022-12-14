@@ -53,12 +53,52 @@ export const QuiltImageCrossEyesViewer: FC<QuiltImageCrossEyesViewerProps> = ({
   if (!frames?.length) return null;
 
   return (
-    <div
-      ref={containerRef}
-      className="flex rounded-lg max-w-2xl overflow-hidden drop-shadow-lg"
-    >
-      <canvas ref={leftCanvasRef} className="w-1/2 pointer-events-none" />
-      <canvas ref={rightCanvasRef} className="w-1/2 pointer-events-none" />
-    </div>
+    <>
+      {/* cross-eyes 3d viewer */}
+      <h3>
+        Cross-eyes Preview
+        <label
+          htmlFor="cross-eyes-how-to-modal"
+          className="btn btn-link p-0 ml-1"
+        >
+          (How?)
+        </label>
+      </h3>
+      <div
+        ref={containerRef}
+        className="flex rounded-lg max-w-2xl overflow-hidden drop-shadow-lg"
+      >
+        <canvas ref={leftCanvasRef} className="w-1/2 pointer-events-none" />
+        <canvas ref={rightCanvasRef} className="w-1/2 pointer-events-none" />
+      </div>
+
+      {/* Put this part before </body> tag */}
+      <input
+        type="checkbox"
+        id="cross-eyes-how-to-modal"
+        className="modal-toggle"
+      />
+      <div className="modal">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">How to cross-eyes 3d?</h3>
+          <p>
+            Try to focus your eyes at a point between the screen and your eyes,
+            thus bringing the two images together
+          </p>
+          <video
+            src="/assets/how-to-cross-eyes.mp4"
+            className="max-w-full rounded-lg m-0"
+            muted
+            loop
+            autoPlay
+          />
+          <div className="modal-action">
+            <label htmlFor="cross-eyes-how-to-modal" className="btn">
+              Ok
+            </label>
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
