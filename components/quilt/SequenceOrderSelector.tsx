@@ -48,7 +48,7 @@ export const SequenceOrderSelector: FC<SequenceOrderSelectorProps> = ({
       <h2>Choose the beginning frame</h2>
       <p>
         Please click on the frame in which your camera is on the{' '}
-        <mark className="p-1 rounded">left</mark>.
+        <mark>left</mark>.
       </p>
       <StyledFramesContainer
         ref={containerRef}

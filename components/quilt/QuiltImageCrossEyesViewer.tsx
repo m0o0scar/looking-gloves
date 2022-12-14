@@ -1,4 +1,3 @@
-import styled from '@emotion/styled';
 import { FC, useRef, useState, useEffect } from 'react';
 
 export interface QuiltImageCrossEyesViewerProps {
@@ -54,7 +53,7 @@ export const QuiltImageCrossEyesViewer: FC<QuiltImageCrossEyesViewerProps> = ({
 
   return (
     <>
-      {/* cross-eyes 3d viewer */}
+      {/* title */}
       <h3>
         Cross-eyes Preview
         <label
@@ -64,15 +63,22 @@ export const QuiltImageCrossEyesViewer: FC<QuiltImageCrossEyesViewerProps> = ({
           (How?)
         </label>
       </h3>
+
+      {/* viewer */}
       <div
-        ref={containerRef}
-        className="flex rounded-lg max-w-2xl overflow-hidden drop-shadow-lg"
+        className="tooltip tooltip-info"
+        data-tip="Try move your mouse on the image below 😉"
       >
-        <canvas ref={leftCanvasRef} className="w-1/2 pointer-events-none" />
-        <canvas ref={rightCanvasRef} className="w-1/2 pointer-events-none" />
+        <div
+          ref={containerRef}
+          className="flex rounded-lg max-w-2xl overflow-hidden drop-shadow-lg"
+        >
+          <canvas ref={leftCanvasRef} className="w-1/2 pointer-events-none" />
+          <canvas ref={rightCanvasRef} className="w-1/2 pointer-events-none" />
+        </div>
       </div>
 
-      {/* Put this part before </body> tag */}
+      {/* cross-eye 3d how-to modal */}
       <input
         type="checkbox"
         id="cross-eyes-how-to-modal"

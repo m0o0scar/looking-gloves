@@ -1,5 +1,7 @@
 import type { NextPage } from 'next';
 
+import { HomeBtn } from '@components/common/HomeBtn';
+import { PageContainer } from '@components/common/PageContainer';
 import { LumaLightfieldExtractor } from '@components/extractors/LumaLightfieldExtractor';
 import { QuiltImageCreator } from '@components/quilt/QuiltImageCreator';
 
@@ -8,7 +10,9 @@ const rows = 12;
 
 const LumaPage: NextPage = () => {
   return (
-    <article className="prose max-w-full flex flex-col items-center p-5 gap-4 bg-slate-200 min-h-screen box-border">
+    <PageContainer>
+      <HomeBtn />
+
       <h1>Luma NeRF to Quilt</h1>
 
       <QuiltImageCreator
@@ -23,7 +27,7 @@ const LumaPage: NextPage = () => {
           />
         )}
       />
-    </article>
+    </PageContainer>
   );
 };
 

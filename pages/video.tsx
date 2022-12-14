@@ -1,5 +1,8 @@
 import type { NextPage } from 'next';
 
+import { HomeBtn } from '@components/common/HomeBtn';
+import { PageContainer } from '@components/common/PageContainer';
+
 import { VideoFramesExtractor } from '../components/extractors/VideoFramesExtractor';
 import { QuiltImageCreator } from '../components/quilt/QuiltImageCreator';
 
@@ -8,7 +11,9 @@ const rows = 12;
 
 const VideoPage: NextPage = () => {
   return (
-    <article className="prose max-w-full flex flex-col items-center p-5 gap-4 bg-slate-200 min-h-screen box-border">
+    <PageContainer>
+      <HomeBtn />
+
       <h1>Video to Quilt</h1>
 
       <QuiltImageCreator
@@ -23,7 +28,7 @@ const VideoPage: NextPage = () => {
           />
         )}
       />
-    </article>
+    </PageContainer>
   );
 };
 
