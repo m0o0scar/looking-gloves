@@ -2,18 +2,16 @@ import React, { FC, useState, useEffect, useRef } from 'react';
 
 const NoFrames: HTMLCanvasElement[] = [];
 
-export interface VideoDecoderProps {
+export interface VideoFramesExtractorProps {
   numberOfFrames: number;
-  frameWidth: number;
   onFileSelected?: (file: File) => void;
   onMetadataLoaded?: (video: HTMLVideoElement) => void;
   onProgress?: (progress: number) => void;
   onFramesExtracted?: (frames?: HTMLCanvasElement[]) => void;
 }
 
-export const VideoDecoder: FC<VideoDecoderProps> = ({
+export const VideoFramesExtractor: FC<VideoFramesExtractorProps> = ({
   numberOfFrames,
-  frameWidth,
   onFileSelected,
   onMetadataLoaded,
   onProgress,
@@ -41,12 +39,11 @@ export const VideoDecoder: FC<VideoDecoderProps> = ({
   // draw video frame to canvas and seek for the next frame
   const onVideoSeeked = () => {
     const { videoWidth, videoHeight } = videoRef.current!;
-    const frameHeight = (frameWidth * videoHeight) / videoWidth;
 
     // draw current frame of the video to the canvas
     const frame = document.createElement('canvas');
-    frame.width = frameWidth;
-    frame.height = frameHeight;
+    frame.width = videoWidth;
+    frame.height = videoHeight;
     const ctx = frame.getContext('2d')!;
 
     ctx.drawImage(
@@ -57,8 +54,8 @@ export const VideoDecoder: FC<VideoDecoderProps> = ({
       videoHeight,
       0,
       0,
-      frameWidth,
-      frameHeight
+      videoWidth,
+      videoHeight
     );
     setFrames((frames) => [...frames, frame]);
 

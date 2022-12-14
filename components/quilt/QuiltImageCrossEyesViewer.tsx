@@ -1,15 +1,6 @@
 import styled from '@emotion/styled';
 import { FC, useRef, useState, useEffect } from 'react';
 
-const StyledContainer = styled.div`
-  display: flex;
-  max-width: 100%;
-
-  > canvas {
-    width: 50%;
-  }
-`;
-
 export interface QuiltImageCrossEyesViewerProps {
   frames?: HTMLCanvasElement[];
 }

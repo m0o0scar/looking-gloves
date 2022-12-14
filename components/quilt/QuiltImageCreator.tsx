@@ -1,9 +1,9 @@
 import { FC, ReactNode, useEffect, useRef, useState } from 'react';
 
-import { ExtractingFramesProgress } from '@components/ExtractingFramesProgress';
-import { QuiltImage } from '@components/QuiltImage';
-import { QuiltImageCrossEyesViewer } from '@components/QuiltImageCrossEyesViewer';
-import { SequenceOrderSelector } from '@components/SequenceOrderSelector';
+import { ExtractingFramesProgress } from './ExtractingFramesProgress';
+import { QuiltImage } from './QuiltImage';
+import { QuiltImageCrossEyesViewer } from './QuiltImageCrossEyesViewer';
+import { SequenceOrderSelector } from './SequenceOrderSelector';
 
 interface SequenceDecoderParams {
   onProgress: (progress: number) => void;
@@ -14,14 +14,14 @@ export interface QuiltImageCreatorProps {
   cols: number;
   rows: number;
   frameWidth: number;
-  sequenceDecoder: (params: SequenceDecoderParams) => ReactNode;
+  sequenceExtractor: (params: SequenceDecoderParams) => ReactNode;
 }
 
 export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({
   cols,
   rows,
   frameWidth,
-  sequenceDecoder,
+  sequenceExtractor,
 }) => {
   // extraction progress
   const [progress, setProgress] = useState(0);
@@ -81,7 +81,7 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({
   return (
     <>
       {/* sequence decoder which extract frames from a source (video file, image sequence zip, etc.) */}
-      {sequenceDecoder({
+      {sequenceExtractor({
         onProgress: setProgress,
         onFramesExtracted: setFrames,
       })}
