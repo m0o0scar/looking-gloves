@@ -101,15 +101,15 @@ export const VideoDecoder: FC<VideoDecoderProps> = ({
   }, [frames]);
 
   return (
-    <div>
-      <h1>Select a video file</h1>
+    <>
+      <h2>Please select a video file</h2>
 
       {/* file input for selecting video file */}
       <input
         ref={inputRef}
         type="file"
         accept="video/*"
-        className="file-input"
+        className="file-input h-auto"
         onChange={(e) => setFiles(e.target.files)}
       />
 
@@ -120,6 +120,6 @@ export const VideoDecoder: FC<VideoDecoderProps> = ({
         onLoadedMetadata={onVideoMetadataLoaded}
         onSeeked={onVideoSeeked}
       />
-    </div>
+    </>
   );
 };

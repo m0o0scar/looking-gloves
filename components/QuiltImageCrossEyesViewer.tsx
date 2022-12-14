@@ -17,19 +17,20 @@ export interface QuiltImageCrossEyesViewerProps {
 export const QuiltImageCrossEyesViewer: FC<QuiltImageCrossEyesViewerProps> = ({
   frames,
 }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
   const leftCanvasRef = useRef<HTMLCanvasElement>(null);
   const rightCanvasRef = useRef<HTMLCanvasElement>(null);
 
   const distance = Math.round((frames?.length || 0) / 10);
 
   useEffect(() => {
-    const handler = (e: MouseEvent) => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const render = (leftIndex: number) => {
       if (frames?.length) {
-        const i = Math.round(
-          (e.clientX / window.innerWidth) * (frames.length - 1 - distance)
-        );
-        const left = i;
-        const right = i + distance;
+        const left = leftIndex;
+        const right = leftIndex + distance;
 
         leftCanvasRef.current!.width = frames[left].width;
         leftCanvasRef.current!.height = frames[left].height;
@@ -42,16 +43,31 @@ export const QuiltImageCrossEyesViewer: FC<QuiltImageCrossEyesViewerProps> = ({
         rightCtx.drawImage(frames[right], 0, 0);
       }
     };
-    window.addEventListener('mousemove', handler);
-    return () => window.removeEventListener('mousemove', handler);
+
+    const onMouseMove = (e: MouseEvent) => {
+      if (frames?.length) {
+        const i = Math.round(
+          (e.offsetX / container.offsetWidth) * (frames.length - 1 - distance)
+        );
+        render(i);
+      }
+    };
+
+    render(0);
+
+    container.addEventListener('mousemove', onMouseMove);
+    return () => container.removeEventListener('mousemove', onMouseMove);
   }, [frames]);
 
   if (!frames?.length) return null;
 
   return (
-    <div className="flex rounded-lg max-w-2xl overflow-hidden">
-      <canvas ref={leftCanvasRef} className="w-1/2" />
-      <canvas ref={rightCanvasRef} className="w-1/2" />
+    <div
+      ref={containerRef}
+      className="flex rounded-lg max-w-2xl overflow-hidden"
+    >
+      <canvas ref={leftCanvasRef} className="w-1/2 pointer-events-none" />
+      <canvas ref={rightCanvasRef} className="w-1/2 pointer-events-none" />
     </div>
   );
 };

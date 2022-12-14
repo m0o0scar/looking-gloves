@@ -44,17 +44,17 @@ export const SequenceOrderSelector: FC<SequenceOrderSelectorProps> = ({
   if (!firstFrame || !lastFrame) return null;
 
   return (
-    <div className="flex flex-col items-center">
-      <h1>Choose the beginning frame</h1>
+    <>
+      <h2>Choose the beginning frame</h2>
       <p>
-        Please click on the frame in which your target appears on the right
-        side.
+        Please click on the frame in which your target appears on the{' '}
+        <mark className="p-1 rounded">right side</mark>.
       </p>
       <StyledFramesContainer
         ref={containerRef}
         className="flex gap-4"
         onClick={onClick}
       ></StyledFramesContainer>
-    </div>
+    </>
   );
 };
