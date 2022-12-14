@@ -14,6 +14,7 @@ export const LumaLightfieldExtractor: FC<LumaLightfieldExtractorProps> = ({
   onFramesExtracted,
 }) => {
   const [url, setUrl] = useState('');
+  const [fetching, setFetching] = useState(false);
   const [message, setMessage] = useState('');
 
   const getUrlFromClipboard = async () => {
@@ -48,53 +49,64 @@ export const LumaLightfieldExtractor: FC<LumaLightfieldExtractorProps> = ({
   }
 
   async function downloadAndUnzipLightFieldFromLuma() {
-    if (!url) return;
+    if (!url || fetching) return;
 
+    setFetching(true);
     onProgress?.(-1);
     onFramesExtracted?.();
 
-    // fetch luma page
-    setMessage('Fetching info ...');
-    const resp = await fetch(
-      `/api/luma/getInfo?url=${encodeURIComponent(url)}`
-    );
-    const json = await resp.json();
+    try {
+      // fetch luma page
+      setMessage('Fetching info ...');
+      const resp = await fetch(
+        `/api/luma/getInfo?url=${encodeURIComponent(url)}`
+      );
+      const json = await resp.json();
 
-    // download light field photos zip
-    const lightFieldZipUrl =
-      json.pageProps.props.pageProps.artifacts.light_field;
-    const zipFileName = lightFieldZipUrl.split('/').pop()!;
-    const zipDownloadUrl = `/luma/lightfield/${zipFileName}`;
+      // download light field photos zip
+      const lightFieldZipUrl =
+        json.pageProps.props.pageProps.artifacts.light_field;
+      const zipFileName = lightFieldZipUrl.split('/').pop()!;
+      const zipDownloadUrl = `/luma/lightfield/${zipFileName}`;
 
-    // download and unzip the light field photos
-    setMessage('Downloading light field photos ...');
-    const zipFile = await fetchWithProgress(
-      zipDownloadUrl,
-      undefined,
-      (received, total) => {
-        const progress = received / total;
-        const receivedInMB = (received / 1024 / 1024).toFixed(2);
-        const totalInMB = (total / 1024 / 1024).toFixed(2);
-        setMessage(
-          `Downloading light field photos ${receivedInMB}MB / ${totalInMB}MB ...`
-        );
-        onProgress?.(progress);
+      // download and unzip the light field photos
+      setMessage('Downloading light field photos ...');
+      const zipFile = await fetchWithProgress(
+        zipDownloadUrl,
+        undefined,
+        (received, total) => {
+          const progress = received / total;
+          const receivedInMB = (received / 1024 / 1024).toFixed(2);
+          const totalInMB = (total / 1024 / 1024).toFixed(2);
+          setMessage(
+            `Downloading light field photos ${receivedInMB}MB / ${totalInMB}MB ...`
+          );
+          onProgress?.(progress);
+        }
+      );
+      const { entries } = await unzip(zipFile);
+
+      const frames: HTMLCanvasElement[] = [];
+      const names = Object.keys(entries).sort().reverse();
+      const startIndex = Math.floor((names.length - numberOfFrames) / 2);
+      for (let i = 0; i < numberOfFrames; i++) {
+        const name = names[startIndex + i];
+        const blob = await entries[name].blob('image/jpg');
+        const frame = await drawBlobToCanvas(blob);
+        frames.push(frame);
       }
-    );
-    const { entries } = await unzip(zipFile);
 
-    const frames: HTMLCanvasElement[] = [];
-    const names = Object.keys(entries).sort().reverse();
-    const startIndex = Math.floor((names.length - numberOfFrames) / 2);
-    for (let i = 0; i < numberOfFrames; i++) {
-      const name = names[startIndex + i];
-      const blob = await entries[name].blob('image/jpg');
-      const frame = await drawBlobToCanvas(blob);
-      frames.push(frame);
+      onProgress?.(1);
+      onFramesExtracted?.(frames);
+      setMessage(`Downloaded. There are ${names.length} frames in total.`);
+    } catch (e) {
+      setMessage('Failed to fetch.');
+      console.error(e);
+      onProgress?.(0);
+      onFramesExtracted?.();
+    } finally {
+      setFetching(false);
     }
-
-    onFramesExtracted?.(frames);
-    setMessage(`Downloaded. There are ${names.length} frames in total.`);
   }
 
   return (
@@ -118,7 +130,7 @@ export const LumaLightfieldExtractor: FC<LumaLightfieldExtractorProps> = ({
         </div>
         <button
           className="btn"
-          disabled={!url}
+          disabled={!url || fetching}
           onClick={downloadAndUnzipLightFieldFromLuma}
         >
           Fetch
