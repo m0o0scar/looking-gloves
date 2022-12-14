@@ -1,4 +1,5 @@
 import type { NextPage } from 'next';
+import Head from 'next/head';
 
 import { HomeBtn } from '@components/common/HomeBtn';
 import { PageContainer } from '@components/common/PageContainer';
@@ -12,9 +13,13 @@ const rows = 12;
 const VideoPage: NextPage = () => {
   return (
     <PageContainer>
+      <Head>
+        <title>Lamu - Video to Quilt</title>
+      </Head>
+
       <HomeBtn />
 
-      <h1>Video to Quilt</h1>
+      <h1>🎥 Video to Quilt</h1>
 
       <QuiltImageCreator
         cols={cols}

@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import type { NextPage } from 'next';
+import Head from 'next/head';
 import Link from 'next/link';
 
 import { PageContainer } from '@components/common/PageContainer';
@@ -7,6 +8,10 @@ import { PageContainer } from '@components/common/PageContainer';
 const HomePage: NextPage = () => {
   return (
     <PageContainer className="justify-center">
+      <Head>
+        <title>Lamu</title>
+      </Head>
+
       <h1>
         <mark>Lamu</mark> - NeRF ➡️ Looking Glass
       </h1>
@@ -35,7 +40,7 @@ const HomePage: NextPage = () => {
             className="m-0 max-w-full"
           />
           <div className="card-body flex flex-col">
-            <h2 className="card-title m-0">Light Field</h2>
+            <h2 className="card-title m-0">🔫 NeRF</h2>
             <div>
               Download light field from{' '}
               <a
@@ -75,7 +80,7 @@ const HomePage: NextPage = () => {
             />
           </div>
           <div className="card-body flex flex-col">
-            <h2 className="card-title m-0">Video</h2>
+            <h2 className="card-title m-0">🎥 Video</h2>
             <div>
               Render video output manually, then convert the video output to
               quilt image.

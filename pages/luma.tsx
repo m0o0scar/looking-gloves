@@ -1,4 +1,5 @@
 import type { NextPage } from 'next';
+import Head from 'next/head';
 
 import { HomeBtn } from '@components/common/HomeBtn';
 import { PageContainer } from '@components/common/PageContainer';
@@ -11,9 +12,13 @@ const rows = 12;
 const LumaPage: NextPage = () => {
   return (
     <PageContainer>
+      <Head>
+        <title>Lamu - Luma NeRF to Quilt</title>
+      </Head>
+
       <HomeBtn />
 
-      <h1>Luma NeRF to Quilt</h1>
+      <h1>🔫 Luma NeRF to Quilt</h1>
 
       <QuiltImageCreator
         cols={cols}
