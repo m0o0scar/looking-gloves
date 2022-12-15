@@ -41,10 +41,11 @@ const HomePage: NextPage = () => {
         <div className="card w-96 max-w-full bg-base-100 shadow-xl overflow-hidden">
           <video
             src="/assets/cover-lightfield.mp4"
-            poster="/assets/cover-video.png"
+            poster="/assets/cover-lightfield-poster.jpg"
             muted
             loop
             autoPlay
+            playsInline
             className="m-0 max-w-full"
           />
           <div className="card-body flex flex-col">
