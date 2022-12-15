@@ -81,11 +81,6 @@ const HomePage: NextPage = () => {
               alt="cover"
               className="m-0 max-w-full"
             />
-            <img
-              src="/assets/icons8-circled-play-100.png"
-              alt="video icon"
-              className="w-20 m-0 absolute right-4 bottom-6 invert drop-shadow-lg"
-            />
           </div>
           <div className="card-body flex flex-col">
             <h2 className="card-title m-0">🎥 Video</h2>
