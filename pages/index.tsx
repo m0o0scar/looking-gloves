@@ -40,7 +40,7 @@ const HomePage: NextPage = () => {
       <div className="flex flex-col sm:flex-row gap-5 max-w-full">
         <div className="card w-96 max-w-full bg-base-100 shadow-xl overflow-hidden">
           <video
-            src="/assets/cover-lightfield.mov"
+            src="/assets/cover-lightfield.mp4"
             poster="/assets/cover-video.png"
             muted
             loop
