@@ -39,6 +39,7 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({
   const [sequenceOrderConfirmed, setSequenceOrderConfirmed] = useState(false);
 
   const renderedCanvasRef = useRef<HTMLCanvasElement>();
+  const zipFileUrlRef = useRef('');
 
   const hasFrames = (frames?.length || 0) > 0;
 
@@ -79,12 +80,20 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({
     }
     const content = await zip.generateAsync({ type: 'blob' });
 
+    if (zipFileUrlRef.current) URL.revokeObjectURL(zipFileUrlRef.current);
+    zipFileUrlRef.current = URL.createObjectURL(content);
+
     const a = document.createElement('a');
-    a.href = URL.createObjectURL(content);
+    a.href = zipFileUrlRef.current;
     a.download = 'lightfield.zip';
     a.click();
-    URL.revokeObjectURL(a.href);
   };
+
+  useEffect(() => {
+    return () => {
+      if (zipFileUrlRef.current) URL.revokeObjectURL(zipFileUrlRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     if (!hasFrames) {
