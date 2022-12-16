@@ -1,5 +1,5 @@
 import { fetchWithProgress } from '@utils/fetch';
-import { FC, useState, useEffect } from 'react';
+import { FC, useState } from 'react';
 import { unzip } from 'unzipit';
 
 export interface LumaLightfieldExtractorProps {

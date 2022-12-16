@@ -1,3 +1,4 @@
+import JSZip from 'jszip';
 import { FC, ReactNode, useEffect, useRef, useState } from 'react';
 
 import { ExtractingFramesProgress } from './ExtractingFramesProgress';
@@ -64,6 +65,27 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({
     a.click();
   };
 
+  const saveLightfield = async () => {
+    if (!frames?.length) return;
+
+    var zip = new JSZip();
+    for (let i = 0; i < frames.length; i++) {
+      const imgData = frames[i]
+        .toDataURL('image/jpeg', 0.9)
+        .replace('data:image/jpeg;base64,', '');
+      zip.file(`${i.toString().padStart(3, '0')}.jpg`, imgData, {
+        base64: true,
+      });
+    }
+    const content = await zip.generateAsync({ type: 'blob' });
+
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(content);
+    a.download = 'lightfield.zip';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+
   useEffect(() => {
     if (!hasFrames) {
       // reset sequence order when user selects a new video
@@ -115,11 +137,12 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({
             </div>
 
             {/* download quilt image */}
-            <div className="tooltip" data-tip="Download quilt image">
-              <button className="btn btn-success" onClick={saveQuiltImage}>
-                Download
-              </button>
-            </div>
+            <button className="btn btn-success" onClick={saveQuiltImage}>
+              Save Quilt
+            </button>
+            <button className="btn btn-success" onClick={saveLightfield}>
+              Save Light Field
+            </button>
           </div>
 
           <QuiltImageCrossEyesViewer frames={frames} />

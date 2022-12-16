@@ -15,6 +15,7 @@
     "@tailwindcss/typography": "^0.5.7",
     "classnames": "^2.3.2",
     "daisyui": "^2.42.1",
+    "jszip": "^3.10.1",
     "next": "12.2.2",
     "node-fetch": "^3.3.0",
     "react": "18.2.0",
