@@ -1,4 +1,5 @@
 import JSZip from 'jszip';
+import { debounce } from 'lodash';
 import { FC, ReactNode, useEffect, useRef, useState } from 'react';
 
 import { ExtractingFramesProgress } from './ExtractingFramesProgress';
@@ -39,7 +40,9 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({
   const [sequenceOrderConfirmed, setSequenceOrderConfirmed] = useState(false);
 
   const renderedCanvasRef = useRef<HTMLCanvasElement>();
-  const zipFileUrlRef = useRef('');
+
+  const [savingQuiltImage, setSavingQuiltImage] = useState(false);
+  const [savingLightfield, setSavingLightfield] = useState(false);
 
   const hasFrames = (frames?.length || 0) > 0;
 
@@ -49,7 +52,14 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({
     setSequenceOrderConfirmed(true);
   };
 
-  const saveQuiltImage = () => {
+  const triggerDownload = (url: string, filename: string) => {
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+  };
+
+  const _saveQuiltImage = debounce(() => {
     if (!renderedCanvasRef.current) return;
 
     // Quilt image file name conventions:
@@ -60,13 +70,17 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({
     const name = Date.now();
     const filename = `${name}_qs${cols}x${rows}a${aspectRatio.toFixed(2)}.jpg`;
 
-    const a = document.createElement('a');
-    a.href = renderedCanvasRef.current.toDataURL('image/jpeg', 0.9);
-    a.download = filename;
-    a.click();
+    const url = renderedCanvasRef.current.toDataURL('image/jpeg', 0.9);
+    triggerDownload(url, filename);
+    setSavingQuiltImage(false);
+  }, 500);
+
+  const saveQuiltImage = () => {
+    setSavingQuiltImage(true);
+    _saveQuiltImage();
   };
 
-  const saveLightfield = async () => {
+  const _saveLightfield = debounce(async () => {
     if (!frames?.length) return;
 
     var zip = new JSZip();
@@ -80,20 +94,19 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({
     }
     const content = await zip.generateAsync({ type: 'blob' });
 
-    if (zipFileUrlRef.current) URL.revokeObjectURL(zipFileUrlRef.current);
-    zipFileUrlRef.current = URL.createObjectURL(content);
+    const name = Date.now();
+    const filename = `${name}_lightfield.zip`;
+    const url = URL.createObjectURL(content);
+    triggerDownload(url, filename);
 
-    const a = document.createElement('a');
-    a.href = zipFileUrlRef.current;
-    a.download = 'lightfield.zip';
-    a.click();
+    URL.revokeObjectURL(url);
+    setSavingLightfield(false);
+  }, 500);
+
+  const saveLightfield = () => {
+    setSavingLightfield(true);
+    _saveLightfield();
   };
-
-  useEffect(() => {
-    return () => {
-      if (zipFileUrlRef.current) URL.revokeObjectURL(zipFileUrlRef.current);
-    };
-  }, []);
 
   useEffect(() => {
     if (!hasFrames) {
@@ -146,11 +159,19 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({
             </div>
 
             {/* download quilt image */}
-            <button className="btn btn-success" onClick={saveQuiltImage}>
-              Save Quilt
+            <button
+              className="btn btn-success"
+              disabled={savingQuiltImage}
+              onClick={saveQuiltImage}
+            >
+              {savingQuiltImage ? 'Saving ...' : 'Save Quilt'}
             </button>
-            <button className="btn btn-success" onClick={saveLightfield}>
-              Save Light Field
+            <button
+              className="btn btn-success"
+              disabled={savingLightfield}
+              onClick={saveLightfield}
+            >
+              {savingLightfield ? 'Saving ...' : 'Save Light Field'}
             </button>
           </div>
 
