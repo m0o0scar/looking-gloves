@@ -24,7 +24,7 @@ const VideoPage: NextPage = () => {
       <QuiltImageCreator
         cols={cols}
         rows={rows}
-        frameWidth={600}
+        frameWidth={800}
         sequenceExtractor={({ onProgress, onFramesExtracted }) => (
           <VideoFramesExtractor
             numberOfFrames={cols * rows}
