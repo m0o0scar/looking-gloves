@@ -103,10 +103,19 @@ export const LightFieldCreator: FC<LightFieldCreatorProps> = ({
     const video = await imagesToVideo(frames);
     zip.file('lightfield.mp4', video, { binary: true });
     zip.file('lightfield.mp4.json', JSON.stringify(hopConfig, null, 2));
+    // for (let i = 0; i < frames.length; i++) {
+    //   const imgData = frames[i]
+    //     .toDataURL('image/jpeg', 0.9)
+    //     .replace('data:image/jpeg;base64,', '');
+    //   zip.file(`${i.toString().padStart(3, '0')}.jpg`, imgData, {
+    //     base64: true,
+    //   });
+    // }
     const content = await zip.generateAsync({ type: 'blob' });
 
     const name = Date.now();
     const filename = `${name}_lightfield.hop`;
+    // const filename = `${name}_lightfield.zip`;
     const url = URL.createObjectURL(content);
     triggerDownload(url, filename);
 
