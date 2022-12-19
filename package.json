@@ -12,7 +12,10 @@
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@mui/material": "^5.10.15",
+    "@react-three/drei": "^9.47.1",
+    "@react-three/fiber": "^8.9.1",
     "@tailwindcss/typography": "^0.5.7",
+    "@types/three": "^0.146.0",
     "classnames": "^2.3.2",
     "daisyui": "^2.42.1",
     "jszip": "^3.10.1",
@@ -22,6 +25,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-toastify": "^9.1.1",
+    "three": "^0.147.0",
     "unzipit": "^1.4.0"
   },
   "devDependencies": {

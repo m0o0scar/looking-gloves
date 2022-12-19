@@ -1,63 +1,57 @@
+import { triggerDownload } from '@utils/download';
+import { imagesToVideo } from '@utils/video';
 import JSZip from 'jszip';
 import { debounce } from 'lodash';
 import { FC, ReactNode, useEffect, useRef, useState } from 'react';
 
+import { SequenceExtractorProps } from '../extractors/types';
 import { ExtractingFramesProgress } from './ExtractingFramesProgress';
+import { LightFieldCrossEyesViewer } from './LightFieldCrossEyesViewer';
+import { LightFieldFocusEditor } from './LightFieldFocusEditor';
 import { QuiltImage } from './QuiltImage';
-import { QuiltImageCrossEyesViewer } from './QuiltImageCrossEyesViewer';
 import { SequenceOrderSelector } from './SequenceOrderSelector';
 
-interface SequenceDecoderParams {
-  onProgress: (progress: number) => void;
-  onFramesExtracted: (frames?: HTMLCanvasElement[]) => void;
-}
-
-export interface QuiltImageCreatorProps {
+export interface LightFieldCreatorProps {
   cols: number;
   rows: number;
   frameWidth: number;
-  sequenceExtractor: (params: SequenceDecoderParams) => ReactNode;
+  sequenceExtractor: (params: Partial<SequenceExtractorProps>) => ReactNode;
 }
 
-export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({
+export const LightFieldCreator: FC<LightFieldCreatorProps> = ({
   cols,
   rows,
   frameWidth,
   sequenceExtractor,
 }) => {
+  // overall status
+  const [status, setStatus] = useState<
+    'idle' | 'extracting' | 'choosingOrder' | 'adjustFocus' | 'preview'
+  >('idle');
+
   // extraction progress
   const [progress, setProgress] = useState(0);
 
   // frames
   const [frames, setFrames] = useState<HTMLCanvasElement[] | undefined>();
-  const reverseFrames = () =>
+  const isLeftToRight = useRef(true);
+  const reverseFrames = () => {
+    isLeftToRight.current = !isLeftToRight.current;
     setFrames((value) => (value ? [...value].reverse() : undefined));
+  };
 
   // sequence order
   const [firstAndLastFrame, setFirstAndLastFrame] = useState<
     [HTMLCanvasElement, HTMLCanvasElement] | undefined
   >();
-  const [sequenceOrderConfirmed, setSequenceOrderConfirmed] = useState(false);
+
+  // light field focus
+  const focus = useRef(0);
 
   const renderedCanvasRef = useRef<HTMLCanvasElement>();
 
   const [savingQuiltImage, setSavingQuiltImage] = useState(false);
   const [savingLightfield, setSavingLightfield] = useState(false);
-
-  const hasFrames = (frames?.length || 0) > 0;
-
-  // when sequence order is selected, reverse frames if needed
-  const onSequenceOrderSelected = (shouldReverse: boolean) => {
-    if (shouldReverse) reverseFrames();
-    setSequenceOrderConfirmed(true);
-  };
-
-  const triggerDownload = (url: string, filename: string) => {
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.click();
-  };
 
   const _saveQuiltImage = debounce(() => {
     if (!renderedCanvasRef.current) return;
@@ -83,19 +77,45 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({
   const _saveLightfield = debounce(async () => {
     if (!frames?.length) return;
 
+    const hopConfig = {
+      movie: false,
+      mediaType: 'photoset',
+      quilt_settings: {
+        viewX: 1,
+        viewY: 1,
+        viewTotal: frames.length,
+        invertViews: true,
+        aspect: -1.0,
+      },
+      depthiness: 1.0,
+      depthInversion: false,
+      chromaDepth: false,
+      depthPosition: 'right',
+      focus: focus.current * (isLeftToRight.current ? -1 : 1),
+      viewOrderReversed: isLeftToRight.current,
+      zoom: 1.0,
+      position_x: 0.0,
+      position_y: 0.0,
+      duration: 10.0,
+    };
+
     var zip = new JSZip();
-    for (let i = 0; i < frames.length; i++) {
-      const imgData = frames[i]
-        .toDataURL('image/jpeg', 0.9)
-        .replace('data:image/jpeg;base64,', '');
-      zip.file(`${i.toString().padStart(3, '0')}.jpg`, imgData, {
-        base64: true,
-      });
-    }
+    const video = await imagesToVideo(frames);
+    zip.file('lightfield.mp4', video, { binary: true });
+    zip.file('lightfield.mp4.json', JSON.stringify(hopConfig, null, 2));
+    // for (let i = 0; i < frames.length; i++) {
+    //   const imgData = frames[i]
+    //     .toDataURL('image/jpeg', 0.9)
+    //     .replace('data:image/jpeg;base64,', '');
+    //   zip.file(`${i.toString().padStart(3, '0')}.jpg`, imgData, {
+    //     base64: true,
+    //   });
+    // }
     const content = await zip.generateAsync({ type: 'blob' });
 
     const name = Date.now();
-    const filename = `${name}_lightfield.zip`;
+    const filename = `${name}_lightfield.hop`;
+    // const filename = `${name}_lightfield.zip`;
     const url = URL.createObjectURL(content);
     triggerDownload(url, filename);
 
@@ -108,32 +128,45 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({
     _saveLightfield();
   };
 
-  useEffect(() => {
-    if (!hasFrames) {
-      // reset sequence order when user selects a new video
-      setSequenceOrderConfirmed(false);
-      setFirstAndLastFrame(undefined);
-      renderedCanvasRef.current = undefined;
-    }
+  const onSourceProvided = () => setStatus('extracting');
 
-    if (hasFrames && !firstAndLastFrame) {
-      // remember the 1st and last frame ONCE when frames are extracted
-      setFirstAndLastFrame([frames![0], frames![frames!.length - 1]]);
+  const onSequenceOrderSelected = (shouldReverse: boolean) => {
+    if (shouldReverse) reverseFrames();
+    setStatus('adjustFocus');
+  };
+
+  const onFocusConfirm = (focusValue: number) => {
+    focus.current = focusValue;
+    setStatus('preview');
+  };
+
+  // remember the 1st and last frame ONCE when frames are extracted
+  useEffect(() => {
+    if (!frames?.length) {
+      setFirstAndLastFrame(undefined);
     }
-  }, [frames]);
+    if (frames?.length && !firstAndLastFrame) {
+      setFirstAndLastFrame([frames![0], frames![frames!.length - 1]]);
+      setStatus('choosingOrder');
+    }
+  }, [frames, firstAndLastFrame]);
 
   return (
     <>
       {/* sequence decoder which extract frames from a source (video file, image sequence zip, etc.) */}
       {sequenceExtractor({
+        onSourceProvided,
         onProgress: setProgress,
         onFramesExtracted: setFrames,
       })}
 
       {/* frames extraction progress */}
-      <ExtractingFramesProgress progress={progress} />
+      {status === 'extracting' && (
+        <ExtractingFramesProgress progress={progress} />
+      )}
 
-      {hasFrames && !sequenceOrderConfirmed && (
+      {/* sequence order */}
+      {status === 'choosingOrder' && (
         <>
           <div className="divider"></div>
           <SequenceOrderSelector
@@ -144,12 +177,23 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({
         </>
       )}
 
-      {sequenceOrderConfirmed && (
+      {status === 'adjustFocus' && (
         <>
           <div className="divider"></div>
-          <h2 className="flex items-center gap-2">
-            Here is your quilt image 😆
-          </h2>
+          <LightFieldFocusEditor
+            // make sure we're giving it the Left-to-Right frames sequence
+            frames={
+              frames && !isLeftToRight.current ? [...frames].reverse() : frames
+            }
+            onFocusConfirm={onFocusConfirm}
+          />
+        </>
+      )}
+
+      {status === 'preview' && (
+        <>
+          <div className="divider"></div>
+          <h2 className="flex items-center gap-2">Done ✌️😎</h2>
           <div className="flex gap-4">
             {/* reverse frames sequence order */}
             <div className="tooltip" data-tip="Reverse frames sequence order">
@@ -175,10 +219,11 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({
             </button>
           </div>
 
-          <QuiltImageCrossEyesViewer frames={frames} />
+          <LightFieldCrossEyesViewer frames={frames} />
 
-          <h3>Quilt image ({cols * rows} frames)</h3>
+          {/* <h3>Quilt image ({cols * rows} frames)</h3> */}
           <QuiltImage
+            className="hidden"
             numberOfCols={cols}
             numberOfRows={rows}
             frameWidth={frameWidth}

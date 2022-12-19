@@ -1,15 +1,12 @@
 import { fetchWithProgress } from '@utils/fetch';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { unzip } from 'unzipit';
 
-export interface LumaLightfieldExtractorProps {
-  numberOfFrames: number;
-  onProgress?: (progress: number) => void;
-  onFramesExtracted?: (frames?: HTMLCanvasElement[]) => void;
-}
+import { SequenceExtractorProps } from './types';
 
-export const LumaLightfieldExtractor: FC<LumaLightfieldExtractorProps> = ({
+export const LumaLightfieldExtractor: FC<SequenceExtractorProps> = ({
   numberOfFrames,
+  onSourceProvided,
   onProgress,
   onFramesExtracted,
 }) => {
@@ -108,6 +105,10 @@ export const LumaLightfieldExtractor: FC<LumaLightfieldExtractorProps> = ({
       setFetching(false);
     }
   }
+
+  useEffect(() => {
+    if (url) onSourceProvided?.();
+  }, [url]);
 
   return (
     <>

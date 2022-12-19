@@ -1,15 +1,12 @@
 import React, { FC, useState, useEffect, useRef } from 'react';
 
+import { SequenceExtractorProps } from './types';
+
 const NoFrames: HTMLCanvasElement[] = [];
 
-export interface VideoFramesExtractorProps {
-  numberOfFrames: number;
-  onProgress?: (progress: number) => void;
-  onFramesExtracted?: (frames?: HTMLCanvasElement[]) => void;
-}
-
-export const VideoFramesExtractor: FC<VideoFramesExtractorProps> = ({
+export const VideoFramesExtractor: FC<SequenceExtractorProps> = ({
   numberOfFrames,
+  onSourceProvided,
   onProgress,
   onFramesExtracted,
 }) => {
@@ -73,8 +70,9 @@ export const VideoFramesExtractor: FC<VideoFramesExtractorProps> = ({
     }
 
     if (files?.[0]) {
-      setFrames(NoFrames);
+      onSourceProvided?.();
       onProgress?.(0);
+      setFrames(NoFrames);
 
       const file = files[0];
       const url = URL.createObjectURL(file);
