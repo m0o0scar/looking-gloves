@@ -60,10 +60,10 @@ export const LightFieldFocusEditor: FC<LightFieldFocusEditorProps> = ({
   const fov = 75;
   const planeSize = 1;
   const cameraZ = planeSize / (2 * Math.tan((fov * Math.PI) / 360));
-  const canvasSize = 400;
+  const canvasSize = 600;
 
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div className="flex flex-col items-center gap-4 max-w-full">
       <h2>Adjust light field focus</h2>
       <p>Drag the slider below to focus on your target</p>
 
@@ -71,8 +71,8 @@ export const LightFieldFocusEditor: FC<LightFieldFocusEditorProps> = ({
         flat
         linear
         camera={{ position: [0, 0, cameraZ] }}
-        className="rounded-lg"
-        style={{ width: canvasSize, height: canvasSize }}
+        className="rounded-lg max-w-full aspect-square"
+        style={{ width: canvasSize }}
       >
         <mesh material={lightFieldMaterial}>
           <planeGeometry args={[planeSize, planeSize, 1, 1]} />
@@ -90,7 +90,7 @@ export const LightFieldFocusEditor: FC<LightFieldFocusEditorProps> = ({
       />
 
       <div className="w-full text-right">
-        <button className="btn" onClick={() => onFocusConfirm?.(focus)}>
+        <button className="btn" onClick={() => onFocusConfirm?.(focus * 10)}>
           Done
         </button>
       </div>
