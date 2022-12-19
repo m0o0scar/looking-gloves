@@ -3,6 +3,7 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 
+import { PageCard } from '@components/common/PageCard';
 import { PageContainer } from '@components/common/PageContainer';
 
 const HomePage: NextPage = () => {
@@ -38,19 +39,25 @@ const HomePage: NextPage = () => {
       </p>
 
       <div className="flex flex-col sm:flex-row gap-5 max-w-full">
-        <div className="card w-96 max-w-full bg-base-100 shadow-xl overflow-hidden">
-          <video
-            src="/assets/cover-lightfield.mp4"
-            poster="/assets/cover-lightfield-poster.jpg"
-            muted
-            loop
-            autoPlay
-            playsInline
-            className="m-0 max-w-full"
-          />
-          <div className="card-body flex flex-col">
-            <h2 className="card-title m-0">🔫 NeRF</h2>
-            <div>
+        <PageCard
+          title="🎥 Video"
+          content="Render video output manually, then convert the video output to quilt image."
+          link="/video"
+          thumbnail={
+            <img
+              src="/assets/cover-video.png"
+              alt="cover"
+              className="m-0 max-w-full"
+            />
+          }
+          alert="Tutorial coming soon 🚧."
+          alertClassName=""
+        />
+
+        <PageCard
+          title="🔫 NeRF"
+          content={
+            <>
               Download light field from{' '}
               <a
                 href="https://captures.lumalabs.ai/me"
@@ -60,44 +67,23 @@ const HomePage: NextPage = () => {
                 Luma AI
               </a>{' '}
               directly and convert to quilt image.
-            </div>
-            <div className="alert alert-warning text-xs">
-              Some of the lightfield output from Luma AI have curved camera
-              path, which may lead to a toe-in/curve effect on the Looking
-              Glass.
-            </div>
-            <div className="grow" />
-            <div className="card-actions justify-end">
-              <Link href="/luma">
-                <button className="btn btn-primary">Go</button>
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        <div className="card w-96 max-w-full bg-base-100 shadow-xl overflow-hidden">
-          <div className="relative flex">
-            <img
-              src="/assets/cover-video.png"
-              alt="cover"
+            </>
+          }
+          link="/luma"
+          thumbnail={
+            <video
+              src="/assets/cover-lightfield.mp4"
+              poster="/assets/cover-lightfield-poster.jpg"
+              muted
+              loop
+              autoPlay
+              playsInline
               className="m-0 max-w-full"
             />
-          </div>
-          <div className="card-body flex flex-col">
-            <h2 className="card-title m-0">🎥 Video</h2>
-            <div>
-              Render video output manually, then convert the video output to
-              quilt image.
-            </div>
-            <div className="alert text-xs">Tutorial coming soon 🚧.</div>
-            <div className="grow" />
-            <div className="card-actions justify-end">
-              <Link href="/video">
-                <button className="btn btn-primary">Go</button>
-              </Link>
-            </div>
-          </div>
-        </div>
+          }
+          alert="Some of the lightfield output from Luma AI have curved camera path, which may lead to a toe-in/curve effect on the Looking Glass."
+          alertClassName="alert-warning"
+        />
       </div>
     </PageContainer>
   );
