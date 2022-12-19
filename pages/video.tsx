@@ -1,3 +1,4 @@
+import { COLS, ROWS } from '@utils/constant';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 
@@ -6,9 +7,6 @@ import { PageContainer } from '@components/common/PageContainer';
 
 import { VideoFramesExtractor } from '../components/extractors/VideoFramesExtractor';
 import { QuiltImageCreator } from '../components/quilt/QuiltImageCreator';
-
-const cols = 8;
-const rows = 12;
 
 const VideoPage: NextPage = () => {
   return (
@@ -22,12 +20,12 @@ const VideoPage: NextPage = () => {
       <h1>🎥 Video to Quilt</h1>
 
       <QuiltImageCreator
-        cols={cols}
-        rows={rows}
+        cols={COLS}
+        rows={ROWS}
         frameWidth={800}
         sequenceExtractor={({ onProgress, onFramesExtracted }) => (
           <VideoFramesExtractor
-            numberOfFrames={cols * rows}
+            numberOfFrames={COLS * ROWS}
             onProgress={onProgress}
             onFramesExtracted={onFramesExtracted}
           />
