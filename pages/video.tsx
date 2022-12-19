@@ -6,26 +6,31 @@ import { HomeBtn } from '@components/common/HomeBtn';
 import { PageContainer } from '@components/common/PageContainer';
 
 import { VideoFramesExtractor } from '../components/extractors/VideoFramesExtractor';
-import { QuiltImageCreator } from '../components/quilt/QuiltImageCreator';
+import { LightFieldCreator } from '../components/lightfield/LightFieldCreator';
 
 const VideoPage: NextPage = () => {
   return (
     <PageContainer>
       <Head>
-        <title>👓 Nerfglass - Video to Quilt</title>
+        <title>👓 Nerfglass - Video to Light Field</title>
       </Head>
 
       <HomeBtn />
 
-      <h1>🎥 Video to Quilt</h1>
+      <h1>🎥 Video to Light Field</h1>
 
-      <QuiltImageCreator
+      <LightFieldCreator
         cols={COLS}
         rows={ROWS}
         frameWidth={800}
-        sequenceExtractor={({ onProgress, onFramesExtracted }) => (
+        sequenceExtractor={({
+          onSourceProvided,
+          onProgress,
+          onFramesExtracted,
+        }) => (
           <VideoFramesExtractor
             numberOfFrames={COLS * ROWS}
+            onSourceProvided={onSourceProvided}
             onProgress={onProgress}
             onFramesExtracted={onFramesExtracted}
           />

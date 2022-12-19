@@ -41,7 +41,7 @@ const HomePage: NextPage = () => {
       <div className="flex flex-col sm:flex-row gap-5 max-w-full">
         <PageCard
           title="🎥 Video"
-          content="Render video output manually, then convert the video output to quilt image."
+          content="Render video output manually, then convert the video output to light field."
           link="/video"
           thumbnail={
             <img
@@ -66,7 +66,7 @@ const HomePage: NextPage = () => {
               >
                 Luma AI
               </a>{' '}
-              directly and convert to quilt image.
+              directly and convert to light field.
             </>
           }
           link="/luma"
@@ -81,7 +81,7 @@ const HomePage: NextPage = () => {
               className="m-0 max-w-full"
             />
           }
-          alert="Some of the lightfield output from Luma AI have curved camera path, which may lead to a toe-in/curve effect on the Looking Glass."
+          alert="Some of the light field output from Luma AI have curved camera path, which may lead to a toe-in/curve effect on the Looking Glass."
           alertClassName="alert-warning"
         />
       </div>

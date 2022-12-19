@@ -1,10 +1,10 @@
 import { FC, useRef, useState, useEffect } from 'react';
 
-export interface QuiltImageCrossEyesViewerProps {
+export interface LightFieldCrossEyesViewerProps {
   frames?: HTMLCanvasElement[];
 }
 
-export const QuiltImageCrossEyesViewer: FC<QuiltImageCrossEyesViewerProps> = ({
+export const LightFieldCrossEyesViewer: FC<LightFieldCrossEyesViewerProps> = ({
   frames,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);

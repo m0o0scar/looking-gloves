@@ -19,22 +19,23 @@ export const PageCard: FC<PageCardProps> = ({
   alert,
   alertClassName,
   link,
-  linkLabel = 'Go',
 }) => {
   return (
-    <div className="card w-96 max-w-full bg-base-100 shadow-xl overflow-hidden">
-      {thumbnail}
-      <div className="card-body flex flex-col">
-        <h2 className="card-title m-0">{title}</h2>
-        <div>{content}</div>
-        <div className={cls('text-xs alert', alertClassName)}>{alert}</div>
-        <div className="grow" />
-        <div className="card-actions justify-end">
-          <Link href={link}>
-            <button className="btn btn-primary">{linkLabel}</button>
-          </Link>
+    <Link href={link}>
+      <div
+        className={cls(
+          'card w-96 max-w-full bg-base-100 shadow-lg overflow-hidden cursor-pointer',
+          'transition-all hover:scale-105 hover:shadow-2xl'
+        )}
+      >
+        {thumbnail}
+        <div className="card-body flex flex-col">
+          <h2 className="card-title m-0">{title}</h2>
+          <div>{content}</div>
+          <div className={cls('text-xs alert', alertClassName)}>{alert}</div>
+          <div className="grow" />
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
