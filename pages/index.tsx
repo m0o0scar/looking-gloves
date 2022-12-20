@@ -85,11 +85,11 @@ const HomePage: NextPage = () => {
           alertClassName="alert-warning"
         />
 
-        <PageCard
+        {/* <PageCard
           title="RGBD"
           content="Convert any picture into RGBD photo"
           link="/rgbd"
-        />
+        /> */}
       </div>
     </PageContainer>
   );
