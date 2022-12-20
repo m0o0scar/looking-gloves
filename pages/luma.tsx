@@ -15,7 +15,6 @@ const LumaPage: NextPage = () => {
           onFramesExtracted,
         }) => (
           <LumaLightfieldExtractor
-            numberOfFrames={COLS * ROWS}
             onSourceProvided={onSourceProvided}
             onProgress={onProgress}
             onFramesExtracted={onFramesExtracted}

@@ -1,11 +1,13 @@
+import { COLS, ROWS } from '@utils/constant';
 import React, { FC, useState, useEffect, useRef } from 'react';
 
 import { SequenceExtractorProps } from './types';
 
 const NoFrames: HTMLCanvasElement[] = [];
 
+const numberOfFrames = COLS * ROWS;
+
 export const VideoFramesExtractor: FC<SequenceExtractorProps> = ({
-  numberOfFrames,
   onSourceProvided,
   onProgress,
   onFramesExtracted,

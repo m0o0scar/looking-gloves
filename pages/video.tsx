@@ -1,4 +1,3 @@
-import { COLS, ROWS } from '@utils/constant';
 import type { NextPage } from 'next';
 
 import { PageContainer } from '@components/common/PageContainer';
@@ -16,7 +15,6 @@ const VideoPage: NextPage = () => {
           onFramesExtracted,
         }) => (
           <VideoFramesExtractor
-            numberOfFrames={COLS * ROWS}
             onSourceProvided={onSourceProvided}
             onProgress={onProgress}
             onFramesExtracted={onFramesExtracted}

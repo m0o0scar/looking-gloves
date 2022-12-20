@@ -1,11 +1,13 @@
+import { COLS, ROWS } from '@utils/constant';
 import { fetchWithProgress } from '@utils/fetch';
 import { FC, useEffect, useState } from 'react';
 import { unzip } from 'unzipit';
 
 import { SequenceExtractorProps } from './types';
 
+const numberOfFrames = COLS * ROWS;
+
 export const LumaLightfieldExtractor: FC<SequenceExtractorProps> = ({
-  numberOfFrames,
   onSourceProvided,
   onProgress,
   onFramesExtracted,

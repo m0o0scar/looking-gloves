@@ -13,16 +13,10 @@ import { QuiltImage } from './QuiltImage';
 import { SequenceOrderSelector } from './SequenceOrderSelector';
 
 export interface LightFieldCreatorProps {
-  cols?: number;
-  rows?: number;
-  frameWidth?: number;
   sequenceExtractor?: (params: Partial<SequenceExtractorProps>) => ReactNode;
 }
 
 export const LightFieldCreator: FC<LightFieldCreatorProps> = ({
-  cols = COLS,
-  rows = ROWS,
-  frameWidth = FRAME_WIDTH,
   sequenceExtractor,
 }) => {
   // overall status
@@ -58,11 +52,11 @@ export const LightFieldCreator: FC<LightFieldCreatorProps> = ({
 
     // Quilt image file name conventions:
     // https://docs.lookingglassfactory.com/keyconcepts/quilts#file-naming-conventions
-    const frameWidth = renderedCanvasRef.current.width / cols;
-    const frameHeight = renderedCanvasRef.current.height / rows;
+    const frameWidth = renderedCanvasRef.current.width / COLS;
+    const frameHeight = renderedCanvasRef.current.height / ROWS;
     const aspectRatio = frameWidth / frameHeight;
     const name = Date.now();
-    const filename = `${name}_qs${cols}x${rows}a${aspectRatio.toFixed(2)}.jpg`;
+    const filename = `${name}_qs${COLS}x${ROWS}a${aspectRatio.toFixed(2)}.jpg`;
 
     const url = renderedCanvasRef.current.toDataURL('image/jpeg', 0.9);
     triggerDownload(url, filename);
