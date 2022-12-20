@@ -84,6 +84,12 @@ const HomePage: NextPage = () => {
           alert="Some of the light field output from Luma AI have curved camera path, which may lead to a toe-in/curve effect on the Looking Glass."
           alertClassName="alert-warning"
         />
+
+        <PageCard
+          title="RGBD"
+          content="Convert any picture into RGBD photo"
+          link="/rgbd"
+        />
       </div>
     </PageContainer>
   );
