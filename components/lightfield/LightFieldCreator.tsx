@@ -1,3 +1,4 @@
+import { COLS, ROWS, FRAME_WIDTH } from '@utils/constant';
 import { triggerDownload } from '@utils/download';
 import { imagesToVideo } from '@utils/video';
 import JSZip from 'jszip';
@@ -12,16 +13,16 @@ import { QuiltImage } from './QuiltImage';
 import { SequenceOrderSelector } from './SequenceOrderSelector';
 
 export interface LightFieldCreatorProps {
-  cols: number;
-  rows: number;
-  frameWidth: number;
-  sequenceExtractor: (params: Partial<SequenceExtractorProps>) => ReactNode;
+  cols?: number;
+  rows?: number;
+  frameWidth?: number;
+  sequenceExtractor?: (params: Partial<SequenceExtractorProps>) => ReactNode;
 }
 
 export const LightFieldCreator: FC<LightFieldCreatorProps> = ({
-  cols,
-  rows,
-  frameWidth,
+  cols = COLS,
+  rows = ROWS,
+  frameWidth = FRAME_WIDTH,
   sequenceExtractor,
 }) => {
   // overall status
@@ -176,7 +177,7 @@ export const LightFieldCreator: FC<LightFieldCreatorProps> = ({
   return (
     <>
       {/* sequence decoder which extract frames from a source (video file, image sequence zip, etc.) */}
-      {sequenceExtractor({
+      {sequenceExtractor?.({
         onSourceProvided,
         onProgress: setProgress,
         onFramesExtracted: setLeftToRightSequence,

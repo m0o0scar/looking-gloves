@@ -1,4 +1,3 @@
-import { OrbitControls } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { FC, useState, useEffect, useRef } from 'react';
 import { DataArrayTexture, ShaderMaterial } from 'three';

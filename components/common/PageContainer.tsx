@@ -1,7 +1,18 @@
+import { PRODUCT_NAME } from '@utils/constant';
 import cls from 'classnames';
+import Head from 'next/head';
 import { FC, HTMLAttributes } from 'react';
 
-export const PageContainer: FC<HTMLAttributes<HTMLDivElement>> = ({
+import { HomeBtn } from './HomeBtn';
+
+export interface PageContainerProps extends HTMLAttributes<HTMLDivElement> {
+  title?: string;
+  subtitle?: string;
+}
+
+export const PageContainer: FC<PageContainerProps> = ({
+  title,
+  subtitle,
   className,
   children,
   ...props
@@ -13,6 +24,18 @@ export const PageContainer: FC<HTMLAttributes<HTMLDivElement>> = ({
         className
       )}
     >
+      {title && (
+        <Head>
+          <title>
+            {PRODUCT_NAME} - {title}
+          </title>
+        </Head>
+      )}
+
+      {subtitle && <h1>{subtitle}</h1>}
+
+      <HomeBtn />
+
       {children}
     </article>
   );
