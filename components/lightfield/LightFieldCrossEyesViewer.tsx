@@ -65,17 +65,13 @@ export const LightFieldCrossEyesViewer: FC<LightFieldCrossEyesViewerProps> = ({
       </h3>
 
       {/* viewer */}
+      <p>Try move your mouse on the image below 😉</p>
       <div
-        className="tooltip tooltip-info"
-        data-tip="Try move your mouse on the image below 😉"
+        ref={containerRef}
+        className="flex rounded-lg max-w-2xl overflow-hidden drop-shadow-lg"
       >
-        <div
-          ref={containerRef}
-          className="flex rounded-lg max-w-2xl overflow-hidden drop-shadow-lg"
-        >
-          <canvas ref={leftCanvasRef} className="w-1/2 pointer-events-none" />
-          <canvas ref={rightCanvasRef} className="w-1/2 pointer-events-none" />
-        </div>
+        <canvas ref={leftCanvasRef} className="w-1/2 pointer-events-none" />
+        <canvas ref={rightCanvasRef} className="w-1/2 pointer-events-none" />
       </div>
 
       {/* cross-eye 3d how-to modal */}

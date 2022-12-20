@@ -1,7 +1,7 @@
 import { triggerDownload } from '@utils/download';
 import { imagesToVideo } from '@utils/video';
 import JSZip from 'jszip';
-import { debounce } from 'lodash';
+import { debounce, last } from 'lodash';
 import { FC, ReactNode, useEffect, useRef, useState } from 'react';
 
 import { SequenceExtractorProps } from '../extractors/types';
@@ -33,12 +33,11 @@ export const LightFieldCreator: FC<LightFieldCreatorProps> = ({
   const [progress, setProgress] = useState(0);
 
   // frames
+  const [flip, setFlip] = useState(false);
+  const [leftToRightSequence, setLeftToRightSequence] = useState<
+    HTMLCanvasElement[] | undefined
+  >();
   const [frames, setFrames] = useState<HTMLCanvasElement[] | undefined>();
-  const isLeftToRight = useRef(true);
-  const reverseFrames = () => {
-    isLeftToRight.current = !isLeftToRight.current;
-    setFrames((value) => (value ? [...value].reverse() : undefined));
-  };
 
   // sequence order
   const [firstAndLastFrame, setFirstAndLastFrame] = useState<
@@ -91,8 +90,8 @@ export const LightFieldCreator: FC<LightFieldCreatorProps> = ({
       depthInversion: false,
       chromaDepth: false,
       depthPosition: 'right',
-      focus: focus.current * (isLeftToRight.current ? -1 : 1),
-      viewOrderReversed: isLeftToRight.current,
+      focus: focus.current * (flip ? 1 : -1),
+      viewOrderReversed: !flip,
       zoom: 1.0,
       position_x: 0.0,
       position_y: 0.0,
@@ -128,10 +127,14 @@ export const LightFieldCreator: FC<LightFieldCreatorProps> = ({
     _saveLightfield();
   };
 
+  const scrollToBottom = () => {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  };
+
   const onSourceProvided = () => setStatus('extracting');
 
   const onSequenceOrderSelected = (shouldReverse: boolean) => {
-    if (shouldReverse) reverseFrames();
+    if (shouldReverse) setFlip(true);
     setStatus('adjustFocus');
   };
 
@@ -140,16 +143,35 @@ export const LightFieldCreator: FC<LightFieldCreatorProps> = ({
     setStatus('preview');
   };
 
+  useEffect(() => {
+    if (!leftToRightSequence?.length) {
+      setFrames(undefined);
+    } else {
+      setFrames(
+        flip ? [...leftToRightSequence].reverse() : leftToRightSequence
+      );
+    }
+  }, [leftToRightSequence, flip]);
+
   // remember the 1st and last frame ONCE when frames are extracted
   useEffect(() => {
-    if (!frames?.length) {
+    if (!leftToRightSequence?.length) {
       setFirstAndLastFrame(undefined);
     }
-    if (frames?.length && !firstAndLastFrame) {
-      setFirstAndLastFrame([frames![0], frames![frames!.length - 1]]);
+    if (leftToRightSequence?.length && !firstAndLastFrame) {
+      setFirstAndLastFrame([
+        leftToRightSequence![0],
+        last(leftToRightSequence)!,
+      ]);
       setStatus('choosingOrder');
     }
-  }, [frames, firstAndLastFrame]);
+  }, [leftToRightSequence, firstAndLastFrame]);
+
+  useEffect(() => {
+    if (status === 'choosingOrder' || status === 'adjustFocus') {
+      scrollToBottom();
+    }
+  }, [status]);
 
   return (
     <>
@@ -157,7 +179,7 @@ export const LightFieldCreator: FC<LightFieldCreatorProps> = ({
       {sequenceExtractor({
         onSourceProvided,
         onProgress: setProgress,
-        onFramesExtracted: setFrames,
+        onFramesExtracted: setLeftToRightSequence,
       })}
 
       {/* frames extraction progress */}
@@ -181,10 +203,7 @@ export const LightFieldCreator: FC<LightFieldCreatorProps> = ({
         <>
           <div className="divider"></div>
           <LightFieldFocusEditor
-            // make sure we're giving it the Left-to-Right frames sequence
-            frames={
-              frames && !isLeftToRight.current ? [...frames].reverse() : frames
-            }
+            frames={leftToRightSequence}
             onFocusConfirm={onFocusConfirm}
           />
         </>
@@ -197,7 +216,10 @@ export const LightFieldCreator: FC<LightFieldCreatorProps> = ({
           <div className="flex gap-4">
             {/* reverse frames sequence order */}
             <div className="tooltip" data-tip="Reverse frames sequence order">
-              <button className="btn btn-warning" onClick={reverseFrames}>
+              <button
+                className="btn btn-warning"
+                onClick={() => setFlip((value) => !value)}
+              >
                 Flip
               </button>
             </div>
