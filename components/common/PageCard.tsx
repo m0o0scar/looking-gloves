@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { FC, ReactNode, ReactFragment } from 'react';
 
 export interface PageCardProps {
-  thumbnail: ReactNode;
+  thumbnail?: ReactNode;
   title: ReactNode;
   content: ReactNode | ReactFragment;
   alert?: ReactNode;
@@ -28,12 +28,13 @@ export const PageCard: FC<PageCardProps> = ({
           'transition-all hover:scale-105 hover:shadow-2xl'
         )}
       >
-        {thumbnail}
+        {thumbnail || <div className="max-w-full aspect-[3/2] bg-slate-300" />}
         <div className="card-body flex flex-col">
           <h2 className="card-title m-0">{title}</h2>
           <div>{content}</div>
-          <div className={cls('text-xs alert', alertClassName)}>{alert}</div>
-          <div className="grow" />
+          {alert && (
+            <div className={cls('text-xs alert', alertClassName)}>{alert}</div>
+          )}
         </div>
       </div>
     </Link>
