@@ -20,13 +20,14 @@ export const LightFieldFocusEditor: FC<LightFieldFocusEditorProps> = ({
 
   useEffect(() => {
     if (frames?.length) {
-      const camsX = frames.length;
-      const camsY = 1;
+      const numberOfFrames = frames.length;
       const frameWidth = frames[0].width;
       const frameHeight = frames[0].height;
 
       let offset = 0;
-      const data = new Uint8Array(frameWidth * frameHeight * 4 * camsX * camsY);
+      const data = new Uint8Array(
+        frameWidth * frameHeight * 4 * numberOfFrames
+      );
       for (const frame of frames) {
         const imgData = frame
           .getContext('2d')!
@@ -39,17 +40,18 @@ export const LightFieldFocusEditor: FC<LightFieldFocusEditorProps> = ({
         data,
         frameWidth,
         frameHeight,
-        camsX * camsY
+        numberOfFrames
       );
       texture.needsUpdate = true;
 
-      const material = createLightFieldMaterial(texture, camsX, camsY);
+      const material = createLightFieldMaterial(texture, numberOfFrames);
       setLightFieldMaterial(material);
     }
   }, [frames]);
 
   useEffect(() => {
     if (lightFieldMaterial) {
+      console.log('focus', focus);
       lightFieldMaterial.uniforms.focus.value = focus;
     }
   }, [focus, lightFieldMaterial]);

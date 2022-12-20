@@ -6,7 +6,7 @@ precision highp int;
 precision highp sampler2DArray;
 
 uniform sampler2DArray field;
-uniform vec2 camArraySize;
+uniform float numberOfFrames;
 uniform float aperture;
 uniform float focus;
 
@@ -21,17 +21,14 @@ void main() {
     discard;
   }
 
-  for (float i = 0.0; i < camArraySize.x; i++) {
-    for (float j = 0.0; j < camArraySize.y; j++) {
-      float dx = i - (vSt.x * camArraySize.x - 0.5);
-      float dy = j - (vSt.y * camArraySize.y - 0.5);
-      float sqDist = dx * dx + dy * dy;
-      if (sqDist < aperture) {
-        float camOff = i + camArraySize.x * j;
-        vec2 focOff = vec2(dx, dy) * focus;
-        color += texture(field, vec3(vUv + focOff, camOff));
-        colorCount++;
-      }
+  for (float i = 0.0; i < numberOfFrames; i++) {
+    float dx = 0.5 - vSt.x * numberOfFrames + i;
+    float dy = 0.5 - vSt.y;
+    float sqDist = dx * dx + dy * dy;
+    if (sqDist < aperture) {
+      vec2 focOff = vec2(dx, dy) * focus;
+      color += texture(field, vec3(vUv + focOff, i));
+      colorCount++;
     }
   }
 
@@ -60,13 +57,12 @@ void main() {
 
 export const createLightFieldMaterial = (
   texture: DataArrayTexture,
-  camsX: number,
-  camsY: number
+  numberOfFrames: number
 ) =>
   new ShaderMaterial({
     uniforms: {
       field: { value: texture },
-      camArraySize: new Uniform(new Vector2(camsX, camsY)),
+      numberOfFrames: { value: numberOfFrames },
       aperture: { value: 5.0 },
       focus: { value: 0.0 },
     },

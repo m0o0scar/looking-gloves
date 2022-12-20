@@ -40,7 +40,7 @@ export const LightFieldCreator: FC<LightFieldCreatorProps> = ({
   >();
 
   // light field focus
-  const focus = useRef(0);
+  const [focus, setFocus] = useState(0);
 
   const renderedCanvasRef = useRef<HTMLCanvasElement>();
 
@@ -85,7 +85,7 @@ export const LightFieldCreator: FC<LightFieldCreatorProps> = ({
       depthInversion: false,
       chromaDepth: false,
       depthPosition: 'right',
-      focus: focus.current * (flip ? 1 : -1),
+      focus: focus * (flip ? 1 : -1),
       viewOrderReversed: !flip,
       zoom: 1.0,
       position_x: 0.0,
@@ -133,8 +133,8 @@ export const LightFieldCreator: FC<LightFieldCreatorProps> = ({
     setStatus('adjustFocus');
   };
 
-  const onFocusConfirm = (focusValue: number) => {
-    focus.current = focusValue;
+  const onFocusConfirm = (value: number) => {
+    setFocus(value);
     setStatus('preview');
   };
 
@@ -238,12 +238,9 @@ export const LightFieldCreator: FC<LightFieldCreatorProps> = ({
 
           <LightFieldCrossEyesViewer frames={frames} />
 
-          {/* <h3>Quilt image ({cols * rows} frames)</h3> */}
+          <h3>Quilt image ({COLS * ROWS} frames)</h3>
           <QuiltImage
-            className="hidden"
-            numberOfCols={cols}
-            numberOfRows={rows}
-            frameWidth={frameWidth}
+            focus={focus * (flip ? 1 : -1)}
             frames={frames}
             onRendered={(canvas) => (renderedCanvasRef.current = canvas)}
           />
