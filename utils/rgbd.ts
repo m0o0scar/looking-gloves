@@ -1,4 +1,4 @@
-function imageFileToBase64(file: File) {
+function imageFileToBase64(file: File | Blob) {
   return new Promise<string>((resolve, error) => {
     const reader = new FileReader();
     reader.onload = () => resolve(reader.result as string);
@@ -12,7 +12,7 @@ interface EndpointResponse {
   duration: number;
 }
 
-export const convertPhotoToRGBD = async (file: File) => {
+export const convertPhotoToRGBD = async (file: File | Blob) => {
   // convert image file into base64 encoded string
   const base64 = await imageFileToBase64(file);
 

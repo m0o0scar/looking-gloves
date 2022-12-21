@@ -50,22 +50,17 @@ const HomePage: NextPage = () => {
             </>
           }
           link="/video"
-          thumbnail={
-            <img
-              src="/assets/cover-video.png"
-              alt="cover"
-              className="m-0 max-w-full aspect-[3/2]"
-            />
-          }
+          thumbnail="/assets/cover-video.png"
           alert="Tutorial coming soon 🚧."
           alertClassName=""
         />
 
-        {/* <PageCard
-          title="RGBD"
-          content="Convert any picture into RGBD photo"
+        <PageCard
+          title="🏞️ RGBD"
+          content="Convert any picture into RGBD image"
           link="/rgbd"
-        /> */}
+          thumbnail="/assets/cover-rgbd.png"
+        />
       </div>
     </PageContainer>
   );
