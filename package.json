@@ -18,6 +18,7 @@
     "@types/three": "^0.146.0",
     "classnames": "^2.3.2",
     "daisyui": "^2.42.1",
+    "holoplay-core": "^0.0.9",
     "jszip": "^3.10.1",
     "lodash": "^4.17.21",
     "next": "12.2.2",

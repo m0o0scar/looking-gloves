@@ -1,15 +1,13 @@
-import { COLS, ROWS, FRAME_WIDTH } from '@utils/constant';
-import { triggerDownload } from '@utils/download';
-import { framesAreLeftToRight, imagesToVideo } from '@utils/video';
-import JSZip from 'jszip';
-import { debounce, last } from 'lodash';
-import { FC, ReactNode, useEffect, useRef, useState } from 'react';
+import { COLS, ROWS } from '@utils/constant';
+import { FC, ReactNode, useRef, useState } from 'react';
 
 import { SequenceExtractorProps } from '../extractors/types';
 import { ExtractingFramesProgress } from './ExtractingFramesProgress';
 import { LightFieldCrossEyesViewer } from './LightFieldCrossEyesViewer';
 import { LightFieldFocusEditor } from './LightFieldFocusEditor';
 import { QuiltImage } from './QuiltImage';
+import { QuiltImageSaveButton } from './QuiltImageSaveButton';
+import { QuiltImageViewOnDeviceButton } from './QuiltImageViewOnDeviceButton';
 
 export interface LightFieldCreatorProps {
   sequenceExtractor?: (params: Partial<SequenceExtractorProps>) => ReactNode;
@@ -28,30 +26,7 @@ export const LightFieldCreator: FC<LightFieldCreatorProps> = ({ sequenceExtracto
   // light field focus
   const [focus, setFocus] = useState(0);
 
-  const renderedCanvasRef = useRef<HTMLCanvasElement>();
-
-  const [savingQuiltImage, setSavingQuiltImage] = useState(false);
-
-  const _saveQuiltImage = debounce(() => {
-    if (!renderedCanvasRef.current) return;
-
-    // Quilt image file name conventions:
-    // https://docs.lookingglassfactory.com/keyconcepts/quilts#file-naming-conventions
-    const frameWidth = renderedCanvasRef.current.width / COLS;
-    const frameHeight = renderedCanvasRef.current.height / ROWS;
-    const aspectRatio = frameWidth / frameHeight;
-    const name = Date.now();
-    const filename = `${name}_qs${COLS}x${ROWS}a${aspectRatio.toFixed(2)}.jpg`;
-
-    const url = renderedCanvasRef.current.toDataURL('image/jpeg', 0.9);
-    triggerDownload(url, filename);
-    setSavingQuiltImage(false);
-  }, 500);
-
-  const saveQuiltImage = () => {
-    setSavingQuiltImage(true);
-    _saveQuiltImage();
-  };
+  const [quiltImage, setQuiltImage] = useState<HTMLCanvasElement | undefined>();
 
   const onSourceProvided = () => setStatus('extracting');
 
@@ -82,7 +57,11 @@ export const LightFieldCreator: FC<LightFieldCreatorProps> = ({ sequenceExtracto
       {status === 'adjustFocus' && (
         <>
           <div className="divider"></div>
-          <LightFieldFocusEditor frames={frames} onFocusConfirm={onFocusConfirm} />
+          <LightFieldFocusEditor
+            initialFocus={focus}
+            frames={frames}
+            onFocusConfirm={onFocusConfirm}
+          />
         </>
       )}
 
@@ -91,24 +70,22 @@ export const LightFieldCreator: FC<LightFieldCreatorProps> = ({ sequenceExtracto
           <div className="divider"></div>
           <h2 className="flex items-center gap-2">Done ✌️😎</h2>
           <div className="flex gap-4">
-            {/* download quilt image */}
-            <button
-              className="btn btn-success"
-              disabled={savingQuiltImage}
-              onClick={saveQuiltImage}
-            >
-              {savingQuiltImage ? 'Saving ...' : 'Save Quilt'}
+            {/* go back to adjust focus */}
+            <button className="btn btn-warning" onClick={() => setStatus('adjustFocus')}>
+              Adjust focus
             </button>
+
+            {/* view on looking glass device */}
+            <QuiltImageViewOnDeviceButton quiltImage={quiltImage} />
+
+            {/* download quilt image */}
+            <QuiltImageSaveButton quiltImage={quiltImage} />
           </div>
 
           <LightFieldCrossEyesViewer frames={frames} />
 
           <h3>Quilt image ({COLS * ROWS} frames)</h3>
-          <QuiltImage
-            focus={focus}
-            frames={frames}
-            onRendered={(canvas) => (renderedCanvasRef.current = canvas)}
-          />
+          <QuiltImage focus={focus} frames={frames} onRendered={setQuiltImage} />
         </>
       )}
     </>

@@ -4,16 +4,20 @@ import { DataArrayTexture, ShaderMaterial } from 'three';
 
 import { createLightFieldMaterial } from './LightFieldMaterial';
 
+const SCALE = 10;
+
 export interface LightFieldFocusEditorProps {
+  initialFocus?: number;
   frames?: HTMLCanvasElement[];
   onFocusConfirm?: (focus: number) => void;
 }
 
 export const LightFieldFocusEditor: FC<LightFieldFocusEditorProps> = ({
+  initialFocus = 0,
   frames,
   onFocusConfirm,
 }) => {
-  const [focus, setFocus] = useState(0);
+  const [focus, setFocus] = useState(initialFocus / SCALE);
 
   const [lightFieldMaterial, setLightFieldMaterial] = useState<ShaderMaterial>();
 
@@ -80,7 +84,7 @@ export const LightFieldFocusEditor: FC<LightFieldFocusEditorProps> = ({
       />
 
       <div className="w-full text-right">
-        <button className="btn" onClick={() => onFocusConfirm?.(focus * 10)}>
+        <button className="btn" onClick={() => onFocusConfirm?.(focus * SCALE)}>
           Done
         </button>
       </div>
