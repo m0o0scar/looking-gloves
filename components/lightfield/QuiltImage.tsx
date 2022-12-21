@@ -1,7 +1,8 @@
+import { drawSourceOntoDest } from '@utils/canvas';
 import cls from 'classnames';
 import { FC, useEffect, useRef, HTMLAttributes } from 'react';
 
-import { COLS, ROWS, FRAME_WIDTH } from '../../utils/constant';
+import { COLS, ROWS, FRAME_WIDTH, FRAME_HEIGHT } from '../../utils/constant';
 
 export interface QuiltImageProps extends HTMLAttributes<HTMLCanvasElement> {
   focus?: number;
@@ -24,10 +25,8 @@ export const QuiltImage: FC<QuiltImageProps> = ({
       canvasRef.current!.height = 0;
     } else {
       // update canvas size
-      const { width, height } = frames[0];
-      const frameHeight = (height / width) * FRAME_WIDTH;
       canvasRef.current!.width = COLS * FRAME_WIDTH;
-      canvasRef.current!.height = ROWS * frameHeight;
+      canvasRef.current!.height = ROWS * FRAME_HEIGHT;
 
       // draw frames to canvas
       const ctx = canvasRef.current!.getContext('2d')!;
@@ -37,38 +36,22 @@ export const QuiltImage: FC<QuiltImageProps> = ({
         const col = i % COLS;
         const row = ROWS - 1 - Math.floor(i / COLS);
         const x = col * FRAME_WIDTH;
-        const y = row * frameHeight;
+        const y = row * FRAME_HEIGHT;
 
         // calculate offset according to the focus value
         // to draw the focus target in the center of the frame
         const focusValue = focus / 10;
         const offset = (i - numberOfFrames / 2) * -focusValue * frame.width;
 
-        // fill the background with "edge" first
-        ctx.drawImage(
-          frame,
-          offset <= 0 ? 0 : frame.width - 1,
-          0,
-          1,
-          frame.height,
-          x,
-          y,
-          FRAME_WIDTH,
-          frameHeight
-        );
-
         // draw the actual frame
-        ctx.drawImage(
-          frame,
-          offset,
-          0,
-          frame.width,
-          frame.height,
-          x,
-          y,
-          FRAME_WIDTH,
-          frameHeight
-        );
+        drawSourceOntoDest(frame, canvasRef.current!, {
+          dx: x,
+          dy: y,
+          dw: FRAME_WIDTH,
+          dh: FRAME_HEIGHT,
+          sourceOffsetX: offset,
+          fillEdge: true,
+        });
       }
 
       onRendered?.(canvasRef.current!);
