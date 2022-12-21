@@ -1,11 +1,5 @@
-# Next.js Template
+# 🧤🖼️ Looking Gloves
 
-## Install
+Create and display holograms on Looking Glass.
 
-```
-npx degit m0o0scar/nextjs-template my-project
-cd my-project
-
-yarn
-yarn dev
-```
+...
