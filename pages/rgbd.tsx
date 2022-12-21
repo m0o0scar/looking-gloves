@@ -4,6 +4,7 @@ import { triggerDownload } from '@utils/download';
 import { convertPhotoToRGBD } from '@utils/rgbd';
 import type { NextPage } from 'next';
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
 import { PageContainer } from '@components/common/PageContainer';
 
@@ -26,7 +27,7 @@ const RGBDPhotoPage: NextPage = () => {
   const onClipboardButtonClick = async () => {
     const img = await getImageFromClipboard();
     if (img) setFile(img);
-    else alert('No image found in clipboard');
+    else toast.warn('No image found in clipboard');
   };
 
   useEffect(() => {
@@ -39,6 +40,7 @@ const RGBDPhotoPage: NextPage = () => {
           const result = await convertPhotoToRGBD(file);
           setRGBDPhoto(result);
         } catch (e) {
+          toast.error('Failed to convert image into RGBD photo');
           console.error(e);
         } finally {
           setPending(false);

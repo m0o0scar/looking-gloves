@@ -100,7 +100,7 @@ export const LightFieldCreator: FC<LightFieldCreatorProps> = ({ sequenceExtracto
             </div>
 
             {/* view on looking glass device */}
-            <QuiltImageViewOnDeviceButton quiltImage={quiltImage} />
+            <QuiltImageViewOnDeviceButton quiltImage={quiltImage} autoShow />
 
             {/* download quilt image */}
             <QuiltImageSaveButton quiltImage={quiltImage} />

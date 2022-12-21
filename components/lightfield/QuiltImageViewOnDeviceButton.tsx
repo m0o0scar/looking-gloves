@@ -1,16 +1,24 @@
 import { showQuiltImage } from '@utils/holoplay';
 import cls from 'classnames';
 import { debounce } from 'lodash';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 
 export interface QuiltImageViewOnDeviceButtonProps {
   quiltImage?: HTMLCanvasElement;
+  autoShow?: boolean;
 }
 
 export const QuiltImageViewOnDeviceButton: FC<QuiltImageViewOnDeviceButtonProps> = ({
   quiltImage,
+  autoShow,
 }) => {
   const [pending, setPending] = useState(false);
+
+  const autoShowQuiltOnDevice = async () => {
+    setPending(true);
+    await showQuiltImage(quiltImage, { silent: true });
+    setPending(false);
+  };
 
   const _onClick = debounce(async () => {
     await showQuiltImage(quiltImage);
@@ -21,6 +29,12 @@ export const QuiltImageViewOnDeviceButton: FC<QuiltImageViewOnDeviceButtonProps>
     setPending(true);
     _onClick();
   };
+
+  useEffect(() => {
+    if (quiltImage && autoShow) {
+      autoShowQuiltOnDevice();
+    }
+  }, [quiltImage, autoShow]);
 
   return (
     <div className="tooltip" data-tip="View on Looking Glass">
