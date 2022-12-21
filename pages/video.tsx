@@ -7,13 +7,9 @@ import { LightFieldCreator } from '../components/lightfield/LightFieldCreator';
 
 const VideoPage: NextPage = () => {
   return (
-    <PageContainer title=" Video to Light Field" subtitle="🎥 Video">
+    <PageContainer favicon="🎥" title=" Video to Light Field" subtitle="🎥 Video">
       <LightFieldCreator
-        sequenceExtractor={({
-          onSourceProvided,
-          onProgress,
-          onFramesExtracted,
-        }) => (
+        sequenceExtractor={({ onSourceProvided, onProgress, onFramesExtracted }) => (
           <VideoFramesExtractor
             onSourceProvided={onSourceProvided}
             onProgress={onProgress}

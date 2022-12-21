@@ -48,7 +48,7 @@ const RGBDPhotoPage: NextPage = () => {
   }, [file]);
 
   return (
-    <PageContainer title="RGBD Photo" subtitle="🏞️ RGBD Photo">
+    <PageContainer favicon="🏞️" title="RGBD Photo" subtitle="🏞️ RGBD Photo">
       <h2>Please select an image file</h2>
 
       <div className="flex gap-4">

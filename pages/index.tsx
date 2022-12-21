@@ -8,7 +8,7 @@ import { PageContainer } from '@components/common/PageContainer';
 
 const HomePage: NextPage = () => {
   return (
-    <PageContainer className="justify-center" hideHomeBtn>
+    <PageContainer className="justify-center" hideHomeBtn favicon="🖼️">
       <Head>
         <title>{PRODUCT_NAME}</title>
       </Head>
