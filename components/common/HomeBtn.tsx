@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from 'next/link';
-import { FC, useState, useEffect } from 'react';
+import { FC } from 'react';
 
 export const HomeBtn: FC = () => {
   return (

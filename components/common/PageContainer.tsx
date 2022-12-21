@@ -8,11 +8,13 @@ import { HomeBtn } from './HomeBtn';
 export interface PageContainerProps extends HTMLAttributes<HTMLDivElement> {
   title?: string;
   subtitle?: string;
+  hideHomeBtn?: boolean;
 }
 
 export const PageContainer: FC<PageContainerProps> = ({
   title,
   subtitle,
+  hideHomeBtn,
   className,
   children,
   ...props
@@ -34,7 +36,7 @@ export const PageContainer: FC<PageContainerProps> = ({
 
       {subtitle && <h1>{subtitle}</h1>}
 
-      <HomeBtn />
+      {!hideHomeBtn && <HomeBtn />}
 
       {children}
     </article>
