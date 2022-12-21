@@ -32,6 +32,7 @@ export const LightFieldCreator: FC<LightFieldCreatorProps> = ({ sequenceExtracto
 
   const onSequenceExtracted = (sequence?: HTMLCanvasElement[]) => {
     if (sequence?.length) {
+      setFocus(0);
       setFrames(sequence);
       setStatus('adjustFocus');
     }
