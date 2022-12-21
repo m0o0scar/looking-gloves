@@ -25,10 +25,9 @@ const HomePage: NextPage = () => {
       </div>
 
       <p className="max-w-3xl">
-        Hi there! Welcome to {PRODUCT_NAME}, a webapp for converting NeRF
-        (Neural Radiance Fields) into Looking Glass hologram. I&lsquo;m glad
-        you&lsquo;re here and hope you enjoy using this tool. Let me know if you
-        have any questions or feedback{' '}
+        Hi there! Welcome to {PRODUCT_NAME}, a webapp for converting NeRF (Neural Radiance Fields)
+        into Looking Glass hologram. I&lsquo;m glad you&lsquo;re here and hope you enjoy using this
+        tool. Let me know if you have any questions or feedback{' '}
         <a
           className="no-underline"
           href={`mailto:moscartong@gmail.com?subject=${PRODUCT_NAME} Feedback`}
@@ -52,37 +51,6 @@ const HomePage: NextPage = () => {
           }
           alert="Tutorial coming soon 🚧."
           alertClassName=""
-        />
-
-        <PageCard
-          title="🔫 NeRF"
-          content={
-            <>
-              Download light field from{' '}
-              <a
-                href="https://captures.lumalabs.ai/me"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Luma AI
-              </a>{' '}
-              directly and convert to light field.
-            </>
-          }
-          link="/luma"
-          thumbnail={
-            <video
-              src="/assets/cover-lightfield.mp4"
-              poster="/assets/cover-lightfield-poster.jpg"
-              muted
-              loop
-              autoPlay
-              playsInline
-              className="m-0 max-w-full aspect-[3/2]"
-            />
-          }
-          alert="Some of the light field output from Luma AI have curved camera path, which may lead to a toe-in/curve effect on the Looking Glass."
-          alertClassName="alert-warning"
         />
 
         {/* <PageCard

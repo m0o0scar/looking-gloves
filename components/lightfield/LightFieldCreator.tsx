@@ -23,7 +23,6 @@ export const LightFieldCreator: FC<LightFieldCreatorProps> = ({ sequenceExtracto
   const [progress, setProgress] = useState(0);
 
   // frames
-  const [leftToRightSequence, setLeftToRightSequence] = useState<HTMLCanvasElement[] | undefined>();
   const [frames, setFrames] = useState<HTMLCanvasElement[] | undefined>();
 
   // light field focus
@@ -58,10 +57,7 @@ export const LightFieldCreator: FC<LightFieldCreatorProps> = ({ sequenceExtracto
 
   const onSequenceExtracted = (sequence?: HTMLCanvasElement[]) => {
     if (sequence?.length) {
-      const isL2R = framesAreLeftToRight(sequence);
-      const orderedSequence = isL2R ? sequence : [...sequence].reverse();
-      setLeftToRightSequence(orderedSequence);
-      setFrames(orderedSequence);
+      setFrames(sequence);
       setStatus('adjustFocus');
     }
   };
@@ -86,7 +82,7 @@ export const LightFieldCreator: FC<LightFieldCreatorProps> = ({ sequenceExtracto
       {status === 'adjustFocus' && (
         <>
           <div className="divider"></div>
-          <LightFieldFocusEditor frames={leftToRightSequence} onFocusConfirm={onFocusConfirm} />
+          <LightFieldFocusEditor frames={frames} onFocusConfirm={onFocusConfirm} />
         </>
       )}
 
@@ -110,7 +106,7 @@ export const LightFieldCreator: FC<LightFieldCreatorProps> = ({ sequenceExtracto
           <h3>Quilt image ({COLS * ROWS} frames)</h3>
           <QuiltImage
             focus={focus}
-            frames={leftToRightSequence}
+            frames={frames}
             onRendered={(canvas) => (renderedCanvasRef.current = canvas)}
           />
         </>

@@ -41,7 +41,6 @@ export const LightFieldFocusEditor: FC<LightFieldFocusEditorProps> = ({
 
   useEffect(() => {
     if (lightFieldMaterial) {
-      console.log('focus', focus);
       lightFieldMaterial.uniforms.focus.value = focus;
     }
   }, [focus, lightFieldMaterial]);
