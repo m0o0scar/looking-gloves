@@ -15,3 +15,10 @@ mark {
   padding: 5px 10px;
   border-radius: 10px;
 }
+
+/* fix daisy button won't show loading spinner issue */
+.btn.loading.btn-square:before {
+  border: 2px solid #fff;
+  border-top-color: transparent;
+  border-left-color: transparent;
+}

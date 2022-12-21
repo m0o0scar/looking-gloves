@@ -61,6 +61,30 @@ export const LightFieldFocusEditor: FC<LightFieldFocusEditorProps> = ({
       <h2>Adjust light field focus</h2>
       <p>Drag the slider below to focus on your target</p>
 
+      <div className="w-full flex items-center gap-4">
+        <input
+          type="range"
+          className="range"
+          min="-0.02"
+          max="0.02"
+          step="0.0001"
+          value={focus}
+          onChange={(e) => setFocus(parseFloat(e.target.value))}
+        />
+        <button className="btn" onClick={() => onFocusConfirm?.(focus * SCALE)}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-6 h-6"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+          </svg>
+        </button>
+      </div>
+
       <Canvas
         flat
         linear
@@ -72,22 +96,6 @@ export const LightFieldFocusEditor: FC<LightFieldFocusEditorProps> = ({
           <planeGeometry args={[planeSize, planeSize, 1, 1]} />
         </mesh>
       </Canvas>
-
-      <input
-        type="range"
-        className="range"
-        min="-0.02"
-        max="0.02"
-        step="0.0001"
-        value={focus}
-        onChange={(e) => setFocus(parseFloat(e.target.value))}
-      />
-
-      <div className="w-full text-right">
-        <button className="btn" onClick={() => onFocusConfirm?.(focus * SCALE)}>
-          Done
-        </button>
-      </div>
     </div>
   );
 };
