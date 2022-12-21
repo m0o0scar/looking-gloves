@@ -1,6 +1,6 @@
 import { COLS, ROWS, FRAME_WIDTH } from '@utils/constant';
 import { triggerDownload } from '@utils/download';
-import { imagesToVideo } from '@utils/video';
+import { framesAreLeftToRight, imagesToVideo } from '@utils/video';
 import JSZip from 'jszip';
 import { debounce, last } from 'lodash';
 import { FC, ReactNode, useEffect, useRef, useState } from 'react';
@@ -10,34 +10,21 @@ import { ExtractingFramesProgress } from './ExtractingFramesProgress';
 import { LightFieldCrossEyesViewer } from './LightFieldCrossEyesViewer';
 import { LightFieldFocusEditor } from './LightFieldFocusEditor';
 import { QuiltImage } from './QuiltImage';
-import { SequenceOrderSelector } from './SequenceOrderSelector';
 
 export interface LightFieldCreatorProps {
   sequenceExtractor?: (params: Partial<SequenceExtractorProps>) => ReactNode;
 }
 
-export const LightFieldCreator: FC<LightFieldCreatorProps> = ({
-  sequenceExtractor,
-}) => {
+export const LightFieldCreator: FC<LightFieldCreatorProps> = ({ sequenceExtractor }) => {
   // overall status
-  const [status, setStatus] = useState<
-    'idle' | 'extracting' | 'choosingOrder' | 'adjustFocus' | 'preview'
-  >('idle');
+  const [status, setStatus] = useState<'idle' | 'extracting' | 'adjustFocus' | 'preview'>('idle');
 
   // extraction progress
   const [progress, setProgress] = useState(0);
 
   // frames
-  const [flip, setFlip] = useState(false);
-  const [leftToRightSequence, setLeftToRightSequence] = useState<
-    HTMLCanvasElement[] | undefined
-  >();
+  const [leftToRightSequence, setLeftToRightSequence] = useState<HTMLCanvasElement[] | undefined>();
   const [frames, setFrames] = useState<HTMLCanvasElement[] | undefined>();
-
-  // sequence order
-  const [firstAndLastFrame, setFirstAndLastFrame] = useState<
-    [HTMLCanvasElement, HTMLCanvasElement] | undefined
-  >();
 
   // light field focus
   const [focus, setFocus] = useState(0);
@@ -45,7 +32,6 @@ export const LightFieldCreator: FC<LightFieldCreatorProps> = ({
   const renderedCanvasRef = useRef<HTMLCanvasElement>();
 
   const [savingQuiltImage, setSavingQuiltImage] = useState(false);
-  const [savingLightfield, setSavingLightfield] = useState(false);
 
   const _saveQuiltImage = debounce(() => {
     if (!renderedCanvasRef.current) return;
@@ -68,69 +54,16 @@ export const LightFieldCreator: FC<LightFieldCreatorProps> = ({
     _saveQuiltImage();
   };
 
-  const _saveLightfield = debounce(async () => {
-    if (!frames?.length) return;
-
-    const hopConfig = {
-      movie: false,
-      mediaType: 'photoset',
-      quilt_settings: {
-        viewX: 1,
-        viewY: 1,
-        viewTotal: frames.length,
-        invertViews: true,
-        aspect: -1.0,
-      },
-      depthiness: 1.0,
-      depthInversion: false,
-      chromaDepth: false,
-      depthPosition: 'right',
-      focus: focus * (flip ? 1 : -1),
-      viewOrderReversed: !flip,
-      zoom: 1.0,
-      position_x: 0.0,
-      position_y: 0.0,
-      duration: 10.0,
-    };
-
-    var zip = new JSZip();
-    const video = await imagesToVideo(frames);
-    zip.file('lightfield.mp4', video, { binary: true });
-    zip.file('lightfield.mp4.json', JSON.stringify(hopConfig, null, 2));
-    // for (let i = 0; i < frames.length; i++) {
-    //   const imgData = frames[i]
-    //     .toDataURL('image/jpeg', 0.9)
-    //     .replace('data:image/jpeg;base64,', '');
-    //   zip.file(`${i.toString().padStart(3, '0')}.jpg`, imgData, {
-    //     base64: true,
-    //   });
-    // }
-    const content = await zip.generateAsync({ type: 'blob' });
-
-    const name = Date.now();
-    const filename = `${name}_lightfield.hop`;
-    // const filename = `${name}_lightfield.zip`;
-    const url = URL.createObjectURL(content);
-    triggerDownload(url, filename);
-
-    URL.revokeObjectURL(url);
-    setSavingLightfield(false);
-  }, 500);
-
-  const saveLightfield = () => {
-    setSavingLightfield(true);
-    _saveLightfield();
-  };
-
-  const scrollToBottom = () => {
-    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-  };
-
   const onSourceProvided = () => setStatus('extracting');
 
-  const onSequenceOrderSelected = (shouldReverse: boolean) => {
-    if (shouldReverse) setFlip(true);
-    setStatus('adjustFocus');
+  const onSequenceExtracted = (sequence?: HTMLCanvasElement[]) => {
+    if (sequence?.length) {
+      const isL2R = framesAreLeftToRight(sequence);
+      const orderedSequence = isL2R ? sequence : [...sequence].reverse();
+      setLeftToRightSequence(orderedSequence);
+      setFrames(orderedSequence);
+      setStatus('adjustFocus');
+    }
   };
 
   const onFocusConfirm = (value: number) => {
@@ -138,69 +71,22 @@ export const LightFieldCreator: FC<LightFieldCreatorProps> = ({
     setStatus('preview');
   };
 
-  useEffect(() => {
-    if (!leftToRightSequence?.length) {
-      setFrames(undefined);
-    } else {
-      setFrames(
-        flip ? [...leftToRightSequence].reverse() : leftToRightSequence
-      );
-    }
-  }, [leftToRightSequence, flip]);
-
-  // remember the 1st and last frame ONCE when frames are extracted
-  useEffect(() => {
-    if (!leftToRightSequence?.length) {
-      setFirstAndLastFrame(undefined);
-    }
-    if (leftToRightSequence?.length && !firstAndLastFrame) {
-      setFirstAndLastFrame([
-        leftToRightSequence![0],
-        last(leftToRightSequence)!,
-      ]);
-      setStatus('choosingOrder');
-    }
-  }, [leftToRightSequence, firstAndLastFrame]);
-
-  useEffect(() => {
-    if (status === 'choosingOrder' || status === 'adjustFocus') {
-      scrollToBottom();
-    }
-  }, [status]);
-
   return (
     <>
       {/* sequence decoder which extract frames from a source (video file, image sequence zip, etc.) */}
       {sequenceExtractor?.({
         onSourceProvided,
         onProgress: setProgress,
-        onFramesExtracted: setLeftToRightSequence,
+        onFramesExtracted: onSequenceExtracted,
       })}
 
       {/* frames extraction progress */}
-      {status === 'extracting' && (
-        <ExtractingFramesProgress progress={progress} />
-      )}
-
-      {/* sequence order */}
-      {status === 'choosingOrder' && (
-        <>
-          <div className="divider"></div>
-          <SequenceOrderSelector
-            firstFrame={firstAndLastFrame?.[0]}
-            lastFrame={firstAndLastFrame?.[1]}
-            onOrderSelected={onSequenceOrderSelected}
-          />
-        </>
-      )}
+      {status === 'extracting' && <ExtractingFramesProgress progress={progress} />}
 
       {status === 'adjustFocus' && (
         <>
           <div className="divider"></div>
-          <LightFieldFocusEditor
-            frames={leftToRightSequence}
-            onFocusConfirm={onFocusConfirm}
-          />
+          <LightFieldFocusEditor frames={leftToRightSequence} onFocusConfirm={onFocusConfirm} />
         </>
       )}
 
@@ -209,16 +95,6 @@ export const LightFieldCreator: FC<LightFieldCreatorProps> = ({
           <div className="divider"></div>
           <h2 className="flex items-center gap-2">Done ✌️😎</h2>
           <div className="flex gap-4">
-            {/* reverse frames sequence order */}
-            <div className="tooltip" data-tip="Reverse frames sequence order">
-              <button
-                className="btn btn-warning"
-                onClick={() => setFlip((value) => !value)}
-              >
-                Flip
-              </button>
-            </div>
-
             {/* download quilt image */}
             <button
               className="btn btn-success"
@@ -227,21 +103,14 @@ export const LightFieldCreator: FC<LightFieldCreatorProps> = ({
             >
               {savingQuiltImage ? 'Saving ...' : 'Save Quilt'}
             </button>
-            <button
-              className="btn btn-success"
-              disabled={savingLightfield}
-              onClick={saveLightfield}
-            >
-              {savingLightfield ? 'Saving ...' : 'Save Light Field'}
-            </button>
           </div>
 
           <LightFieldCrossEyesViewer frames={frames} />
 
           <h3>Quilt image ({COLS * ROWS} frames)</h3>
           <QuiltImage
-            focus={focus * (flip ? 1 : -1)}
-            frames={frames}
+            focus={focus}
+            frames={leftToRightSequence}
             onRendered={(canvas) => (renderedCanvasRef.current = canvas)}
           />
         </>

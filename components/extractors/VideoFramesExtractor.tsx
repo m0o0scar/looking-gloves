@@ -39,25 +39,14 @@ export const VideoFramesExtractor: FC<SequenceExtractorProps> = ({
     frame.height = videoHeight;
     const ctx = frame.getContext('2d')!;
 
-    ctx.drawImage(
-      videoRef.current!,
-      0,
-      0,
-      videoWidth,
-      videoHeight,
-      0,
-      0,
-      videoWidth,
-      videoHeight
-    );
+    ctx.drawImage(videoRef.current!, 0, 0, videoWidth, videoHeight, 0, 0, videoWidth, videoHeight);
     setFrames((frames) => [...frames, frame]);
 
     // continue to seek for next frame, or callback when collected enough frames
     if (frameIndexRef.current < numberOfFrames - 1) {
       frameIndexRef.current += 1;
       onProgress?.(frameIndexRef.current / numberOfFrames);
-      videoRef.current!.currentTime +=
-        videoRef.current!.duration / numberOfFrames;
+      videoRef.current!.currentTime += videoRef.current!.duration / numberOfFrames;
     } else {
       onProgress?.(1);
     }
