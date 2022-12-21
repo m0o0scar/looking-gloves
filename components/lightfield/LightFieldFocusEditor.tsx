@@ -65,7 +65,7 @@ export const LightFieldFocusEditor: FC<LightFieldFocusEditorProps> = ({
         <input
           type="range"
           className="range"
-          min="-0.02"
+          min="0"
           max="0.02"
           step="0.0001"
           value={focus}
