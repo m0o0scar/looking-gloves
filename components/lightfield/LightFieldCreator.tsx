@@ -1,5 +1,6 @@
-import { FC, ReactNode, useRef, useState } from 'react';
+import { FC, ReactNode, useEffect, useState } from 'react';
 
+import { scrollToBottom } from '../../utils/dom';
 import { SequenceExtractorProps } from '../extractors/types';
 import { ExtractingFramesProgress } from './ExtractingFramesProgress';
 import { LightFieldFocusEditor } from './LightFieldFocusEditor';
@@ -40,6 +41,12 @@ export const LightFieldCreator: FC<LightFieldCreatorProps> = ({ sequenceExtracto
     setFocus(value);
     setStatus('preview');
   };
+
+  useEffect(() => {
+    if (status === 'adjustFocus') {
+      scrollToBottom();
+    }
+  }, [status]);
 
   return (
     <>
