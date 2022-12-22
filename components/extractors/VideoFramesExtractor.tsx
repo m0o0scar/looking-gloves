@@ -1,5 +1,4 @@
 import { COLS, ROWS } from '@utils/constant';
-import { framesAreLeftToRight } from '@utils/video';
 import React, { FC, useState, useEffect, useRef } from 'react';
 
 import { SequenceExtractorProps } from './types';
@@ -77,8 +76,6 @@ export const VideoFramesExtractor: FC<SequenceExtractorProps> = ({
     if (!frames.length) {
       onFramesExtracted?.();
     } else if (frames.length >= numberOfFrames) {
-      const isLeftToRight = framesAreLeftToRight(frames);
-      if (!isLeftToRight) frames.reverse();
       onFramesExtracted?.(frames);
     }
   }, [frames]);

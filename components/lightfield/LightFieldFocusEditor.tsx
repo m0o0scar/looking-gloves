@@ -65,24 +65,46 @@ export const LightFieldFocusEditor: FC<LightFieldFocusEditorProps> = ({
         <input
           type="range"
           className="range"
-          min="0"
+          min="-0.02"
           max="0.02"
           step="0.0001"
           value={focus}
           onChange={(e) => setFocus(parseFloat(e.target.value))}
         />
-        <button className="btn" onClick={() => onFocusConfirm?.(focus * SCALE)}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-6 h-6"
+        <div className="tooltip" data-tip="Cancel">
+          <button
+            className="btn btn-square btn-error"
+            onClick={() => onFocusConfirm?.(initialFocus)}
           >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-          </svg>
-        </button>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-6 h-6"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div className="tooltip" data-tip="Confirm">
+          <button
+            className="btn btn-square btn-success"
+            onClick={() => onFocusConfirm?.(focus * SCALE)}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-6 h-6"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+            </svg>
+          </button>
+        </div>
       </div>
 
       <Canvas

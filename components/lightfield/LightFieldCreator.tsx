@@ -3,6 +3,7 @@ import { FC, ReactNode, useEffect, useState } from 'react';
 import { scrollToBottom } from '../../utils/dom';
 import { SequenceExtractorProps } from '../extractors/types';
 import { ExtractingFramesProgress } from './ExtractingFramesProgress';
+import { LightFieldCrossEyesViewer } from './LightFieldCrossEyesViewer';
 import { LightFieldFocusEditor } from './LightFieldFocusEditor';
 import { QuiltImage } from './QuiltImage';
 import { QuiltImageSaveButton } from './QuiltImageSaveButton';
@@ -38,8 +39,9 @@ export const LightFieldCreator: FC<LightFieldCreatorProps> = ({ sequenceExtracto
   };
 
   const onFocusConfirm = (value: number) => {
-    setFocus(value);
+    setFocus(Math.abs(value));
     setStatus('preview');
+    if (value < 0) setFrames([...frames!].reverse());
   };
 
   useEffect(() => {
@@ -105,6 +107,8 @@ export const LightFieldCreator: FC<LightFieldCreatorProps> = ({ sequenceExtracto
             {/* download quilt image */}
             <QuiltImageSaveButton quiltImage={quiltImage} />
           </div>
+
+          {/* <LightFieldCrossEyesViewer frames={frames} /> */}
 
           <QuiltImage focus={focus} frames={frames} onRendered={setQuiltImage} />
         </>

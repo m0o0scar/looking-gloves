@@ -59,11 +59,12 @@ export const QuiltImage: FC<QuiltImageProps> = ({
   }, [frames]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      style={{ maxWidth: `min(100%, 600px)` }}
-      className={cls('rounded-lg drop-shadow-lg max-w-3xl', className)}
-      {...props}
-    />
+    <div className="max-w-2xl">
+      <canvas
+        ref={canvasRef}
+        className={cls('rounded-lg drop-shadow-lg w-full', className)}
+        {...props}
+      />
+    </div>
   );
 };
