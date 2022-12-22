@@ -1,4 +1,5 @@
 import { COLS, ROWS } from '@utils/constant';
+import { loadImage } from '@utils/image';
 import React, { FC, useState, useEffect, useRef } from 'react';
 
 import { SequenceExtractorProps } from './types';
@@ -25,6 +26,27 @@ export const VideoFramesExtractor: FC<SequenceExtractorProps> = ({
   const frameWidth = useRef(0);
   const frameHeight = useRef(0);
 
+  const createFrame = (source: CanvasImageSource) => {
+    const frame = document.createElement('canvas');
+    frame.width = frameWidth.current;
+    frame.height = frameHeight.current;
+
+    let sw = 0,
+      sh = 0;
+    if (source instanceof HTMLVideoElement) {
+      sw = source.videoWidth;
+      sh = source.videoHeight;
+    } else if (source instanceof HTMLImageElement) {
+      sw = source.naturalWidth;
+      sh = source.naturalHeight;
+    }
+
+    const ctx = frame.getContext('2d')!;
+    ctx.drawImage(source, 0, 0, sw, sh, 0, 0, frameWidth.current, frameHeight.current);
+
+    return frame;
+  };
+
   // start seeking frames when video loaded
   const onVideoMetadataLoaded = () => {
     // start extracting frames from the beginning
@@ -46,23 +68,7 @@ export const VideoFramesExtractor: FC<SequenceExtractorProps> = ({
   // draw video frame to canvas and seek for the next frame
   const onVideoSeeked = () => {
     // draw current frame of the video to the canvas
-    const { videoWidth, videoHeight } = videoRef.current!;
-    const frame = document.createElement('canvas');
-    frame.width = frameWidth.current;
-    frame.height = frameHeight.current;
-    const ctx = frame.getContext('2d')!;
-
-    ctx.drawImage(
-      videoRef.current!,
-      0,
-      0,
-      videoWidth,
-      videoHeight,
-      0,
-      0,
-      frameWidth.current,
-      frameHeight.current
-    );
+    const frame = createFrame(videoRef.current!);
     setFrames((frames) => [...frames, frame]);
 
     // continue to seek for next frame, or callback when collected enough frames
@@ -73,6 +79,25 @@ export const VideoFramesExtractor: FC<SequenceExtractorProps> = ({
     } else {
       onProgress?.(1);
     }
+  };
+
+  const onImageFilesSelected = async (images: File[]) => {
+    const firstImage = await loadImage(images[0]);
+    frameWidth.current = Math.floor(Math.min(firstImage.naturalWidth, maxFrameWidth));
+    frameHeight.current = Math.floor(
+      (frameWidth.current / firstImage.naturalWidth) * firstImage.naturalHeight
+    );
+
+    const frames: HTMLCanvasElement[] = [];
+    for (let i = 0; i < images.length; i += 1) {
+      const img = await loadImage(images[i]);
+      const frame = createFrame(img);
+      frames.push(frame);
+      onProgress?.(i / images.length);
+    }
+
+    setFrames(frames);
+    onFramesExtracted?.(frames);
   };
 
   // when video file is selected, start extracting frames from it
@@ -88,9 +113,15 @@ export const VideoFramesExtractor: FC<SequenceExtractorProps> = ({
       onProgress?.(0);
       setFrames(NoFrames);
 
-      const file = files[0];
-      const url = URL.createObjectURL(file);
-      videoRef.current!.src = url;
+      if (files[0].type.startsWith('video/')) {
+        const file = files[0];
+        const url = URL.createObjectURL(file);
+        videoRef.current!.src = url;
+      } else {
+        const images = Array.from(files).filter((file) => file.type.startsWith('image/'));
+        images.sort((a, b) => a.name.localeCompare(b.name));
+        onImageFilesSelected(images);
+      }
     }
   }, [files]);
 
@@ -111,7 +142,8 @@ export const VideoFramesExtractor: FC<SequenceExtractorProps> = ({
       <input
         ref={inputRef}
         type="file"
-        accept="video/*"
+        accept="video/*, image/*"
+        multiple
         className="file-input h-auto"
         onChange={(e) => setFiles(e.target.files)}
       />

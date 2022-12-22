@@ -1,4 +1,4 @@
-import { DataArrayTexture, ShaderMaterial, Uniform, Vector2 } from 'three';
+import { DataArrayTexture, ShaderMaterial } from 'three';
 
 const fragmentShader = `
 precision highp float;
@@ -55,10 +55,7 @@ void main() {
 }
 `;
 
-export const createLightFieldMaterial = (
-  texture: DataArrayTexture,
-  numberOfFrames: number
-) =>
+export const createLightFieldMaterial = (texture: DataArrayTexture, numberOfFrames: number) =>
   new ShaderMaterial({
     uniforms: {
       field: { value: texture },

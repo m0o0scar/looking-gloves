@@ -28,8 +28,11 @@ export const QuiltImage: FC<QuiltImageProps> = ({
       canvasRef.current!.width = COLS * FRAME_WIDTH;
       canvasRef.current!.height = ROWS * FRAME_HEIGHT;
 
-      // draw frames to canvas
       const ctx = canvasRef.current!.getContext('2d')!;
+      ctx.fillStyle = 'black';
+      ctx.fillRect(0, 0, canvasRef.current!.width, canvasRef.current!.height);
+
+      // draw frames to canvas
       const numberOfFrames = COLS * ROWS;
       for (let i = 0; i < frames.length; i++) {
         const frame = frames[i];
