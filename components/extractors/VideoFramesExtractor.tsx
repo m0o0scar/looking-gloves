@@ -6,6 +6,7 @@ import { SequenceExtractorProps } from './types';
 const NoFrames: HTMLCanvasElement[] = [];
 
 const numberOfFrames = COLS * ROWS;
+const maxFrameWidth = 1000;
 
 export const VideoFramesExtractor: FC<SequenceExtractorProps> = ({
   onSourceProvided,
@@ -21,25 +22,47 @@ export const VideoFramesExtractor: FC<SequenceExtractorProps> = ({
   const [frames, setFrames] = useState<HTMLCanvasElement[]>(NoFrames);
 
   const frameIndexRef = useRef(0);
+  const frameWidth = useRef(0);
+  const frameHeight = useRef(0);
 
   // start seeking frames when video loaded
   const onVideoMetadataLoaded = () => {
     // start extracting frames from the beginning
     frameIndexRef.current = 0;
     videoRef.current!.currentTime = 0;
+
+    const { videoWidth, videoHeight } = videoRef.current!;
+    frameWidth.current = Math.floor(Math.min(videoWidth, maxFrameWidth));
+    frameHeight.current = Math.floor((frameWidth.current / videoWidth) * videoHeight);
+
+    console.log(
+      'video loaded',
+      `duration = ${videoRef.current!.duration}s`,
+      `video size = ${videoRef.current!.videoWidth}px x ${videoRef.current!.videoHeight}px`,
+      `frame size = ${frameWidth.current}px x ${frameHeight.current}px`
+    );
   };
 
   // draw video frame to canvas and seek for the next frame
   const onVideoSeeked = () => {
-    const { videoWidth, videoHeight } = videoRef.current!;
-
     // draw current frame of the video to the canvas
+    const { videoWidth, videoHeight } = videoRef.current!;
     const frame = document.createElement('canvas');
-    frame.width = videoWidth;
-    frame.height = videoHeight;
+    frame.width = frameWidth.current;
+    frame.height = frameHeight.current;
     const ctx = frame.getContext('2d')!;
 
-    ctx.drawImage(videoRef.current!, 0, 0, videoWidth, videoHeight, 0, 0, videoWidth, videoHeight);
+    ctx.drawImage(
+      videoRef.current!,
+      0,
+      0,
+      videoWidth,
+      videoHeight,
+      0,
+      0,
+      frameWidth.current,
+      frameHeight.current
+    );
     setFrames((frames) => [...frames, frame]);
 
     // continue to seek for next frame, or callback when collected enough frames
