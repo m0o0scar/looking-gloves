@@ -1,3 +1,5 @@
+export const PRODUCT_EMOJI = '🖼️';
+export const PRODUCT_NAME_SHORT = 'Looking Gloves';
 export const PRODUCT_NAME = '🖼️ Looking Gloves';
 export const PRODUCT_DESC_SHORT = '🛠️ Tools for creating Looking Glass holograms';
 

@@ -1,4 +1,4 @@
-import { PRODUCT_NAME } from '@utils/constant';
+import { PRODUCT_NAME_SHORT } from '@utils/constant';
 import cls from 'classnames';
 import Head from 'next/head';
 import { FC, HTMLAttributes } from 'react';
@@ -37,7 +37,7 @@ export const PageContainer: FC<PageContainerProps> = ({
         )}
         {title && (
           <title>
-            {PRODUCT_NAME} - {title}
+            {PRODUCT_NAME_SHORT} - {title}
           </title>
         )}
       </Head>

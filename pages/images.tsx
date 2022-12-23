@@ -2,15 +2,15 @@ import type { NextPage } from 'next';
 
 import { PageContainer } from '@components/common/PageContainer';
 
-import { VideoFramesExtractor } from '../components/extractors/VideoFramesExtractor';
+import { ImageSequenceExtractor } from '../components/extractors/ImageSequenceExtractor';
 import { LightFieldCreator } from '../components/lightfield/LightFieldCreator';
 
 const VideoPage: NextPage = () => {
   return (
-    <PageContainer favicon="🎥" title=" Video to Light Field" subtitle="🎥 Video">
+    <PageContainer favicon="🎥" title="Image Sequence to Light Field" subtitle="🎥 Images/Video">
       <LightFieldCreator
         sequenceExtractor={({ onSourceProvided, onProgress, onFramesExtracted }) => (
-          <VideoFramesExtractor
+          <ImageSequenceExtractor
             onSourceProvided={onSourceProvided}
             onProgress={onProgress}
             onFramesExtracted={onFramesExtracted}

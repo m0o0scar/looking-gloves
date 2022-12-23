@@ -8,7 +8,7 @@ const NoFrames: HTMLCanvasElement[] = [];
 
 const maxFrameWidth = 1000;
 
-export const VideoFramesExtractor: FC<SequenceExtractorProps> = ({
+export const ImageSequenceExtractor: FC<SequenceExtractorProps> = ({
   onSourceProvided,
   onProgress,
   onFramesExtracted,
@@ -52,7 +52,7 @@ export const VideoFramesExtractor: FC<SequenceExtractorProps> = ({
     // assume 30 fps, calculate the total number of frames available
     const totalFrames = Math.floor(videoRef.current!.duration * 30);
     const numberOfFramesToExtract = Math.ceil(totalFrames / COLS) * COLS;
-    expectedNumberOfFrames.current = Math.min(numberOfFramesToExtract, 96);
+    expectedNumberOfFrames.current = Math.min(numberOfFramesToExtract, 48);
     console.log('[Video] expected number of frames', expectedNumberOfFrames.current);
 
     // start extracting frames from the beginning
@@ -144,7 +144,11 @@ export const VideoFramesExtractor: FC<SequenceExtractorProps> = ({
 
   return (
     <>
-      <h2>Please select a video file</h2>
+      <h2>Please select video or light field photoset</h2>
+
+      <p>
+        For Light Field photoset, please select <mark>ALL</mark> the image files.
+      </p>
 
       {/* file input for selecting video file */}
       <input
