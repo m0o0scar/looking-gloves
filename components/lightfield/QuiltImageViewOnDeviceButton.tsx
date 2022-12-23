@@ -1,4 +1,4 @@
-import { showQuiltImage } from '@utils/holoplay';
+import { holoplayClient } from '@utils/holoplay';
 import cls from 'classnames';
 import { debounce } from 'lodash';
 import { FC, useEffect, useState } from 'react';
@@ -18,12 +18,12 @@ export const QuiltImageViewOnDeviceButton: FC<QuiltImageViewOnDeviceButtonProps>
 
   const autoShowQuiltOnDevice = async () => {
     setPending(true);
-    await showQuiltImage(quiltImage, numberOfFrames, { silent: true });
+    await holoplayClient.showQuiltImage(quiltImage!, numberOfFrames!, { silent: true });
     setPending(false);
   };
 
   const _onClick = debounce(async () => {
-    await showQuiltImage(quiltImage, numberOfFrames);
+    await holoplayClient.showQuiltImage(quiltImage!, numberOfFrames!);
     setPending(false);
   }, 300);
 
