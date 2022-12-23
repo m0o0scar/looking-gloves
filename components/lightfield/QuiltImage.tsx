@@ -2,7 +2,7 @@ import { drawSourceOntoDest } from '@utils/canvas';
 import cls from 'classnames';
 import { FC, useEffect, useRef, HTMLAttributes } from 'react';
 
-import { COLS, ROWS, FRAME_WIDTH, FRAME_HEIGHT } from '../../utils/constant';
+import { COLS, FRAME_WIDTH, FRAME_HEIGHT } from '../../utils/constant';
 
 export interface QuiltImageProps extends HTMLAttributes<HTMLCanvasElement> {
   focus?: number;
@@ -25,26 +25,26 @@ export const QuiltImage: FC<QuiltImageProps> = ({
       canvasRef.current!.height = 0;
     } else {
       // update canvas size
+      const rows = Math.ceil(frames.length / COLS);
       canvasRef.current!.width = COLS * FRAME_WIDTH;
-      canvasRef.current!.height = ROWS * FRAME_HEIGHT;
+      canvasRef.current!.height = rows * FRAME_HEIGHT;
 
       const ctx = canvasRef.current!.getContext('2d')!;
       ctx.fillStyle = 'black';
       ctx.fillRect(0, 0, canvasRef.current!.width, canvasRef.current!.height);
 
       // draw frames to canvas
-      const numberOfFrames = COLS * ROWS;
       for (let i = 0; i < frames.length; i++) {
         const frame = frames[i];
         const col = i % COLS;
-        const row = ROWS - 1 - Math.floor(i / COLS);
+        const row = rows - 1 - Math.floor(i / COLS);
         const x = col * FRAME_WIDTH;
         const y = row * FRAME_HEIGHT;
 
         // calculate offset according to the focus value
         // to draw the focus target in the center of the frame
         const focusValue = focus / 10;
-        const offset = (i - numberOfFrames / 2) * -focusValue * frame.width;
+        const offset = (i - frames.length / 2) * -focusValue * frame.width;
 
         // draw the actual frame
         drawSourceOntoDest(frame, canvasRef.current!, {

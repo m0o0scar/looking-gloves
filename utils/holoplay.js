@@ -1,6 +1,6 @@
 import * as HoloPlayCore from 'holoplay-core';
 import { toast } from 'react-toastify';
-import { COLS, ROWS } from './constant';
+import { COLS } from './constant';
 
 const TAG = '[HoloPlay]';
 
@@ -33,19 +33,20 @@ const connect = async (options) => {
   });
 }
 
-export const showQuiltImage = async (quiltInCanvas, options) => {
+export const showQuiltImage = async (quiltInCanvas, numberOfFrames, options) => {
   try {
     const client = await connect(options);
 
+    const rows = Math.ceil(numberOfFrames / COLS);
     const frameWidth = quiltInCanvas.width / COLS;
-    const frameHeight = quiltInCanvas.height / ROWS;
+    const frameHeight = quiltInCanvas.height / rows;
     const aspect = frameWidth / frameHeight;
 
     const imageData = quiltInCanvas.toDataURL('image/jpeg', 0.9).replace(/^data:image\/jpeg;base64,/, '')
     const binaryData = new Uint8Array(atob(imageData).split('').map(c => c.charCodeAt(0)));
 
     const showCmd = new HoloPlayCore.ShowMessage(
-      { vx: COLS, vy: ROWS, vtotal: COLS * ROWS, aspect },
+      { vx: COLS, vy: rows, vtotal: numberOfFrames, aspect },
       binaryData,
       0
     );

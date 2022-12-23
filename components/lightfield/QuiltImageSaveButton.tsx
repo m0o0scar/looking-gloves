@@ -1,4 +1,4 @@
-import { COLS, ROWS } from '@utils/constant';
+import { COLS } from '@utils/constant';
 import { triggerDownload } from '@utils/download';
 import cls from 'classnames';
 import { debounce } from 'lodash';
@@ -6,21 +6,26 @@ import { FC, useState } from 'react';
 
 export interface QuiltImageSaveButtonProps {
   quiltImage?: HTMLCanvasElement;
+  numberOfFrames?: number;
 }
 
-export const QuiltImageSaveButton: FC<QuiltImageSaveButtonProps> = ({ quiltImage }) => {
+export const QuiltImageSaveButton: FC<QuiltImageSaveButtonProps> = ({
+  quiltImage,
+  numberOfFrames = 0,
+}) => {
   const [pending, setPending] = useState(false);
 
   const _saveQuiltImage = debounce(() => {
-    if (!quiltImage) return;
+    if (!quiltImage || !numberOfFrames) return;
 
     // Quilt image file name conventions:
     // https://docs.lookingglassfactory.com/keyconcepts/quilts#file-naming-conventions
+    const rows = Math.ceil(numberOfFrames / COLS);
     const frameWidth = quiltImage.width / COLS;
-    const frameHeight = quiltImage.height / ROWS;
+    const frameHeight = quiltImage.height / rows;
     const aspectRatio = frameWidth / frameHeight;
     const name = Date.now();
-    const filename = `${name}_qs${COLS}x${ROWS}a${aspectRatio.toFixed(2)}.jpg`;
+    const filename = `${name}_qs${COLS}x${rows}a${aspectRatio.toFixed(2)}.jpg`;
 
     const url = quiltImage.toDataURL('image/jpeg', 0.9);
     triggerDownload(url, filename);

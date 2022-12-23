@@ -5,23 +5,25 @@ import { FC, useEffect, useState } from 'react';
 
 export interface QuiltImageViewOnDeviceButtonProps {
   quiltImage?: HTMLCanvasElement;
+  numberOfFrames?: number;
   autoShow?: boolean;
 }
 
 export const QuiltImageViewOnDeviceButton: FC<QuiltImageViewOnDeviceButtonProps> = ({
   quiltImage,
+  numberOfFrames,
   autoShow,
 }) => {
   const [pending, setPending] = useState(false);
 
   const autoShowQuiltOnDevice = async () => {
     setPending(true);
-    await showQuiltImage(quiltImage, { silent: true });
+    await showQuiltImage(quiltImage, numberOfFrames, { silent: true });
     setPending(false);
   };
 
   const _onClick = debounce(async () => {
-    await showQuiltImage(quiltImage);
+    await showQuiltImage(quiltImage, numberOfFrames);
     setPending(false);
   }, 300);
 

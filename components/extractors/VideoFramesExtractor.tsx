@@ -1,4 +1,4 @@
-import { COLS, ROWS } from '@utils/constant';
+import { COLS } from '@utils/constant';
 import { loadImage } from '@utils/image';
 import React, { FC, useState, useEffect, useRef } from 'react';
 
@@ -6,7 +6,6 @@ import { SequenceExtractorProps } from './types';
 
 const NoFrames: HTMLCanvasElement[] = [];
 
-const numberOfFrames = COLS * ROWS;
 const maxFrameWidth = 1000;
 
 export const VideoFramesExtractor: FC<SequenceExtractorProps> = ({
@@ -22,6 +21,7 @@ export const VideoFramesExtractor: FC<SequenceExtractorProps> = ({
   const videoRef = useRef<HTMLVideoElement>(null);
   const [frames, setFrames] = useState<HTMLCanvasElement[]>(NoFrames);
 
+  const expectedNumberOfFrames = useRef(0);
   const frameIndexRef = useRef(0);
   const frameWidth = useRef(0);
   const frameHeight = useRef(0);
@@ -49,6 +49,12 @@ export const VideoFramesExtractor: FC<SequenceExtractorProps> = ({
 
   // start seeking frames when video loaded
   const onVideoMetadataLoaded = () => {
+    // assume 30 fps, calculate the total number of frames available
+    const totalFrames = Math.floor(videoRef.current!.duration * 30);
+    const numberOfFramesToExtract = Math.ceil(totalFrames / COLS) * COLS;
+    expectedNumberOfFrames.current = Math.min(numberOfFramesToExtract, 96);
+    console.log('[Video] expected number of frames', expectedNumberOfFrames.current);
+
     // start extracting frames from the beginning
     frameIndexRef.current = 0;
     videoRef.current!.currentTime = 0;
@@ -72,16 +78,19 @@ export const VideoFramesExtractor: FC<SequenceExtractorProps> = ({
     setFrames((frames) => [...frames, frame]);
 
     // continue to seek for next frame, or callback when collected enough frames
-    if (frameIndexRef.current < numberOfFrames - 1) {
+    if (frameIndexRef.current < expectedNumberOfFrames.current - 1) {
       frameIndexRef.current += 1;
-      onProgress?.(frameIndexRef.current / numberOfFrames);
-      videoRef.current!.currentTime += videoRef.current!.duration / numberOfFrames;
+      onProgress?.(frameIndexRef.current / expectedNumberOfFrames.current);
+      videoRef.current!.currentTime += videoRef.current!.duration / expectedNumberOfFrames.current;
     } else {
       onProgress?.(1);
     }
   };
 
   const onImageFilesSelected = async (images: File[]) => {
+    expectedNumberOfFrames.current = images.length;
+    console.log('[Image] expected number of frames', images.length);
+
     const firstImage = await loadImage(images[0]);
     frameWidth.current = Math.floor(Math.min(firstImage.naturalWidth, maxFrameWidth));
     frameHeight.current = Math.floor(
@@ -97,7 +106,6 @@ export const VideoFramesExtractor: FC<SequenceExtractorProps> = ({
     }
 
     setFrames(frames);
-    onFramesExtracted?.(frames);
   };
 
   // when video file is selected, start extracting frames from it
@@ -125,11 +133,11 @@ export const VideoFramesExtractor: FC<SequenceExtractorProps> = ({
     }
   }, [files]);
 
-  // invoke callback when frames are extracted
+  // invoke callback when all frames are extracted
   useEffect(() => {
     if (!frames.length) {
       onFramesExtracted?.();
-    } else if (frames.length >= numberOfFrames) {
+    } else if (frames.length >= expectedNumberOfFrames.current) {
       onFramesExtracted?.(frames);
     }
   }, [frames]);
