@@ -1,5 +1,8 @@
 import { DataArrayTexture, ShaderMaterial } from 'three';
 
+// WebGL2 Light field renderer
+// forked and modified from https://github.com/hypothete/lightfield-webgl2
+
 const fragmentShader = `
 precision highp float;
 precision highp int;
