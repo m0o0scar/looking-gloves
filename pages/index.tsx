@@ -51,8 +51,25 @@ const HomePage: NextPage = () => {
           }
           link="/images"
           thumbnail="/assets/cover-images.jpg"
-          alert="Tutorial coming soon 🚧."
+          alert="🚧 Tutorial coming soon."
           alertClassName=""
+        />
+
+        <PageCard
+          title="🔫 Luma NeRF"
+          content={
+            <>
+              Convert{' '}
+              <a href="https://captures.lumalabs.ai/me" target="_blank" rel="noreferrer">
+                Luma AI
+              </a>{' '}
+              NeRF to light field with just its URL.
+            </>
+          }
+          link="/luma"
+          thumbnail="/assets/cover-luma.jpg"
+          alert="❗ Some of the light field output from Luma AI have curved camera path, which may lead to a toe-in/curve effect on the Looking Glass."
+          alertClassName="alert-warning"
         />
 
         <PageCard
