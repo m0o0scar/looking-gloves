@@ -1,3 +1,4 @@
+import { Analytics } from '@vercel/analytics/react';
 import type { AppProps } from 'next/app';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -20,6 +21,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
         pauseOnHover
         theme="light"
       />
+      <Analytics />
     </div>
   );
 }
