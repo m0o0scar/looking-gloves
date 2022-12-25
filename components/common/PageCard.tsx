@@ -34,7 +34,7 @@ export const PageCard: FC<PageCardProps> = ({
 
         {/* if thumbnail is given as string, show it as image */}
         {thumbnail && typeof thumbnail === 'string' && (
-          <img src={thumbnail} alt="cover" className="m-0 max-w-full aspect-[3/2]" />
+          <img src={thumbnail} alt="cover" className="m-0 max-w-full aspect-[3/2] object-cover" />
         )}
 
         {/* if thumbnail is given as ReactNode, show it as is */}
@@ -44,7 +44,7 @@ export const PageCard: FC<PageCardProps> = ({
         <div className="card-body flex flex-col">
           <h2 className="card-title m-0">{title}</h2>
           <div>{content}</div>
-          {alert && <div className={cls('text-xs alert', alertClassName)}>{alert}</div>}
+          {alert && <div className={cls('text-xs alert mt-2', alertClassName)}>{alert}</div>}
         </div>
       </div>
     </Link>
