@@ -3,7 +3,7 @@ import { FC, ReactNode, useEffect, useState } from 'react';
 import { scrollToBottom } from '../../utils/dom';
 import { SequenceExtractorProps } from '../extractors/types';
 import { ExtractingFramesProgress } from './ExtractingFramesProgress';
-import { LightFieldCrossEyesViewer } from './LightFieldCrossEyesViewer';
+// import { LightFieldCrossEyesViewer } from './LightFieldCrossEyesViewer';
 import { LightFieldFocusEditor } from './LightFieldFocusEditor';
 import { QuiltImage } from './QuiltImage';
 import { QuiltImageSaveButton } from './QuiltImageSaveButton';
@@ -22,6 +22,7 @@ export const LightFieldCreator: FC<LightFieldCreatorProps> = ({ sequenceExtracto
 
   // frames
   const [frames, setFrames] = useState<HTMLCanvasElement[] | undefined>();
+  const [enforceOrder, setEnforceOrder] = useState(false);
 
   // light field focus
   const [focus, setFocus] = useState(0);
@@ -30,18 +31,24 @@ export const LightFieldCreator: FC<LightFieldCreatorProps> = ({ sequenceExtracto
 
   const onSourceProvided = () => setStatus('extracting');
 
-  const onSequenceExtracted = (sequence?: HTMLCanvasElement[]) => {
+  const onSequenceExtracted = (sequence?: HTMLCanvasElement[], enforceOrder = false) => {
     if (sequence?.length) {
       setFocus(0);
       setFrames(sequence);
+      setEnforceOrder(enforceOrder);
       setStatus('adjustFocus');
     }
   };
 
   const onFocusConfirm = (value: number) => {
-    setFocus(Math.abs(value));
+    if (!enforceOrder) {
+      setFocus(Math.abs(value));
+      if (value < 0) setFrames([...frames!].reverse());
+    } else {
+      setFocus(value);
+    }
+
     setStatus('preview');
-    if (value < 0) setFrames([...frames!].reverse());
   };
 
   useEffect(() => {
