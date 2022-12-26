@@ -39,7 +39,10 @@ export const QuiltImageViewOnDeviceButton: FC<QuiltImageViewOnDeviceButtonProps>
   }, [quiltImage, autoShow]);
 
   return (
-    <div className="tooltip" data-tip="View on Looking Glass">
+    <div
+      className="tooltip"
+      data-tip="View on Looking Glass (Make sure Looking Glass Studio is closed)"
+    >
       <button
         className={cls('btn btn-square btn-info', { loading: pending })}
         disabled={pending || !quiltImage}
