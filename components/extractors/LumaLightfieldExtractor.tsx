@@ -1,9 +1,14 @@
-import { COLS } from '@utils/constant';
+import Slider from '@mui/material/Slider';
 import { fetchWithProgress } from '@utils/fetch';
 import { FC, useEffect, useState } from 'react';
 import { unzip } from 'unzipit';
 
+import { ImageSequenceAnimation } from '@components/common/ImageSequenceAnimation';
+
 import { SequenceExtractorProps } from './types';
+
+const initialNumberOfFrames = 48;
+const maxNumberOfFrames = 96;
 
 export const LumaLightfieldExtractor: FC<SequenceExtractorProps> = ({
   onSourceProvided,
@@ -13,6 +18,9 @@ export const LumaLightfieldExtractor: FC<SequenceExtractorProps> = ({
   const [url, setUrl] = useState('');
   const [fetching, setFetching] = useState(false);
   const [message, setMessage] = useState('');
+
+  const [frames, setFrames] = useState<HTMLCanvasElement[] | undefined>();
+  const [framesRange, setFramesRange] = useState([0, 0]);
 
   const getUrlFromClipboard = async () => {
     const text = await navigator.clipboard.readText();
@@ -27,7 +35,7 @@ export const LumaLightfieldExtractor: FC<SequenceExtractorProps> = ({
     }
   };
 
-  function drawBlobToCanvas(blob: Blob) {
+  const drawBlobToCanvas = (blob: Blob) => {
     return new Promise<HTMLCanvasElement>((resolve, reject) => {
       const url = URL.createObjectURL(blob);
       const img = new Image();
@@ -43,9 +51,9 @@ export const LumaLightfieldExtractor: FC<SequenceExtractorProps> = ({
       };
       img.onerror = reject;
     });
-  }
+  };
 
-  async function downloadAndUnzipLightFieldFromLuma() {
+  const downloadAndUnzipLightFieldFromLuma = async () => {
     if (!url || fetching) return;
 
     setFetching(true);
@@ -74,22 +82,26 @@ export const LumaLightfieldExtractor: FC<SequenceExtractorProps> = ({
       });
       const { entries } = await unzip(zipFile);
 
+      // draw all the frames into canvas
       const frames: HTMLCanvasElement[] = [];
       const names = Object.keys(entries).sort().reverse();
-      const numberOfFrames = 48;
-      const step = 2;
-      const startIndex = Math.floor((names.length - numberOfFrames * step) / 2);
-      for (let i = 0; i < numberOfFrames * step; i += step) {
-        const name = names[startIndex + i];
+      for (let i = 0; i < names.length; i++) {
+        const name = names[i];
         const blob = await entries[name].blob('image/jpg');
         const frame = await drawBlobToCanvas(blob);
         frames.push(frame);
-        onProgress?.(0.9 + ((i + 1) / numberOfFrames) * 0.1);
+        onProgress?.(0.9 + ((i + 1) / names.length) * 0.1);
       }
 
-      onProgress?.(1);
-      onFramesExtracted?.(frames, true);
       setMessage(`Downloaded. There are ${names.length} frames in total.`);
+      onProgress?.(1);
+
+      // onFramesExtracted?.(frames, true);
+      setFrames(frames);
+
+      const rangeStart = Math.floor((frames.length - initialNumberOfFrames) / 2);
+      const rangeEnd = rangeStart + initialNumberOfFrames;
+      setFramesRange([rangeStart, rangeEnd]);
     } catch (e) {
       setMessage('Failed to fetch.');
       console.error(e);
@@ -98,7 +110,24 @@ export const LumaLightfieldExtractor: FC<SequenceExtractorProps> = ({
     } finally {
       setFetching(false);
     }
-  }
+  };
+
+  const onRangeChange = (newRange: number[]) => {
+    // make sure the range is not too large
+    let [start, end] = newRange;
+    if (end - start > maxNumberOfFrames) {
+      if (start === framesRange[0]) {
+        start = end - maxNumberOfFrames;
+      } else if (end === framesRange[1]) {
+        end = start + maxNumberOfFrames;
+      }
+    }
+    setFramesRange([start, end]);
+  };
+
+  const onConfirmFrames = () => {
+    onFramesExtracted?.(frames?.slice(framesRange[0], framesRange[1]), true);
+  };
 
   useEffect(() => {
     if (url) {
@@ -134,6 +163,27 @@ export const LumaLightfieldExtractor: FC<SequenceExtractorProps> = ({
           Fetch
         </button>
       </div>
+
+      <Slider
+        value={framesRange}
+        onChange={(e, newValue) => onRangeChange(newValue as number[])}
+        step={8}
+        min={0}
+        max={frames?.length || 0}
+        valueLabelDisplay="auto"
+      />
+
+      <ImageSequenceAnimation
+        frames={frames}
+        start={framesRange[0]}
+        end={framesRange[1]}
+        width={300}
+        height={400}
+      />
+
+      <button className="btn" onClick={onConfirmFrames}>
+        Confirm
+      </button>
     </>
   );
 };
