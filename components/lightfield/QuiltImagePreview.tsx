@@ -7,18 +7,33 @@ import { QuiltImageViewOnDeviceButton } from './QuiltImageViewOnDeviceButton';
 export interface QuiltImagePreviewProps {
   sequence?: HTMLCanvasElement[];
   focus?: number;
+  onRestart?: () => void;
 }
 
-export const QuiltImagePreview: FC<QuiltImagePreviewProps> = ({ sequence, focus = 0 }) => {
+export const QuiltImagePreview: FC<QuiltImagePreviewProps> = ({
+  sequence,
+  focus = 0,
+  onRestart,
+}) => {
   const [quiltImage, setQuiltImage] = useState<HTMLCanvasElement | undefined>();
 
   return (
     <>
-      <h2 className="flex items-center gap-2">Done ✌️😎</h2>
+      <h2>Done ✌️😎</h2>
       <div className="flex gap-4">
-        {/* go back to adjust focus */}
-        {/* <div className="tooltip" data-tip="Adjust focus">
-          <button className="btn btn-square btn-warning" onClick={() => setStatus('adjustFocus')}>
+        {/* view on looking glass device */}
+        <QuiltImageViewOnDeviceButton
+          quiltImage={quiltImage}
+          numberOfFrames={sequence?.length}
+          autoShow
+        />
+
+        {/* download quilt image */}
+        <QuiltImageSaveButton quiltImage={quiltImage} numberOfFrames={sequence?.length} />
+
+        {/* make another quilt */}
+        <div className="tooltip" data-tip="Make another one">
+          <button className="btn btn-square" onClick={onRestart}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -30,21 +45,11 @@ export const QuiltImagePreview: FC<QuiltImagePreviewProps> = ({ sequence, focus 
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"
+                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
               />
             </svg>
           </button>
-        </div> */}
-
-        {/* view on looking glass device */}
-        <QuiltImageViewOnDeviceButton
-          quiltImage={quiltImage}
-          numberOfFrames={sequence?.length}
-          autoShow
-        />
-
-        {/* download quilt image */}
-        <QuiltImageSaveButton quiltImage={quiltImage} numberOfFrames={sequence?.length} />
+        </div>
       </div>
 
       <QuiltImage focus={focus} frames={sequence} onRendered={setQuiltImage} />

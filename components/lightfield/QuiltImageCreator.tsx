@@ -1,5 +1,5 @@
 import cls from 'classnames';
-import { FC, useState, useMemo } from 'react';
+import { FC, useState, useMemo, useEffect } from 'react';
 
 import { ProgressBar } from '../common/ProgressBar';
 import { QuiltImageCreatorSteps } from './QuiltImageCreatorSteps';
@@ -19,6 +19,15 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors, prog
   const [sequence, setSequence] = useState<HTMLCanvasElement[] | undefined>();
   const [enforceOrder, setEnforceOrder] = useState(false);
   const [focus, setFocus] = useState(0);
+
+  const reset = () => {
+    setProgressMessage(undefined);
+    setProgress(0);
+    setRawSequence(undefined);
+    setSequence(undefined);
+    setEnforceOrder(false);
+    setFocus(0);
+  };
 
   // move to the next step
   const nextStep = () => {
@@ -58,11 +67,16 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors, prog
     [rawSequence, sequence, focus, enforceOrder, progressMessage]
   );
 
+  // reset the state when we're back to the first step
+  useEffect(() => {
+    if (step === 0) reset();
+  }, [step]);
+
   return (
     <>
       {/* steps */}
       <div className="divider my-0"></div>
-      <QuiltImageCreatorSteps processors={processors} currentStep={step} />
+      <QuiltImageCreatorSteps processors={processors} currentStep={step} onStepClick={setStep} />
       <div className="divider my-0"></div>
 
       {/* sequence processor of the current step */}
@@ -76,7 +90,9 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors, prog
       <ProgressBar progress={progress} message={progressMessage} width={progressBarWidth} />
 
       {/* quilt image preview */}
-      {reachedTheEnd && <QuiltImagePreview sequence={sequence} focus={focus} />}
+      {reachedTheEnd && (
+        <QuiltImagePreview sequence={sequence} focus={focus} onRestart={() => setStep(0)} />
+      )}
     </>
   );
 };
