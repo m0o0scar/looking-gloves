@@ -48,6 +48,9 @@ export const ImageSequenceAnimation: FC<ImageSequenceAnimationProps> = ({
     const endIndex = Math.min(end < 0 ? frames.length : end, frames.length);
     currentIndexRef.current = startIndex + 1;
 
+    // play through all the frames in 2 seconds
+    const fps = Math.min(2000 / (endIndex - startIndex), 50);
+
     animationIntervalRef.current = window.setInterval(() => {
       drawCurrentFrame();
 
@@ -55,7 +58,7 @@ export const ImageSequenceAnimation: FC<ImageSequenceAnimationProps> = ({
       if (currentIndexRef.current <= startIndex || currentIndexRef.current >= endIndex) {
         animationIndexStepRef.current = -1 * animationIndexStepRef.current;
       }
-    }, 1000 / 20);
+    }, fps);
   };
 
   const startAnimation = debounce(_startAnimation, 500);
