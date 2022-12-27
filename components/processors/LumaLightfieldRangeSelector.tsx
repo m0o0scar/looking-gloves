@@ -40,9 +40,11 @@ export const LumaLightfieldRangeSelector: SequenceProcessorInfo = ({
   rawSequence,
   sequence,
   setSequence,
+  activated,
   onDone,
 }) => {
   const [framesRange, setFramesRange] = useState([-1, -1, -1]);
+  const [canCancel, setCanCancel] = useState(false);
 
   // make sure the range is not too large
   const onRangeChange = (newRange: number[]) => {
@@ -81,21 +83,23 @@ export const LumaLightfieldRangeSelector: SequenceProcessorInfo = ({
 
   // init range when sequence is loaded
   useEffect(() => {
-    if (rawSequence?.length) {
+    if (activated && rawSequence?.length) {
       let rangeStart, rangeEnd;
       if (rawSequence.length !== sequence?.length) {
         rangeStart = rawSequence.indexOf(sequence?.[0]!);
         rangeEnd = rawSequence.indexOf(sequence?.[sequence.length - 1]!);
+        setCanCancel(true);
       } else {
         rangeStart = Math.floor((rawSequence.length - initialNumberOfFrames) / 2);
         rangeEnd = rangeStart + initialNumberOfFrames;
+        setCanCancel(false);
       }
       const middle = Math.round((rangeStart + rangeEnd) / 2);
       setFramesRange([rangeStart, middle, rangeEnd]);
 
       scrollToBottom();
     }
-  }, [rawSequence, sequence]);
+  }, [rawSequence, sequence, activated]);
 
   return (
     <div className="flex flex-col items-center gap-2 max-w-full">

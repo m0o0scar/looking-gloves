@@ -14,9 +14,10 @@ export const LightFieldFocusEditor: SequenceProcessorInfo = ({
   focus = 0,
   setFocus,
   sequence,
+  activated,
   onDone,
 }) => {
-  const [adjustedFocus, setAdjustedFocus] = useState(focus / SCALE);
+  const [adjustedFocus, setAdjustedFocus] = useState(0);
 
   const [lightFieldMaterial, setLightFieldMaterial] = useState<ShaderMaterial>();
 
@@ -33,6 +34,12 @@ export const LightFieldFocusEditor: SequenceProcessorInfo = ({
     setFocus(adjustedFocus * SCALE);
     onDone();
   };
+
+  useEffect(() => {
+    if (activated) {
+      setAdjustedFocus(focus / SCALE);
+    }
+  }, [activated]);
 
   useEffect(() => {
     if (sequence?.length) {

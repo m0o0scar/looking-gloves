@@ -14,6 +14,7 @@ export interface SequenceProcessorProps {
   setProgressMessage: (message: string) => void;
   setProgress: (progress: number) => void;
 
+  activated?: boolean;
   onDone: () => void;
 }
 
