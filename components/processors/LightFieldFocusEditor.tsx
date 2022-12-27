@@ -1,9 +1,9 @@
 import { Canvas } from '@react-three/fiber';
-import { FC, useState, useEffect, useRef } from 'react';
+import { FC, useState, useEffect } from 'react';
 import { DataArrayTexture, ShaderMaterial } from 'three';
 
+import { SequenceProcessorProps } from '../lightfield/QuiltImageCreator';
 import { createLightFieldMaterial } from './LightFieldMaterial';
-import { SequenceProcessorProps } from './QuiltImageCreator';
 
 const SCALE = 10;
 

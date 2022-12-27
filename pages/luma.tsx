@@ -1,16 +1,16 @@
 import type { NextPage } from 'next';
 
 import { PageContainer } from '@components/common/PageContainer';
-import { LumaLightfieldExtractor } from '@components/extractors/LumaLightfieldExtractor';
-import { LumaLightfieldRangeSelector } from '@components/extractors/LumaLightfieldRangeSelector';
-import { LightFieldFocusEditor } from '@components/lightfield/LightFieldFocusEditor';
 import { QuiltImageCreator } from '@components/lightfield/QuiltImageCreator';
+import { LightFieldFocusEditor } from '@components/processors/LightFieldFocusEditor';
+import { LumaLightfieldDownloader } from '@components/processors/LumaLightfieldDownloader';
+import { LumaLightfieldRangeSelector } from '@components/processors/LumaLightfieldRangeSelector';
 
 const VideoPage: NextPage = () => {
   return (
     <PageContainer favicon="🔫" title="Luma NeRF to Light Field" subtitle="🔫 Luma NeRF">
       <QuiltImageCreator
-        processors={[LumaLightfieldExtractor, LumaLightfieldRangeSelector, LightFieldFocusEditor]}
+        processors={[LumaLightfieldDownloader, LumaLightfieldRangeSelector, LightFieldFocusEditor]}
         progressBarWidth={470}
       />
     </PageContainer>

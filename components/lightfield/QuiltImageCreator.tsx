@@ -1,7 +1,7 @@
 import cls from 'classnames';
-import { FC, useState, useEffect, ReactNode, useMemo } from 'react';
+import { FC, useState, ReactNode, useMemo } from 'react';
 
-import { ExtractingFramesProgress } from './ExtractingFramesProgress';
+import { ProgressBar } from '../common/ProgressBar';
 import { QuiltImagePreview } from './QuiltImagePreview';
 
 export interface SequenceProcessorProps {
@@ -14,6 +14,8 @@ export interface SequenceProcessorProps {
   focus?: number;
   setFocus: (focus: number) => void;
 
+  progressMessage?: string;
+  setProgressMessage: (message: string) => void;
   setProgress: (progress: number) => void;
 
   onDone: () => void;
@@ -28,6 +30,7 @@ export interface QuiltImageCreatorProps {
 
 export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors, progressBarWidth }) => {
   const [step, setStep] = useState(0);
+  const [progressMessage, setProgressMessage] = useState('');
   const [progress, setProgress] = useState(0);
   const [rawSequence, setRawSequence] = useState<HTMLCanvasElement[] | undefined>();
   const [sequence, setSequence] = useState<HTMLCanvasElement[] | undefined>();
@@ -64,22 +67,24 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors, prog
           setFocus(value);
         }
       },
+      progressMessage,
+      setProgressMessage,
       setProgress,
       onDone: nextStep,
     }),
-    [rawSequence, sequence, focus, enforceOrder]
+    [rawSequence, sequence, focus, enforceOrder, progressMessage]
   );
 
   return (
     <>
       {/* sequence processor of the current step */}
       {processors?.map((processor, index) => (
-        <div key={index} className={cls('contents', { hidden: step !== index })}>
+        <div key={index} className={cls('contents', { hidden: index !== step })}>
           {processor(processorParams)}
         </div>
       ))}
 
-      <ExtractingFramesProgress progress={progress} width={progressBarWidth} />
+      <ProgressBar progress={progress} message={progressMessage} width={progressBarWidth} />
 
       {/* quilt image preview */}
       {reachedTheEnd && <QuiltImagePreview sequence={sequence} focus={focus} />}

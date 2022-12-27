@@ -1,20 +1,18 @@
-import Slider from '@mui/material/Slider';
 import { drawBlobToCanvas } from '@utils/canvas';
 import { fetchWithProgress } from '@utils/fetch';
-import { FC, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 import { unzip } from 'unzipit';
 
-import { ImageSequenceAnimation } from '@components/common/ImageSequenceAnimation';
 import { SequenceProcessorProps } from '@components/lightfield/QuiltImageCreator';
 
-export const LumaLightfieldExtractor: FC<SequenceProcessorProps> = ({
+export const LumaLightfieldDownloader: FC<SequenceProcessorProps> = ({
   setRawSequence,
   setProgress,
+  setProgressMessage,
   onDone,
 }) => {
   const [url, setUrl] = useState('');
   const [fetching, setFetching] = useState(false);
-  const [message, setMessage] = useState('');
 
   const getUrlFromClipboard = async () => {
     const text = await navigator.clipboard.readText();
@@ -34,11 +32,11 @@ export const LumaLightfieldExtractor: FC<SequenceProcessorProps> = ({
 
     setFetching(true);
     setProgress(-1);
-    setMessage('');
+    setProgressMessage('');
 
     try {
       // fetch luma page
-      setMessage('Fetching info ...');
+      setProgressMessage('Fetching info ...');
       const resp = await fetch(`/api/luma/getInfo?url=${encodeURIComponent(url)}`);
       const json = await resp.json();
 
@@ -48,18 +46,19 @@ export const LumaLightfieldExtractor: FC<SequenceProcessorProps> = ({
       const zipDownloadUrl = `/luma/lightfield/${zipFileName}`;
 
       // download and unzip the light field photos
-      setMessage('Downloading light field photos ...');
+      setProgressMessage('Downloading light field photos ...');
       const zipFile = await fetchWithProgress(zipDownloadUrl, undefined, (received, total) => {
         const progress = received / total;
         const receivedInMB = (received / 1024 / 1024).toFixed(2);
         const totalInMB = (total / 1024 / 1024).toFixed(2);
-        setMessage(`Downloading light field photos ${receivedInMB}MB / ${totalInMB}MB ...`);
+        setProgressMessage(`Downloading light field photos ${receivedInMB}MB / ${totalInMB}MB ...`);
         setProgress(progress * 0.9);
       });
-      const { entries } = await unzip(zipFile);
 
       // draw all the frames into canvas
+      setProgressMessage('Processing ...');
       const frames: HTMLCanvasElement[] = [];
+      const { entries } = await unzip(zipFile);
       const names = Object.keys(entries).sort().reverse();
       for (let i = 0; i < names.length; i++) {
         const name = names[i];
@@ -69,14 +68,14 @@ export const LumaLightfieldExtractor: FC<SequenceProcessorProps> = ({
         setProgress(0.9 + ((i + 1) / names.length) * 0.1);
       }
 
-      setMessage(`Downloaded. There are ${names.length} frames in total.`);
+      setProgressMessage(`Downloaded. There are ${names.length} frames in total.`);
       setProgress(1);
 
       setRawSequence(frames);
       onDone();
     } catch (e) {
       // TODO show toast
-      setMessage('Failed to fetch.');
+      setProgressMessage('Failed to fetch from Luma.');
       console.error(e);
       setProgress(0);
       onDone();
@@ -93,6 +92,7 @@ export const LumaLightfieldExtractor: FC<SequenceProcessorProps> = ({
         <div className="form-control grow w-auto sm:w-96">
           <input
             type="url"
+            disabled={fetching}
             placeholder="Luma NeRF URL"
             className="input w-full"
             value={url}
@@ -100,9 +100,6 @@ export const LumaLightfieldExtractor: FC<SequenceProcessorProps> = ({
             onKeyDown={startFetchingOnEnter}
             onClick={getUrlFromClipboard}
           />
-          <label className="label">
-            <span className="label-text-alt">{message}</span>
-          </label>
         </div>
         <button
           className="btn"

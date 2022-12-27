@@ -81,7 +81,7 @@ export const ImageSequenceAnimation: FC<ImageSequenceAnimationProps> = ({
   useEffect(() => {
     if (!frames?.length) {
       stopAnimation();
-    } else {
+    } else if (start >= 0 && end >= 0) {
       startAnimation();
     }
   }, [frames, start, end]);
