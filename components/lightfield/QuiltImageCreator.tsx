@@ -30,7 +30,7 @@ export interface QuiltImageCreatorProps {
 
 export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors, progressBarWidth }) => {
   const [step, setStep] = useState(0);
-  const [progressMessage, setProgressMessage] = useState('');
+  const [progressMessage, setProgressMessage] = useState<string | undefined>();
   const [progress, setProgress] = useState(0);
   const [rawSequence, setRawSequence] = useState<HTMLCanvasElement[] | undefined>();
   const [sequence, setSequence] = useState<HTMLCanvasElement[] | undefined>();
