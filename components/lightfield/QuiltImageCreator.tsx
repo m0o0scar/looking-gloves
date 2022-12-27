@@ -1,30 +1,13 @@
 import cls from 'classnames';
-import { FC, useState, ReactNode, useMemo } from 'react';
+import { FC, useState, useMemo } from 'react';
 
 import { ProgressBar } from '../common/ProgressBar';
+import { QuiltImageCreatorSteps } from './QuiltImageCreatorSteps';
 import { QuiltImagePreview } from './QuiltImagePreview';
-
-export interface SequenceProcessorProps {
-  rawSequence?: HTMLCanvasElement[];
-  setRawSequence: (sequence?: HTMLCanvasElement[]) => void;
-
-  sequence?: HTMLCanvasElement[];
-  setSequence: (sequence?: HTMLCanvasElement[], enforceOrder?: boolean) => void;
-
-  focus?: number;
-  setFocus: (focus: number) => void;
-
-  progressMessage?: string;
-  setProgressMessage: (message: string) => void;
-  setProgress: (progress: number) => void;
-
-  onDone: () => void;
-}
-
-type SequenceProcessor = (params: SequenceProcessorProps) => ReactNode;
+import { SequenceProcessorInfo } from './types';
 
 export interface QuiltImageCreatorProps {
-  processors?: SequenceProcessor[];
+  processors?: SequenceProcessorInfo[];
   progressBarWidth?: number;
 }
 
@@ -77,6 +60,10 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors, prog
 
   return (
     <>
+      {/* steps */}
+      <div className="divider"></div>
+      <QuiltImageCreatorSteps processors={processors} currentStep={step} />
+
       {/* sequence processor of the current step */}
       {processors?.map((processor, index) => (
         <div key={index} className={cls('contents', { hidden: index !== step })}>
@@ -84,6 +71,7 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors, prog
         </div>
       ))}
 
+      {/* progress bar */}
       <ProgressBar progress={progress} message={progressMessage} width={progressBarWidth} />
 
       {/* quilt image preview */}

@@ -2,12 +2,12 @@ import { Canvas } from '@react-three/fiber';
 import { FC, useState, useEffect } from 'react';
 import { DataArrayTexture, ShaderMaterial } from 'three';
 
-import { SequenceProcessorProps } from '../lightfield/QuiltImageCreator';
+import { SequenceProcessorInfo } from '../lightfield/types';
 import { createLightFieldMaterial } from './LightFieldMaterial';
 
 const SCALE = 10;
 
-export const LightFieldFocusEditor: FC<SequenceProcessorProps> = ({
+export const LightFieldFocusEditor: SequenceProcessorInfo = ({
   focus = 0,
   setFocus,
   sequence,
@@ -120,3 +120,5 @@ export const LightFieldFocusEditor: FC<SequenceProcessorProps> = ({
     </div>
   );
 };
+
+LightFieldFocusEditor.title = 'Edit light field focus';

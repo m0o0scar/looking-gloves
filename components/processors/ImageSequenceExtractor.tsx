@@ -2,13 +2,13 @@ import { COLS } from '@utils/constant';
 import { loadImage } from '@utils/image';
 import React, { FC, useState, useEffect, useRef } from 'react';
 
-import { SequenceProcessorProps } from '@components/lightfield/QuiltImageCreator';
+import { SequenceProcessorInfo } from '@components/lightfield/types';
 
 const NoFrames: HTMLCanvasElement[] = [];
 
 const maxFrameWidth = 1000;
 
-export const ImageSequenceExtractor: FC<SequenceProcessorProps> = ({
+export const ImageSequenceExtractor: SequenceProcessorInfo = ({
   setRawSequence,
   setProgress,
   onDone,
@@ -168,3 +168,5 @@ export const ImageSequenceExtractor: FC<SequenceProcessorProps> = ({
     </>
   );
 };
+
+ImageSequenceExtractor.title = 'Extract image sequence';

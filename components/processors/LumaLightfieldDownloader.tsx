@@ -3,9 +3,9 @@ import { fetchWithProgress } from '@utils/fetch';
 import { FC, useState } from 'react';
 import { unzip } from 'unzipit';
 
-import { SequenceProcessorProps } from '@components/lightfield/QuiltImageCreator';
+import { SequenceProcessorInfo } from '@components/lightfield/types';
 
-export const LumaLightfieldDownloader: FC<SequenceProcessorProps> = ({
+export const LumaLightfieldDownloader: SequenceProcessorInfo = ({
   setRawSequence,
   setProgress,
   setProgressMessage,
@@ -112,3 +112,5 @@ export const LumaLightfieldDownloader: FC<SequenceProcessorProps> = ({
     </>
   );
 };
+
+LumaLightfieldDownloader.title = 'Download light field from Luma';

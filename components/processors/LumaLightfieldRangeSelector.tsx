@@ -2,12 +2,12 @@ import { Slider } from '@mui/material';
 import { FC, useState, useEffect } from 'react';
 
 import { ImageSequenceAnimation } from '@components/common/ImageSequenceAnimation';
-import { SequenceProcessorProps } from '@components/lightfield/QuiltImageCreator';
+import { SequenceProcessorInfo } from '@components/lightfield/types';
 
 const initialNumberOfFrames = 48;
 const maxNumberOfFrames = 96;
 
-export const LumaLightfieldRangeSelector: FC<SequenceProcessorProps> = ({
+export const LumaLightfieldRangeSelector: SequenceProcessorInfo = ({
   rawSequence,
   setSequence,
   onDone,
@@ -80,3 +80,5 @@ export const LumaLightfieldRangeSelector: FC<SequenceProcessorProps> = ({
     </>
   );
 };
+
+LumaLightfieldRangeSelector.title = 'Select range';

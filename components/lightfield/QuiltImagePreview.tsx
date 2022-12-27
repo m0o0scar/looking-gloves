@@ -14,7 +14,6 @@ export const QuiltImagePreview: FC<QuiltImagePreviewProps> = ({ sequence, focus 
 
   return (
     <>
-      <div className="divider"></div>
       <h2 className="flex items-center gap-2">Done ✌️😎</h2>
       <div className="flex gap-4">
         {/* go back to adjust focus */}
