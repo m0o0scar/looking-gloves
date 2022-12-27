@@ -17,8 +17,6 @@ export interface SequenceProcessorProps {
   onDone: () => void;
 }
 
-export type SequenceProcessor = (params: SequenceProcessorProps) => ReactNode;
-
 export interface SequenceProcessorInfo extends FC<SequenceProcessorProps> {
   title: string;
 }

@@ -89,5 +89,5 @@ export const ImageSequenceAnimation: FC<ImageSequenceAnimationProps> = ({
     }
   }, [frames, start, end]);
 
-  return <canvas ref={canvasRef} />;
+  return <canvas ref={canvasRef} className="rounded-lg" />;
 };
