@@ -1,26 +1,20 @@
 import Slider from '@mui/material/Slider';
+import { drawBlobToCanvas } from '@utils/canvas';
 import { fetchWithProgress } from '@utils/fetch';
 import { FC, useEffect, useState } from 'react';
 import { unzip } from 'unzipit';
 
 import { ImageSequenceAnimation } from '@components/common/ImageSequenceAnimation';
+import { SequenceProcessorProps } from '@components/lightfield/QuiltImageCreator';
 
-import { SequenceExtractorProps } from './types';
-
-const initialNumberOfFrames = 48;
-const maxNumberOfFrames = 96;
-
-export const LumaLightfieldExtractor: FC<SequenceExtractorProps> = ({
-  onSourceProvided,
-  onProgress,
-  onFramesExtracted,
+export const LumaLightfieldExtractor: FC<SequenceProcessorProps> = ({
+  setRawSequence,
+  setProgress,
+  onDone,
 }) => {
   const [url, setUrl] = useState('');
   const [fetching, setFetching] = useState(false);
   const [message, setMessage] = useState('');
-
-  const [frames, setFrames] = useState<HTMLCanvasElement[] | undefined>();
-  const [framesRange, setFramesRange] = useState([0, 0]);
 
   const getUrlFromClipboard = async () => {
     const text = await navigator.clipboard.readText();
@@ -35,30 +29,12 @@ export const LumaLightfieldExtractor: FC<SequenceExtractorProps> = ({
     }
   };
 
-  const drawBlobToCanvas = (blob: Blob) => {
-    return new Promise<HTMLCanvasElement>((resolve, reject) => {
-      const url = URL.createObjectURL(blob);
-      const img = new Image();
-      img.src = url;
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        canvas.width = img.naturalWidth;
-        canvas.height = img.naturalHeight;
-        const ctx = canvas.getContext('2d')!;
-        ctx.drawImage(img, 0, 0);
-        URL.revokeObjectURL(url);
-        resolve(canvas);
-      };
-      img.onerror = reject;
-    });
-  };
-
   const downloadAndUnzipLightFieldFromLuma = async () => {
     if (!url || fetching) return;
 
     setFetching(true);
-    onProgress?.(-1);
-    onFramesExtracted?.();
+    setProgress(-1);
+    setMessage('');
 
     try {
       // fetch luma page
@@ -78,7 +54,7 @@ export const LumaLightfieldExtractor: FC<SequenceExtractorProps> = ({
         const receivedInMB = (received / 1024 / 1024).toFixed(2);
         const totalInMB = (total / 1024 / 1024).toFixed(2);
         setMessage(`Downloading light field photos ${receivedInMB}MB / ${totalInMB}MB ...`);
-        onProgress?.(progress * 0.9);
+        setProgress(progress * 0.9);
       });
       const { entries } = await unzip(zipFile);
 
@@ -90,51 +66,24 @@ export const LumaLightfieldExtractor: FC<SequenceExtractorProps> = ({
         const blob = await entries[name].blob('image/jpg');
         const frame = await drawBlobToCanvas(blob);
         frames.push(frame);
-        onProgress?.(0.9 + ((i + 1) / names.length) * 0.1);
+        setProgress(0.9 + ((i + 1) / names.length) * 0.1);
       }
 
       setMessage(`Downloaded. There are ${names.length} frames in total.`);
-      onProgress?.(1);
+      setProgress(1);
 
-      // onFramesExtracted?.(frames, true);
-      setFrames(frames);
-
-      const rangeStart = Math.floor((frames.length - initialNumberOfFrames) / 2);
-      const rangeEnd = rangeStart + initialNumberOfFrames;
-      setFramesRange([rangeStart, rangeEnd]);
+      setRawSequence(frames);
+      onDone();
     } catch (e) {
+      // TODO show toast
       setMessage('Failed to fetch.');
       console.error(e);
-      onProgress?.(0);
-      onFramesExtracted?.();
+      setProgress(0);
+      onDone();
     } finally {
       setFetching(false);
     }
   };
-
-  const onRangeChange = (newRange: number[]) => {
-    // make sure the range is not too large
-    let [start, end] = newRange;
-    if (end - start > maxNumberOfFrames) {
-      if (start === framesRange[0]) {
-        start = end - maxNumberOfFrames;
-      } else if (end === framesRange[1]) {
-        end = start + maxNumberOfFrames;
-      }
-    }
-    setFramesRange([start, end]);
-  };
-
-  const onConfirmFrames = () => {
-    onFramesExtracted?.(frames?.slice(framesRange[0], framesRange[1]), true);
-  };
-
-  useEffect(() => {
-    if (url) {
-      onSourceProvided?.();
-      setMessage('');
-    }
-  }, [url]);
 
   return (
     <>
@@ -163,27 +112,6 @@ export const LumaLightfieldExtractor: FC<SequenceExtractorProps> = ({
           Fetch
         </button>
       </div>
-
-      <Slider
-        value={framesRange}
-        onChange={(e, newValue) => onRangeChange(newValue as number[])}
-        step={8}
-        min={0}
-        max={frames?.length || 0}
-        valueLabelDisplay="auto"
-      />
-
-      <ImageSequenceAnimation
-        frames={frames}
-        start={framesRange[0]}
-        end={framesRange[1]}
-        width={300}
-        height={400}
-      />
-
-      <button className="btn" onClick={onConfirmFrames}>
-        Confirm
-      </button>
     </>
   );
 };

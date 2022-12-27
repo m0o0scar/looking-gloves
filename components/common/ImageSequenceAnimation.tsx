@@ -55,7 +55,7 @@ export const ImageSequenceAnimation: FC<ImageSequenceAnimationProps> = ({
       if (currentIndexRef.current <= startIndex || currentIndexRef.current >= endIndex) {
         animationIndexStepRef.current = -1 * animationIndexStepRef.current;
       }
-    }, 1000 / 30);
+    }, 1000 / 20);
   };
 
   const startAnimation = debounce(_startAnimation, 500);

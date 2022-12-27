@@ -3,33 +3,43 @@ import { FC, useState, useEffect, useRef } from 'react';
 import { DataArrayTexture, ShaderMaterial } from 'three';
 
 import { createLightFieldMaterial } from './LightFieldMaterial';
+import { SequenceProcessorProps } from './QuiltImageCreator';
 
 const SCALE = 10;
 
-export interface LightFieldFocusEditorProps {
-  initialFocus?: number;
-  frames?: HTMLCanvasElement[];
-  onFocusConfirm?: (focus: number) => void;
-}
-
-export const LightFieldFocusEditor: FC<LightFieldFocusEditorProps> = ({
-  initialFocus = 0,
-  frames,
-  onFocusConfirm,
+export const LightFieldFocusEditor: FC<SequenceProcessorProps> = ({
+  focus = 0,
+  setFocus,
+  sequence,
+  onDone,
 }) => {
-  const [focus, setFocus] = useState(initialFocus / SCALE);
+  const [adjustedFocus, setAdjustedFocus] = useState(focus / SCALE);
 
   const [lightFieldMaterial, setLightFieldMaterial] = useState<ShaderMaterial>();
 
+  const fov = 75;
+  const planeSize = 1;
+  const cameraZ = planeSize / (2 * Math.tan((fov * Math.PI) / 360));
+  const canvasSize = 600;
+
+  const onCancel = () => {
+    onDone();
+  };
+
+  const onConfirm = () => {
+    setFocus(adjustedFocus * SCALE);
+    onDone();
+  };
+
   useEffect(() => {
-    if (frames?.length) {
-      const numberOfFrames = frames.length;
-      const frameWidth = frames[0].width;
-      const frameHeight = frames[0].height;
+    if (sequence?.length) {
+      const numberOfFrames = sequence.length;
+      const frameWidth = sequence[0].width;
+      const frameHeight = sequence[0].height;
 
       let offset = 0;
       const data = new Uint8Array(frameWidth * frameHeight * 4 * numberOfFrames);
-      for (const frame of [...frames].reverse()) {
+      for (const frame of [...sequence].reverse()) {
         const imgData = frame.getContext('2d')!.getImageData(0, 0, frameWidth, frameHeight);
         data.set(imgData.data, offset);
         offset += imgData.data.byteLength;
@@ -41,20 +51,15 @@ export const LightFieldFocusEditor: FC<LightFieldFocusEditorProps> = ({
       const material = createLightFieldMaterial(texture, numberOfFrames);
       setLightFieldMaterial(material);
     }
-  }, [frames]);
+  }, [sequence]);
 
   useEffect(() => {
     if (lightFieldMaterial) {
-      lightFieldMaterial.uniforms.focus.value = focus;
+      lightFieldMaterial.uniforms.focus.value = adjustedFocus;
     }
-  }, [focus, lightFieldMaterial]);
+  }, [adjustedFocus, lightFieldMaterial]);
 
-  if (!frames?.length) return null;
-
-  const fov = 75;
-  const planeSize = 1;
-  const cameraZ = planeSize / (2 * Math.tan((fov * Math.PI) / 360));
-  const canvasSize = 600;
+  if (!sequence?.length) return null;
 
   return (
     <div className="flex flex-col items-center gap-4 max-w-full">
@@ -68,14 +73,11 @@ export const LightFieldFocusEditor: FC<LightFieldFocusEditorProps> = ({
           min="-0.02"
           max="0.02"
           step="0.0001"
-          value={focus}
-          onChange={(e) => setFocus(parseFloat(e.target.value))}
+          value={adjustedFocus}
+          onChange={(e) => setAdjustedFocus(parseFloat(e.target.value))}
         />
         <div className="tooltip" data-tip="Cancel">
-          <button
-            className="btn btn-square btn-error"
-            onClick={() => onFocusConfirm?.(initialFocus)}
-          >
+          <button className="btn btn-square btn-error" onClick={onCancel}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -89,10 +91,7 @@ export const LightFieldFocusEditor: FC<LightFieldFocusEditorProps> = ({
           </button>
         </div>
         <div className="tooltip" data-tip="Confirm">
-          <button
-            className="btn btn-square btn-success"
-            onClick={() => onFocusConfirm?.(focus * SCALE)}
-          >
+          <button className="btn btn-square btn-success" onClick={onConfirm}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"

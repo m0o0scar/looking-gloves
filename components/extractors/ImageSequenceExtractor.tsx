@@ -2,16 +2,16 @@ import { COLS } from '@utils/constant';
 import { loadImage } from '@utils/image';
 import React, { FC, useState, useEffect, useRef } from 'react';
 
-import { SequenceExtractorProps } from './types';
+import { SequenceProcessorProps } from '@components/lightfield/QuiltImageCreator';
 
 const NoFrames: HTMLCanvasElement[] = [];
 
 const maxFrameWidth = 1000;
 
-export const ImageSequenceExtractor: FC<SequenceExtractorProps> = ({
-  onSourceProvided,
-  onProgress,
-  onFramesExtracted,
+export const ImageSequenceExtractor: FC<SequenceProcessorProps> = ({
+  setRawSequence,
+  setProgress,
+  onDone,
 }) => {
   // input element to select video file
   const inputRef = useRef<HTMLInputElement>(null);
@@ -80,10 +80,10 @@ export const ImageSequenceExtractor: FC<SequenceExtractorProps> = ({
     // continue to seek for next frame, or callback when collected enough frames
     if (frameIndexRef.current < expectedNumberOfFrames.current - 1) {
       frameIndexRef.current += 1;
-      onProgress?.(frameIndexRef.current / expectedNumberOfFrames.current);
+      setProgress(frameIndexRef.current / expectedNumberOfFrames.current);
       videoRef.current!.currentTime += videoRef.current!.duration / expectedNumberOfFrames.current;
     } else {
-      onProgress?.(1);
+      setProgress(1);
     }
   };
 
@@ -102,7 +102,7 @@ export const ImageSequenceExtractor: FC<SequenceExtractorProps> = ({
       const img = await loadImage(images[i]);
       const frame = createFrame(img);
       frames.push(frame);
-      onProgress?.(i / images.length);
+      setProgress(i / images.length);
     }
 
     setFrames(frames);
@@ -117,8 +117,7 @@ export const ImageSequenceExtractor: FC<SequenceExtractorProps> = ({
     }
 
     if (files?.[0]) {
-      onSourceProvided?.();
-      onProgress?.(0);
+      setProgress(0);
       setFrames(NoFrames);
 
       if (files[0].type.startsWith('video/')) {
@@ -135,10 +134,9 @@ export const ImageSequenceExtractor: FC<SequenceExtractorProps> = ({
 
   // invoke callback when all frames are extracted
   useEffect(() => {
-    if (!frames.length) {
-      onFramesExtracted?.();
-    } else if (frames.length >= expectedNumberOfFrames.current) {
-      onFramesExtracted?.(frames);
+    if (frames.length > 0 && frames.length >= expectedNumberOfFrames.current) {
+      setRawSequence(frames);
+      onDone();
     }
   }, [frames]);
 
