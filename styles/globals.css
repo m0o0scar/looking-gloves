@@ -16,6 +16,10 @@ mark {
   border-radius: 10px;
 }
 
+.btn {
+  border: none;
+}
+
 /* fix daisy button won't show loading spinner issue */
 .btn.loading.btn-square:before {
   border: 2px solid #fff;
