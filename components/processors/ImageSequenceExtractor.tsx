@@ -145,7 +145,11 @@ export const ImageSequenceExtractor: SequenceProcessorInfo = ({
       <h2>Please select video or light field photoset</h2>
 
       <p>
-        For Light Field photoset, please select <mark>ALL</mark> the image files.
+        For Light Field photoset, please select{' '}
+        <mark>
+          <b>ALL</b>
+        </mark>{' '}
+        the image files.
       </p>
 
       {/* file input for selecting video file */}
