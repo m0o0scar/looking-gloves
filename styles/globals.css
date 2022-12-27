@@ -16,6 +16,10 @@ mark {
   border-radius: 10px;
 }
 
+.input[disabled] {
+  border: none;
+}
+
 .btn {
   border: none;
 }

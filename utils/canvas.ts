@@ -62,6 +62,24 @@ export const drawSourceOntoDest = (
   );
 };
 
+export const drawBlobToCanvas = (blob: Blob) => {
+  return new Promise<HTMLCanvasElement>((resolve, reject) => {
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    img.src = url;
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext('2d')!;
+      ctx.drawImage(img, 0, 0);
+      URL.revokeObjectURL(url);
+      resolve(canvas);
+    };
+    img.onerror = reject;
+  });
+};
+
 export const canvasToJpeg = (canvas: HTMLCanvasElement, quality = 0.9) => {
   return canvas.toDataURL('image/jpeg', quality);
 };

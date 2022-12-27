@@ -1,18 +1,18 @@
-import { COLS } from '@utils/constant';
+import { drawBlobToCanvas } from '@utils/canvas';
 import { fetchWithProgress } from '@utils/fetch';
-import { FC, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 import { unzip } from 'unzipit';
 
-import { SequenceExtractorProps } from './types';
+import { SequenceProcessorInfo } from '@components/lightfield/types';
 
-export const LumaLightfieldExtractor: FC<SequenceExtractorProps> = ({
-  onSourceProvided,
-  onProgress,
-  onFramesExtracted,
+export const LumaLightfieldDownloader: SequenceProcessorInfo = ({
+  setRawSequence,
+  setProgress,
+  setProgressMessage,
+  onDone,
 }) => {
   const [url, setUrl] = useState('');
   const [fetching, setFetching] = useState(false);
-  const [message, setMessage] = useState('');
 
   const getUrlFromClipboard = async () => {
     const text = await navigator.clipboard.readText();
@@ -27,34 +27,16 @@ export const LumaLightfieldExtractor: FC<SequenceExtractorProps> = ({
     }
   };
 
-  function drawBlobToCanvas(blob: Blob) {
-    return new Promise<HTMLCanvasElement>((resolve, reject) => {
-      const url = URL.createObjectURL(blob);
-      const img = new Image();
-      img.src = url;
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        canvas.width = img.naturalWidth;
-        canvas.height = img.naturalHeight;
-        const ctx = canvas.getContext('2d')!;
-        ctx.drawImage(img, 0, 0);
-        URL.revokeObjectURL(url);
-        resolve(canvas);
-      };
-      img.onerror = reject;
-    });
-  }
-
-  async function downloadAndUnzipLightFieldFromLuma() {
+  const downloadAndUnzipLightFieldFromLuma = async () => {
     if (!url || fetching) return;
 
     setFetching(true);
-    onProgress?.(-1);
-    onFramesExtracted?.();
+    setProgress(-1);
+    setProgressMessage('');
 
     try {
       // fetch luma page
-      setMessage('Fetching info ...');
+      setProgressMessage('Fetching info ...');
       const resp = await fetch(`/api/luma/getInfo?url=${encodeURIComponent(url)}`);
       const json = await resp.json();
 
@@ -64,48 +46,43 @@ export const LumaLightfieldExtractor: FC<SequenceExtractorProps> = ({
       const zipDownloadUrl = `/luma/lightfield/${zipFileName}`;
 
       // download and unzip the light field photos
-      setMessage('Downloading light field photos ...');
+      setProgressMessage('Downloading light field photos ...');
       const zipFile = await fetchWithProgress(zipDownloadUrl, undefined, (received, total) => {
         const progress = received / total;
         const receivedInMB = (received / 1024 / 1024).toFixed(2);
         const totalInMB = (total / 1024 / 1024).toFixed(2);
-        setMessage(`Downloading light field photos ${receivedInMB}MB / ${totalInMB}MB ...`);
-        onProgress?.(progress * 0.9);
+        setProgressMessage(`Downloading light field photos ${receivedInMB}MB / ${totalInMB}MB ...`);
+        setProgress(progress * 0.9);
       });
-      const { entries } = await unzip(zipFile);
 
+      // draw all the frames into canvas
+      setProgressMessage('Processing ...');
       const frames: HTMLCanvasElement[] = [];
+      const { entries } = await unzip(zipFile);
       const names = Object.keys(entries).sort().reverse();
-      const numberOfFrames = 48;
-      const step = 2;
-      const startIndex = Math.floor((names.length - numberOfFrames * step) / 2);
-      for (let i = 0; i < numberOfFrames * step; i += step) {
-        const name = names[startIndex + i];
+      for (let i = 0; i < names.length; i++) {
+        const name = names[i];
         const blob = await entries[name].blob('image/jpg');
         const frame = await drawBlobToCanvas(blob);
         frames.push(frame);
-        onProgress?.(0.9 + ((i + 1) / numberOfFrames) * 0.1);
+        setProgress(0.9 + ((i + 1) / names.length) * 0.1);
       }
 
-      onProgress?.(1);
-      onFramesExtracted?.(frames, true);
-      setMessage(`Downloaded. There are ${names.length} frames in total.`);
+      setProgressMessage(`Downloaded. There are ${names.length} frames in total.`);
+      setProgress(1);
+
+      setRawSequence(frames);
+      onDone();
     } catch (e) {
-      setMessage('Failed to fetch.');
+      // TODO show toast
+      setProgressMessage('Failed to fetch from Luma.');
       console.error(e);
-      onProgress?.(0);
-      onFramesExtracted?.();
+      setProgress(0);
+      onDone();
     } finally {
       setFetching(false);
     }
-  }
-
-  useEffect(() => {
-    if (url) {
-      onSourceProvided?.();
-      setMessage('');
-    }
-  }, [url]);
+  };
 
   return (
     <>
@@ -115,6 +92,7 @@ export const LumaLightfieldExtractor: FC<SequenceExtractorProps> = ({
         <div className="form-control grow w-auto sm:w-96">
           <input
             type="url"
+            disabled={fetching}
             placeholder="Luma NeRF URL"
             className="input w-full"
             value={url}
@@ -122,9 +100,6 @@ export const LumaLightfieldExtractor: FC<SequenceExtractorProps> = ({
             onKeyDown={startFetchingOnEnter}
             onClick={getUrlFromClipboard}
           />
-          <label className="label">
-            <span className="label-text-alt">{message}</span>
-          </label>
         </div>
         <button
           className="btn"
@@ -137,3 +112,5 @@ export const LumaLightfieldExtractor: FC<SequenceExtractorProps> = ({
     </>
   );
 };
+
+LumaLightfieldDownloader.title = 'Download light field from Luma';
