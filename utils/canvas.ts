@@ -61,3 +61,7 @@ export const drawSourceOntoDest = (
     destHeight
   );
 };
+
+export const canvasToJpeg = (canvas: HTMLCanvasElement, quality = 0.9) => {
+  return canvas.toDataURL('image/jpeg', quality);
+};

@@ -1,5 +1,6 @@
 import * as HoloPlayCore from 'holoplay-core';
 import { toast } from 'react-toastify';
+import { canvasToJpeg } from './canvas';
 import { COLS } from './constant';
 
 const TAG = '[HoloPlay Service]';
@@ -59,7 +60,7 @@ class HoloPlayClient {
       const frameHeight = quiltInCanvas.height / rows;
       const aspect = frameWidth / frameHeight;
 
-      const imageData = quiltInCanvas.toDataURL('image/jpeg', 0.9).replace(/^data:image\/jpeg;base64,/, '')
+      const imageData = canvasToJpeg(quiltInCanvas).replace(/^data:image\/jpeg;base64,/, '')
       const binaryData = new Uint8Array(atob(imageData).split('').map(c => c.charCodeAt(0)));
 
       const showCmd = new HoloPlayCore.ShowMessage(

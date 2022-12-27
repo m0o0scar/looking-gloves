@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import { canvasToJpeg } from '@utils/canvas';
 import { getImageFromClipboard } from '@utils/clipboard';
 import { triggerDownload } from '@utils/download';
 import { convertPhotoToRGBD } from '@utils/rgbd';
@@ -15,8 +16,26 @@ const RGBDPhotoPage: NextPage = () => {
   const [pending, setPending] = useState(false);
 
   const saveRGBDPhoto = () => {
-    if (file && rgbdPhoto) {
+    if (rgbdPhoto) {
       triggerDownload(rgbdPhoto, `${Date.now()}-rgbd.jpg`);
+    }
+  };
+
+  const saveDepthMap = () => {
+    if (rgbdPhoto) {
+      // draw the right part (depth map) of the rgbd photo onto a canvas
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d')!;
+      const img = new Image();
+      img.src = rgbdPhoto;
+      img.onload = () => {
+        const width = img.width / 2;
+        const height = img.height;
+        canvas.width = width;
+        canvas.height = height;
+        ctx.drawImage(img, width, 0, width, height, 0, 0, width, height);
+        triggerDownload(canvasToJpeg(canvas), `${Date.now()}-depth-map.jpg`);
+      };
     }
   };
 
@@ -89,24 +108,49 @@ const RGBDPhotoPage: NextPage = () => {
       {pending && <progress className="progress max-w-sm"></progress>}
 
       {rgbdPhoto && (
-        <div className="flex flex-col items-end">
-          <img src={rgbdPhoto} alt="RGBD Photo" className="max-w-3xl rounded-lg" />
-          <button className="btn btn-square" onClick={saveRGBDPhoto}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
-              />
-            </svg>
-          </button>
+        <div className="flex flex-col items-end max-w-3xl">
+          <img src={rgbdPhoto} alt="RGBD Photo" className="w-full rounded-lg" />
+          <div className="flex gap-2">
+            {/* save RGBD photo */}
+            <div className="tooltip" data-tip="Download RGBD photo">
+              <button className="btn btn-success btn-square" onClick={saveRGBDPhoto}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-6 h-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            {/* save depth map only */}
+            <div className="tooltip" data-tip="Download depth map">
+              <button className="btn btn-square" onClick={saveDepthMap}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-6 h-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </PageContainer>
