@@ -3,6 +3,8 @@ import { scrollToBottom } from '@utils/dom';
 import { FC, useState, useEffect } from 'react';
 import { DataArrayTexture, ShaderMaterial } from 'three';
 
+import { IconButton } from '@components/common/IconButton';
+
 import { SequenceProcessorInfo } from '../lightfield/types';
 import { createLightFieldMaterial } from './LightFieldMaterial';
 
@@ -79,34 +81,18 @@ export const LightFieldFocusEditor: SequenceProcessorInfo = ({
           value={adjustedFocus}
           onChange={(e) => setAdjustedFocus(parseFloat(e.target.value))}
         />
-        <div className="tooltip" data-tip="Cancel">
-          <button className="btn btn-square btn-error" onClick={onCancel}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-        <div className="tooltip" data-tip="Confirm">
-          <button className="btn btn-square btn-success" onClick={onConfirm}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-            </svg>
-          </button>
-        </div>
+        <IconButton
+          tooltip="Cancel"
+          iconType="cross"
+          buttonClassName="btn-error"
+          onClick={onCancel}
+        />
+        <IconButton
+          tooltip="Confirm"
+          iconType="tick"
+          buttonClassName="btn-success"
+          onClick={onConfirm}
+        />
       </div>
 
       <Canvas

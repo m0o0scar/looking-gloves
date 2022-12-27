@@ -3,6 +3,7 @@ import { Slider } from '@mui/material';
 import { scrollToBottom } from '@utils/dom';
 import { FC, useState, useEffect } from 'react';
 
+import { IconButton } from '@components/common/IconButton';
 import { ImageSequenceAnimation } from '@components/common/ImageSequenceAnimation';
 import { SequenceProcessorInfo } from '@components/lightfield/types';
 
@@ -110,47 +111,24 @@ export const LumaLightfieldRangeSelector: SequenceProcessorInfo = ({
           max={rawSequence?.length || 0}
           valueLabelDisplay="auto"
         />
-        <div className="tooltip" data-tip="Cancel">
-          <button className="btn btn-square btn-error" onClick={onCancel}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-        <div className="tooltip" data-tip="Confirm">
-          <button className="btn btn-square btn-success" onClick={onConfirmFrames}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-            </svg>
-          </button>
-        </div>
+        <IconButton
+          iconType="cross"
+          buttonClassName="btn-error"
+          disabled={!canCancel}
+          onClick={onCancel}
+        />
+        <IconButton iconType="tick" buttonClassName="btn-success" onClick={onConfirmFrames} />
       </div>
 
-      <ImageSequenceAnimation
-        frames={rawSequence}
-        start={framesRange[0]}
-        end={framesRange[2]}
-        width={600}
-        height={800}
-      />
-
-      <button className="btn" onClick={onConfirmFrames}>
-        Confirm
-      </button>
+      {activated && (
+        <ImageSequenceAnimation
+          frames={rawSequence}
+          start={framesRange[0]}
+          end={framesRange[2]}
+          width={600}
+          height={800}
+        />
+      )}
     </div>
   );
 };
