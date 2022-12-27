@@ -1,3 +1,4 @@
+import { canvasToJpeg } from '@utils/canvas';
 import { COLS } from '@utils/constant';
 import { triggerDownload } from '@utils/download';
 import cls from 'classnames';
@@ -27,7 +28,7 @@ export const QuiltImageSaveButton: FC<QuiltImageSaveButtonProps> = ({
     const name = Date.now();
     const filename = `${name}_qs${COLS}x${rows}a${aspectRatio.toFixed(2)}.jpg`;
 
-    const url = quiltImage.toDataURL('image/jpeg', 0.9);
+    const url = canvasToJpeg(quiltImage);
     triggerDownload(url, filename);
     setPending(false);
   }, 300);
