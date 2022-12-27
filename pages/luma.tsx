@@ -9,6 +9,7 @@ const VideoPage: NextPage = () => {
   return (
     <PageContainer favicon="🔫" title="Luma NeRF to Light Field" subtitle="🔫 Luma NeRF">
       <LightFieldCreator
+        progressBarWidth={470}
         sequenceExtractor={({ onSourceProvided, onProgress, onFramesExtracted }) => (
           <LumaLightfieldExtractor
             onSourceProvided={onSourceProvided}

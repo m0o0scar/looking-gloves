@@ -10,10 +10,14 @@ import { QuiltImageSaveButton } from './QuiltImageSaveButton';
 import { QuiltImageViewOnDeviceButton } from './QuiltImageViewOnDeviceButton';
 
 export interface LightFieldCreatorProps {
+  progressBarWidth?: number;
   sequenceExtractor?: (params: Partial<SequenceExtractorProps>) => ReactNode;
 }
 
-export const LightFieldCreator: FC<LightFieldCreatorProps> = ({ sequenceExtractor }) => {
+export const LightFieldCreator: FC<LightFieldCreatorProps> = ({
+  progressBarWidth,
+  sequenceExtractor,
+}) => {
   // overall status
   const [status, setStatus] = useState<'idle' | 'extracting' | 'adjustFocus' | 'preview'>('idle');
 
