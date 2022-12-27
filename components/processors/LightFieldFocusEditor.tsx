@@ -62,7 +62,7 @@ export const LightFieldFocusEditor: SequenceProcessorInfo = ({
   if (!sequence?.length) return null;
 
   return (
-    <div className="flex flex-col items-center gap-4 max-w-full">
+    <div className="flex flex-col items-center gap-2 max-w-full">
       <h2>Adjust light field focus</h2>
       <p>Drag the slider below to focus on your target</p>
 
@@ -121,4 +121,4 @@ export const LightFieldFocusEditor: SequenceProcessorInfo = ({
   );
 };
 
-LightFieldFocusEditor.title = 'Edit light field focus';
+LightFieldFocusEditor.title = 'Edit focus';

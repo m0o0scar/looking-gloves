@@ -61,8 +61,9 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors, prog
   return (
     <>
       {/* steps */}
-      <div className="divider"></div>
+      <div className="divider my-0"></div>
       <QuiltImageCreatorSteps processors={processors} currentStep={step} />
+      <div className="divider my-0"></div>
 
       {/* sequence processor of the current step */}
       {processors?.map((processor, index) => (
