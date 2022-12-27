@@ -1,4 +1,5 @@
 import { Canvas } from '@react-three/fiber';
+import { scrollToBottom } from '@utils/dom';
 import { FC, useState, useEffect } from 'react';
 import { DataArrayTexture, ShaderMaterial } from 'three';
 
@@ -50,6 +51,8 @@ export const LightFieldFocusEditor: SequenceProcessorInfo = ({
 
       const material = createLightFieldMaterial(texture, numberOfFrames);
       setLightFieldMaterial(material);
+
+      scrollToBottom();
     }
   }, [sequence]);
 
