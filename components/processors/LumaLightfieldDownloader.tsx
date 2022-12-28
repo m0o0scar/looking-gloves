@@ -53,7 +53,7 @@ export const LumaLightfieldDownloader: SequenceProcessorInfo = ({
         },
       } = json;
 
-      setSource({ title: captureName, author: username, url });
+      setSource({ title: captureName, author: username, url, sourceType: 'Luma' });
 
       // download light field photos zip
       const lightFieldZipUrl = json.pageProps.props.pageProps.artifacts.light_field;

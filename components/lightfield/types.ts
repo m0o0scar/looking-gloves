@@ -4,6 +4,7 @@ export interface SourceInfo {
   title?: string;
   author?: string;
   url?: string;
+  sourceType?: string;
 }
 
 export interface SequenceProcessorProps {
