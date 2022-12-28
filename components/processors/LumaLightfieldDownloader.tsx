@@ -15,7 +15,7 @@ export const LumaLightfieldDownloader: SequenceProcessorInfo = ({
   const [fetching, setFetching] = useState(false);
 
   const getUrlFromClipboard = async () => {
-    const text = await navigator.clipboard.readText();
+    const text = await navigator.clipboard?.readText();
     if (text.startsWith('https://captures.lumalabs.ai/')) {
       setUrl(text);
     }

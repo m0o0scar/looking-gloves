@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { canvasToJpeg } from '@utils/canvas';
-import { getImageFromClipboard } from '@utils/clipboard';
+import { clipboardSupported, getImageFromClipboard } from '@utils/clipboard';
 import { triggerDownload } from '@utils/download';
 import { convertPhotoToRGBD } from '@utils/rgbd';
 import type { NextPage } from 'next';
@@ -77,7 +77,7 @@ const RGBDPhotoPage: NextPage = () => {
         <IconButton
           tooltip="Paste from clipboard"
           iconType="clipboard"
-          disabled={pending}
+          disabled={pending || !clipboardSupported}
           onClick={onClipboardButtonClick}
         />
         <div className="form-control w-full max-w-xs">
