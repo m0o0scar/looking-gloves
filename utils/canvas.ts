@@ -38,10 +38,10 @@ export const drawSourceOntoDest = (
   if (fillEdge) {
     ctx.drawImage(
       source,
-      sourceOffsetX <= 0 ? 0 : source.width - 1,
-      0,
+      sourceOffsetX <= 0 ? sourceX : sourceX + sourceWidth - 1,
+      sourceY,
       1,
-      source.height,
+      sourceHeight,
       dx,
       dy,
       destWidth,
