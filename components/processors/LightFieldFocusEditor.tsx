@@ -82,8 +82,8 @@ export const LightFieldFocusEditor: SequenceProcessorInfo = ({
         <input
           type="range"
           className="range"
-          min="-0.02"
-          max="0.02"
+          min="-0.025"
+          max="0.025"
           step="0.0001"
           value={adjustedFocus}
           onChange={(e) => setAdjustedFocus(parseFloat(e.target.value))}
