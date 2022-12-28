@@ -6,6 +6,7 @@ import { unzip } from 'unzipit';
 import { SequenceProcessorInfo } from '@components/lightfield/types';
 
 export const LumaLightfieldDownloader: SequenceProcessorInfo = ({
+  setSource,
   setRawSequence,
   setProgress,
   setProgressMessage,
@@ -39,6 +40,20 @@ export const LumaLightfieldDownloader: SequenceProcessorInfo = ({
       setProgressMessage('Fetching info ...');
       const resp = await fetch(`/api/luma/getInfo?url=${encodeURIComponent(url)}`);
       const json = await resp.json();
+
+      console.log('Luma NeRF info', json);
+      const {
+        pageProps: {
+          props: {
+            pageProps: {
+              artifacts: { light_field },
+              captureMeta: { captureName, username },
+            },
+          },
+        },
+      } = json;
+
+      setSource({ title: captureName, author: username, url });
 
       // download light field photos zip
       const lightFieldZipUrl = json.pageProps.props.pageProps.artifacts.light_field;

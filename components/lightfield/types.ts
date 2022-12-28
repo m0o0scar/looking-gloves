@@ -1,6 +1,15 @@
 import { ReactNode, FC } from 'react';
 
+export interface SourceInfo {
+  title?: string;
+  author?: string;
+  url?: string;
+}
+
 export interface SequenceProcessorProps {
+  source?: SourceInfo;
+  setSource: (source?: SourceInfo) => void;
+
   rawSequence?: HTMLCanvasElement[];
   setRawSequence: (sequence?: HTMLCanvasElement[]) => void;
 
