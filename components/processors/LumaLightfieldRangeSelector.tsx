@@ -129,8 +129,7 @@ export const LumaLightfieldRangeSelector: SequenceProcessorInfo = ({
           frames={rawSequence}
           start={framesRange[0]}
           end={framesRange[2]}
-          width={600}
-          height={800}
+          style={{ width: 600 }}
         />
       )}
     </div>

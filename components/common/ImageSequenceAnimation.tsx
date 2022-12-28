@@ -1,22 +1,22 @@
+import cls from 'classnames';
 import { debounce } from 'lodash';
-import { FC, useState, useEffect, useRef } from 'react';
+import { FC, useState, useEffect, useRef, useImperativeHandle } from 'react';
+import { forwardRef, ForwardedRef, HTMLAttributes } from 'react';
 
-export interface ImageSequenceAnimationProps {
+export interface ImageSequenceAnimationProps extends HTMLAttributes<HTMLCanvasElement> {
   frames?: HTMLCanvasElement[];
   start?: number;
   end?: number;
-  width?: number;
-  height?: number;
 }
 
-export const ImageSequenceAnimation: FC<ImageSequenceAnimationProps> = ({
-  frames,
-  start = -1,
-  end = -1,
-  width = 0,
-  height = 0,
-}) => {
+export const ImageSequenceAnimation = forwardRef(function ImageSequenceAnimation(
+  props: ImageSequenceAnimationProps,
+  ref: ForwardedRef<HTMLCanvasElement>
+) {
+  const { className, style, frames, start = -1, end = -1, ...rest } = props;
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  useImperativeHandle(ref, () => canvasRef.current!);
 
   const currentIndexRef = useRef(0);
   const animationIntervalRef = useRef(0);
@@ -42,20 +42,17 @@ export const ImageSequenceAnimation: FC<ImageSequenceAnimationProps> = ({
   const _startAnimation = () => {
     stopAnimation();
 
-    if (!frames?.length) return;
-
-    const startIndex = Math.max(start < 0 ? 0 : start, 0);
-    const endIndex = Math.min(end < 0 ? frames.length : end, frames.length);
-    currentIndexRef.current = startIndex + 1;
+    if (!frames?.length || start < 0 || end < 0) return;
 
     // play through all the frames in 2 seconds
-    const fps = Math.min(2000 / (endIndex - startIndex), 50);
+    const fps = Math.min(2000 / (end - start), 50);
 
+    currentIndexRef.current = start + 1;
     animationIntervalRef.current = window.setInterval(() => {
       drawCurrentFrame();
 
       currentIndexRef.current += animationIndexStepRef.current;
-      if (currentIndexRef.current <= startIndex || currentIndexRef.current >= endIndex) {
+      if (currentIndexRef.current <= start || currentIndexRef.current >= end) {
         animationIndexStepRef.current = -1 * animationIndexStepRef.current;
       }
     }, fps);
@@ -70,24 +67,23 @@ export const ImageSequenceAnimation: FC<ImageSequenceAnimationProps> = ({
 
   // update canvas size when frames/width/height change
   useEffect(() => {
-    if (canvasRef.current) {
-      const canvasWidth = width || frames?.[0]?.width || 0;
-      const canvasHeight = height || frames?.[0]?.height || 0;
-      if (canvasWidth && canvasHeight) {
-        canvasRef.current.width = canvasWidth;
-        canvasRef.current.height = canvasHeight;
-      }
+    if (canvasRef.current && frames?.length) {
+      canvasRef.current.width = frames[0].width;
+      canvasRef.current.height = frames[0].height;
     }
-  }, [frames, width, height]);
+  }, [frames]);
 
   // restart animation when frames/start/end change
   useEffect(() => {
-    if (!frames?.length) {
-      stopAnimation();
-    } else if (start >= 0 && end >= 0) {
-      startAnimation();
-    }
+    startAnimation();
   }, [frames, start, end]);
 
-  return <canvas ref={canvasRef} className="rounded-lg" />;
-};
+  return (
+    <canvas
+      ref={canvasRef}
+      className={cls('rounded-lg', className)}
+      style={style}
+      {...rest}
+    ></canvas>
+  );
+});
