@@ -9,7 +9,10 @@ import { ImageSequenceExtractor } from '../components/processors/ImageSequenceEx
 const VideoPage: NextPage = () => {
   return (
     <PageContainer favicon="🎥" title="Image Sequence to Light Field" subtitle="🎥 Images/Video">
-      <QuiltImageCreator processors={[ImageSequenceExtractor, LightFieldFocusEditor]} />
+      <QuiltImageCreator
+        processors={[ImageSequenceExtractor, LightFieldFocusEditor]}
+        progressBarWidth={352}
+      />
     </PageContainer>
   );
 };

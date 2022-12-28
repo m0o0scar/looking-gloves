@@ -4,17 +4,11 @@ module.exports = {
     "./pages/**/*.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx}",
   ],
-  theme: {
-    extend: {},
-  },
   plugins: [
     require('@tailwindcss/typography'),
     require("daisyui"),
   ],
   daisyui: {
     themes: ["light"],
-  },
-  corePlugins: {
-    preflight: false,
   }
 }

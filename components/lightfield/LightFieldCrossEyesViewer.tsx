@@ -70,7 +70,7 @@ export const LightFieldCrossEyesViewer: FC<LightFieldCrossEyesViewerProps> = ({ 
 
       {/* cross-eye 3d how-to modal */}
       <input type="checkbox" id="cross-eyes-how-to-modal" className="modal-toggle" />
-      <div className="modal">
+      <div className="modal not-prose">
         <div className="modal-box">
           <h3 className="font-bold text-lg">How to cross-eyes 3d?</h3>
           <p>

@@ -54,10 +54,10 @@ export const QuiltImageCreatorSteps: FC<QuiltImageCreatorStepsProps> = ({
         </ul>
       </div>
 
-      <div className={cls('modal', { 'modal-open': confirmDialogOpen })}>
+      <div className={cls('modal not-prose', { 'modal-open': confirmDialogOpen })}>
         <div className="modal-box">
-          <h3 className="font-bold text-lg m-0">Start over?</h3>
-          <p className="py-4 m-0">
+          <h3 className="font-bold text-lg">Start over?</h3>
+          <p className="py-4">
             Going back to the beginning will reset all your progress. Are you sure?
           </p>
           <div className="modal-action">
