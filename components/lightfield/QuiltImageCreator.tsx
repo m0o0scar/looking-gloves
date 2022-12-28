@@ -70,7 +70,6 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors, prog
   return (
     <>
       {/* steps */}
-      <div className="divider my-0"></div>
       <QuiltImageCreatorSteps processors={processors} currentStep={step} onStepClick={setStep} />
       <div className="divider my-0"></div>
 
