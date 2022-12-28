@@ -25,7 +25,7 @@ export const PageCard: FC<PageCardProps> = ({
     <Link href={link}>
       <div
         className={cls(
-          'card w-96 max-w-full bg-base-100 shadow-lg overflow-hidden cursor-pointer',
+          'card w-72 max-w-full bg-base-100 shadow-lg overflow-hidden cursor-pointer',
           'transition-all hover:scale-105 hover:shadow-2xl'
         )}
       >
@@ -43,7 +43,7 @@ export const PageCard: FC<PageCardProps> = ({
         {/* title & content */}
         <div className="card-body flex flex-col">
           <h2 className="card-title m-0">{title}</h2>
-          <div>{content}</div>
+          <div className="text-sm">{content}</div>
           {alert && <div className={cls('text-xs alert mt-2', alertClassName)}>{alert}</div>}
         </div>
       </div>
