@@ -11,6 +11,7 @@ const maxFrameWidth = 1000;
 export const ImageSequenceExtractor: SequenceProcessorInfo = ({
   setRawSequence,
   setProgress,
+  activated,
   onDone,
 }) => {
   // input element to select video file
@@ -107,6 +108,12 @@ export const ImageSequenceExtractor: SequenceProcessorInfo = ({
 
     setFrames(frames);
   };
+
+  useEffect(() => {
+    if (activated) {
+      inputRef.current!.value = '';
+    }
+  }, [activated]);
 
   // when video file is selected, start extracting frames from it
   useEffect(() => {
