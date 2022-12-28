@@ -10,6 +10,8 @@ import { SequenceProcessorInfo } from '@components/lightfield/types';
 const initialNumberOfFrames = 48;
 const maxNumberOfFrames = 96;
 
+const roundTo8 = (n: number) => Math.round(n / 8) * 8;
+
 const StyledSlider = styled(Slider)`
   .MuiSlider-rail {
     height: 0.5rem;
@@ -53,11 +55,13 @@ export const LumaLightfieldRangeSelector: SequenceProcessorInfo = ({
     // if user drag the middle handle, then we need to adjust both the start and end
     if (middle !== framesRange[1]) {
       const offset = middle - framesRange[1];
-      start = start + offset;
-      end = end + offset;
+      start = roundTo8(start + offset);
+      end = roundTo8(end + offset);
     }
     // if user drag the start or end handle, limit the range and update middle handle
     else {
+      start = roundTo8(start);
+      end = roundTo8(end);
       if (end - start > maxNumberOfFrames) {
         if (start === framesRange[0]) {
           start = end - maxNumberOfFrames;
@@ -65,8 +69,8 @@ export const LumaLightfieldRangeSelector: SequenceProcessorInfo = ({
           end = start + maxNumberOfFrames;
         }
       }
-      middle = Math.round((start + end) / 2);
     }
+    middle = (start + end) / 2;
     setFramesRange([start, middle, end]);
   };
 
@@ -94,7 +98,9 @@ export const LumaLightfieldRangeSelector: SequenceProcessorInfo = ({
         rangeEnd = rangeStart + initialNumberOfFrames;
         setCanCancel(false);
       }
-      const middle = Math.round((rangeStart + rangeEnd) / 2);
+      rangeStart = roundTo8(rangeStart);
+      rangeEnd = roundTo8(rangeEnd);
+      const middle = (rangeStart + rangeEnd) / 2;
       setFramesRange([rangeStart, middle, rangeEnd]);
 
       scrollToBottom();
@@ -110,7 +116,7 @@ export const LumaLightfieldRangeSelector: SequenceProcessorInfo = ({
         <StyledSlider
           value={framesRange}
           onChange={(e, newValue) => onRangeChange(newValue as number[])}
-          step={8}
+          step={1}
           min={0}
           max={rawSequence?.length || 0}
           valueLabelDisplay="auto"
