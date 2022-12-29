@@ -24,7 +24,7 @@ export const PageContainer: FC<PageContainerProps> = ({
   return (
     <article
       className={cls(
-        'prose max-w-full flex flex-col items-center p-5 gap-2 bg-slate-200 min-h-screen',
+        'prose max-w-full flex flex-col items-center p-5 gap-2 bg-slate-200 min-h-screen overflow-x-hidden',
         className
       )}
     >

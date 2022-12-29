@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { canvasToJpeg } from '@utils/canvas';
-import { clipboardSupported, getImageFromClipboard } from '@utils/clipboard';
+import { getImageFromClipboard } from '@utils/clipboard';
 import { triggerDownload } from '@utils/download';
 import { convertPhotoToRGBD } from '@utils/rgbd';
 import type { NextPage } from 'next';
@@ -73,14 +73,14 @@ const RGBDPhotoPage: NextPage = () => {
     <PageContainer favicon="🏞️" title="RGBD Photo" subtitle="🏞️ RGBD Photo">
       <h2>Please select an image file</h2>
 
-      <div className="flex gap-4">
+      <div className="flex gap-4 max-w-full">
         <IconButton
           tooltip="Paste from clipboard"
           iconType="clipboard"
-          disabled={pending || !clipboardSupported}
+          disabled={pending}
           onClick={onClipboardButtonClick}
         />
-        <div className="form-control w-full max-w-xs">
+        <div className="form-control min-w-0 grow md:max-w-xs">
           <input
             type="file"
             disabled={pending}
@@ -94,7 +94,7 @@ const RGBDPhotoPage: NextPage = () => {
         </div>
       </div>
 
-      {pending && <progress className="progress max-w-sm"></progress>}
+      {pending && <progress className="progress max-w-[415px]"></progress>}
 
       {rgbdPhoto && (
         <div className="flex flex-col items-end max-w-3xl">
