@@ -11,7 +11,7 @@ const VideoPage: NextPage = () => {
     <PageContainer favicon="🎥" title="Image Sequence to Light Field" subtitle="🎥 Images/Video">
       <QuiltImageCreator
         processors={[ImageSequenceExtractor, LightFieldFocusEditor]}
-        progressBarWidth={352}
+        progressBarWidth={576}
       />
     </PageContainer>
   );
