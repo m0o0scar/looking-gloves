@@ -25,7 +25,7 @@ export const PageCard: FC<PageCardProps> = ({
     <Link href={link}>
       <div
         className={cls(
-          'card w-72 max-w-full bg-base-100 shadow-lg overflow-hidden cursor-pointer',
+          'card bg-base-100 shadow-lg overflow-hidden cursor-pointer',
           'transition-all hover:scale-105 hover:shadow-2xl'
         )}
       >

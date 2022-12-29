@@ -13,71 +13,73 @@ const HomePage: NextPage = () => {
         <title>{PRODUCT_NAME_SHORT}</title>
       </Head>
 
-      <h1>
-        <mark>{PRODUCT_NAME}</mark>
-      </h1>
-      <h2 className="mt-0">{PRODUCT_DESC_SHORT}</h2>
+      <div className="flex flex-col items-center gap-2 max-w-3xl">
+        <h1 className="text-center">
+          <mark>{PRODUCT_NAME}</mark>
+        </h1>
+        <h2 className="text-center mt-0">{PRODUCT_DESC_SHORT}</h2>
 
-      <p className="max-w-3xl">
-        Hi there! Welcome to <b>{PRODUCT_NAME}</b>, a webapp for you the creator to easily create
-        and display holograms on your Looking Glass device. With me, you can convert your{' '}
-        <u>video/images</u> (works for <b>NeRF</b> video output too 😎) and <u>any photos</u> and
-        transform them into 3D holograms. <br />
-        Let me know if you have any questions or feedback{' '}
-        <a
-          className="no-underline"
-          href={`mailto:moscartong@gmail.com?subject=${PRODUCT_NAME} Feedback`}
-        >
-          💬
-        </a>
-      </p>
+        <p>
+          Hi there! Welcome to <b>{PRODUCT_NAME}</b>, a webapp for you the creator to easily create
+          and display holograms on your Looking Glass device. With me, you can convert your{' '}
+          <u>video/images</u> (works for <b>NeRF</b> video output too 😎) and <u>any photos</u> and
+          transform them into 3D holograms. <br />
+          Let me know if you have any questions or feedback{' '}
+          <a
+            className="no-underline"
+            href={`mailto:moscartong@gmail.com?subject=${PRODUCT_NAME} Feedback`}
+          >
+            💬
+          </a>
+        </p>
 
-      <div className="flex flex-col sm:flex-row gap-5 max-w-full flex-wrap justify-center">
-        <PageCard
-          title="🔫 Luma NeRF"
-          content={
-            <>
-              Convert{' '}
-              <a href="https://captures.lumalabs.ai/me" target="_blank" rel="noreferrer">
-                Luma AI
-              </a>{' '}
-              NeRF to light field with just its URL.
-            </>
-          }
-          link="/luma"
-          thumbnail="/assets/cover-luma.jpg"
-          alert="❗ Some of the light field output from Luma AI have curved camera path, which may lead to a toe-in/curve effect on the Looking Glass."
-          alertClassName="alert-warning"
-        />
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          <PageCard
+            title="🔫 Luma NeRF"
+            content={
+              <>
+                Convert{' '}
+                <a href="https://captures.lumalabs.ai/me" target="_blank" rel="noreferrer">
+                  Luma AI
+                </a>{' '}
+                NeRF to light field with just its URL.
+              </>
+            }
+            link="/luma"
+            thumbnail="/assets/cover-luma.jpg"
+            alert="❗ Some of the light field output from Luma AI have curved camera path, which may lead to a toe-in/curve effect on the Looking Glass."
+            alertClassName="alert-warning"
+          />
 
-        <PageCard
-          title="🎥 Video/Images"
-          content={
-            <>
-              Capture/render a video or images following this{' '}
-              <a
-                href="https://docs.lookingglassfactory.com/keyconcepts/capturing-a-lightfield/linear-light-field-capture"
-                target="_blank"
-                rel="noreferrer"
-                onClick={(e) => e.stopPropagation()}
-              >
-                Linear Light Field Capture
-              </a>{' '}
-              method, then convert the video/images to light field.
-            </>
-          }
-          link="/images"
-          thumbnail="/assets/cover-images.jpg"
-          alert="🚧 Tutorial coming soon."
-          alertClassName=""
-        />
+          <PageCard
+            title="🎥 Video/Images"
+            content={
+              <>
+                Capture/render a video or images following this{' '}
+                <a
+                  href="https://docs.lookingglassfactory.com/keyconcepts/capturing-a-lightfield/linear-light-field-capture"
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  Linear Light Field Capture
+                </a>{' '}
+                method, then convert the video/images to light field.
+              </>
+            }
+            link="/images"
+            thumbnail="/assets/cover-images.jpg"
+            alert="🚧 Tutorial coming soon."
+            alertClassName=""
+          />
 
-        <PageCard
-          title="🏞️ RGBD"
-          content="Convert any picture into RGBD image"
-          link="/rgbd"
-          thumbnail="/assets/cover-rgbd.png"
-        />
+          <PageCard
+            title="🏞️ RGBD"
+            content="Convert any picture into RGBD image"
+            link="/rgbd"
+            thumbnail="/assets/cover-rgbd.png"
+          />
+        </div>
       </div>
     </PageContainer>
   );
