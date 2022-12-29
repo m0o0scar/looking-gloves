@@ -81,7 +81,7 @@ export const ImageSequenceAnimation = forwardRef(function ImageSequenceAnimation
   return (
     <canvas
       ref={canvasRef}
-      className={cls('rounded-lg', className)}
+      className={cls('rounded-lg max-w-full', className)}
       style={style}
       {...rest}
     ></canvas>
