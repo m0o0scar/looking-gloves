@@ -39,7 +39,12 @@ const HomePage: NextPage = () => {
             content={
               <>
                 Convert{' '}
-                <a href="https://captures.lumalabs.ai/me" target="_blank" rel="noreferrer">
+                <a
+                  href="https://captures.lumalabs.ai/me"
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   Luma AI
                 </a>{' '}
                 NeRF to light field with just its URL.
