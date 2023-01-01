@@ -107,6 +107,8 @@ export const LumaLightfieldRangeSelector: SequenceProcessorInfo = ({
     }
   }, [rawSequence, sequence, activated]);
 
+  if (!activated) return null;
+
   return (
     <div className="flex flex-col items-center gap-2 max-w-full">
       <h2>Select frames</h2>
@@ -130,14 +132,12 @@ export const LumaLightfieldRangeSelector: SequenceProcessorInfo = ({
         <IconButton iconType="tick" buttonClassName="btn-success" onClick={onConfirmFrames} />
       </div>
 
-      {activated && (
-        <ImageSequenceAnimation
-          frames={rawSequence}
-          start={framesRange[0]}
-          end={framesRange[2]}
-          style={{ width: 600 }}
-        />
-      )}
+      <ImageSequenceAnimation
+        frames={rawSequence}
+        start={framesRange[0]}
+        end={framesRange[2]}
+        style={{ width: 600 }}
+      />
     </div>
   );
 };

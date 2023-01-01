@@ -76,7 +76,7 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors, prog
 
       {/* sequence processor of the current step */}
       {processors?.map((processor, index) => (
-        <div key={index} className={cls('contents', { hidden: index !== step })}>
+        <div key={index} className="contents">
           {processor({
             source,
             setSource,

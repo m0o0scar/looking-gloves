@@ -109,12 +109,6 @@ export const ImageSequenceExtractor: SequenceProcessorInfo = ({
     setFrames(frames);
   };
 
-  useEffect(() => {
-    if (activated) {
-      inputRef.current!.value = '';
-    }
-  }, [activated]);
-
   // when video file is selected, start extracting frames from it
   useEffect(() => {
     // clean up first
@@ -146,6 +140,8 @@ export const ImageSequenceExtractor: SequenceProcessorInfo = ({
       onDone();
     }
   }, [frames]);
+
+  if (!activated) return null;
 
   return (
     <>

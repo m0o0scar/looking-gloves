@@ -10,6 +10,7 @@ export const LumaLightfieldDownloader: SequenceProcessorInfo = ({
   setRawSequence,
   setProgress,
   setProgressMessage,
+  activated,
   onDone,
 }) => {
   const [url, setUrl] = useState('');
@@ -98,6 +99,8 @@ export const LumaLightfieldDownloader: SequenceProcessorInfo = ({
       setFetching(false);
     }
   };
+
+  if (!activated) return null;
 
   return (
     <>

@@ -5,8 +5,8 @@ import { DataArrayTexture, ShaderMaterial } from 'three';
 
 import { IconButton } from '@components/common/IconButton';
 
+import { createLightFieldMaterial } from '../common/LightFieldMaterial';
 import { SequenceProcessorInfo } from '../lightfield/types';
-import { createLightFieldMaterial } from './LightFieldMaterial';
 
 const SCALE = 10;
 
@@ -36,10 +36,8 @@ export const LightFieldFocusEditor: SequenceProcessorInfo = ({
   };
 
   useEffect(() => {
-    if (activated) {
-      setAdjustedFocus(focus / SCALE);
-    }
-  }, [activated]);
+    setAdjustedFocus(focus / SCALE);
+  }, [focus]);
 
   useEffect(() => {
     if (sequence?.length) {
@@ -71,7 +69,7 @@ export const LightFieldFocusEditor: SequenceProcessorInfo = ({
     }
   }, [adjustedFocus, lightFieldMaterial]);
 
-  if (!sequence?.length) return null;
+  if (!activated || !sequence?.length) return null;
 
   return (
     <div className="flex flex-col items-center gap-2 max-w-full">
