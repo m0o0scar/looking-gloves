@@ -1,25 +1,22 @@
 import cls from 'classnames';
 import { FC, useState } from 'react';
 
+import { useCurrentStep } from '@components/hooks/useCurrentStep';
+
 import { SequenceProcessorInfo } from './types';
 
 export interface QuiltImageCreatorStepsProps {
   processors?: SequenceProcessorInfo[];
-  currentStep?: number;
-  onStepClick?: (step: number) => void;
 }
 
-export const QuiltImageCreatorSteps: FC<QuiltImageCreatorStepsProps> = ({
-  processors,
-  currentStep = 0,
-  onStepClick,
-}) => {
+export const QuiltImageCreatorSteps: FC<QuiltImageCreatorStepsProps> = ({ processors }) => {
+  const { currentStep, gotoStep, backToBeginning } = useCurrentStep(processors?.length || 0);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
 
   if (!processors?.length) return null;
 
   const onClick = (step: number) => {
-    if (step > 0) onStepClick?.(step);
+    if (step > 0) gotoStep(step);
     else setConfirmDialogOpen(true);
   };
 
@@ -29,7 +26,7 @@ export const QuiltImageCreatorSteps: FC<QuiltImageCreatorStepsProps> = ({
 
   const confirmBackToBeginning = () => {
     setConfirmDialogOpen(false);
-    onStepClick?.(0);
+    backToBeginning();
   };
 
   return (

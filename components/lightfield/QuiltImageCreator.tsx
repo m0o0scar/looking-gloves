@@ -1,6 +1,8 @@
 import cls from 'classnames';
 import { FC, useState, useMemo, useEffect, useCallback } from 'react';
 
+import { useCurrentStep } from '@components/hooks/useCurrentStep';
+
 import { ProgressBar } from '../common/ProgressBar';
 import { QuiltImageCreatorSteps } from './QuiltImageCreatorSteps';
 import { QuiltImagePreview } from './QuiltImagePreview';
@@ -12,7 +14,9 @@ export interface QuiltImageCreatorProps {
 }
 
 export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors, progressBarWidth }) => {
-  const [step, setStep] = useState(0);
+  const { currentStep, nextStep, hasReachedEnd, backToBeginning } = useCurrentStep(
+    processors?.length || 0
+  );
   const [progressMessage, setProgressMessage] = useState<string | undefined>();
   const [progress, setProgress] = useState(0);
   const [source, setSource] = useState<SourceInfo | undefined>();
@@ -29,14 +33,6 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors, prog
     setEnforceOrder(false);
     setFocus(0);
   };
-
-  // move to the next step
-  const nextStep = () => {
-    setStep((step) => step + 1);
-  };
-
-  // check if the last step has been reached, if yes then we can show quilt image here
-  const reachedTheEnd = step === (processors?.length || 0);
 
   const setRawSequenceCallback = useCallback((sequence?: HTMLCanvasElement[]) => {
     setRawSequence(sequence);
@@ -65,13 +61,13 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors, prog
 
   // reset the state when we're back to the first step
   useEffect(() => {
-    if (step === 0) reset();
-  }, [step]);
+    if (currentStep === 0) reset();
+  }, [currentStep]);
 
   return (
     <>
       {/* steps */}
-      <QuiltImageCreatorSteps processors={processors} currentStep={step} onStepClick={setStep} />
+      <QuiltImageCreatorSteps processors={processors} />
       <div className="divider my-0"></div>
 
       {/* sequence processor of the current step */}
@@ -89,7 +85,7 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors, prog
             progressMessage,
             setProgressMessage,
             setProgress,
-            activated: index === step,
+            activated: index === currentStep,
             onDone: nextStep,
           })}
         </div>
@@ -99,12 +95,12 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors, prog
       <ProgressBar progress={progress} message={progressMessage} width={progressBarWidth} />
 
       {/* quilt image preview */}
-      {reachedTheEnd && (
+      {hasReachedEnd && (
         <QuiltImagePreview
           sequence={sequence}
           focus={focus}
           sourceInfo={source}
-          onRestart={() => setStep(0)}
+          onRestart={backToBeginning}
         />
       )}
     </>
