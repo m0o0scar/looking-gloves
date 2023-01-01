@@ -2,6 +2,7 @@ import cls from 'classnames';
 import { FC, useState, useMemo, useEffect, useCallback } from 'react';
 
 import { useCurrentStep } from '@components/hooks/useCurrentStep';
+import { useProgress } from '@components/hooks/useProgress';
 
 import { ProgressBar } from '../common/ProgressBar';
 import { QuiltImageCreatorSteps } from './QuiltImageCreatorSteps';
@@ -17,8 +18,7 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors, prog
   const { currentStep, nextStep, hasReachedEnd, backToBeginning } = useCurrentStep(
     processors?.length || 0
   );
-  const [progressMessage, setProgressMessage] = useState<string | undefined>();
-  const [progress, setProgress] = useState(0);
+  const { progress, progressMessage, reset: resetProgress } = useProgress();
   const [source, setSource] = useState<SourceInfo | undefined>();
   const [rawSequence, setRawSequence] = useState<HTMLCanvasElement[] | undefined>();
   const [sequence, setSequence] = useState<HTMLCanvasElement[] | undefined>();
@@ -26,8 +26,7 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors, prog
   const [focus, setFocus] = useState(0);
 
   const reset = () => {
-    setProgressMessage(undefined);
-    setProgress(0);
+    resetProgress();
     setRawSequence(undefined);
     setSequence(undefined);
     setEnforceOrder(false);
@@ -82,9 +81,6 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors, prog
             setSequence: setSequenceCallback,
             focus,
             setFocus: setFocusCallback,
-            progressMessage,
-            setProgressMessage,
-            setProgress,
             activated: index === currentStep,
             onDone: nextStep,
           })}

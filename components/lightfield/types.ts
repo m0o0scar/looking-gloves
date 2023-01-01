@@ -20,10 +20,6 @@ export interface SequenceProcessorProps {
   focus?: number;
   setFocus: (focus: number) => void;
 
-  progressMessage?: string;
-  setProgressMessage: (message: string) => void;
-  setProgress: (progress: number) => void;
-
   activated?: boolean;
   onDone: () => void;
 }

@@ -1,7 +1,8 @@
 import { COLS } from '@utils/constant';
 import { loadImage } from '@utils/image';
-import React, { FC, useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
+import { useProgress } from '@components/hooks/useProgress';
 import { SequenceProcessorInfo } from '@components/lightfield/types';
 
 const NoFrames: HTMLCanvasElement[] = [];
@@ -10,10 +11,11 @@ const maxFrameWidth = 1000;
 
 export const ImageSequenceExtractor: SequenceProcessorInfo = ({
   setRawSequence,
-  setProgress,
   activated,
   onDone,
 }) => {
+  const { updateProgress } = useProgress();
+
   // input element to select video file
   const inputRef = useRef<HTMLInputElement>(null);
   const [files, setFiles] = useState<FileList | null>(null);
@@ -81,10 +83,13 @@ export const ImageSequenceExtractor: SequenceProcessorInfo = ({
     // continue to seek for next frame, or callback when collected enough frames
     if (frameIndexRef.current < expectedNumberOfFrames.current - 1) {
       frameIndexRef.current += 1;
-      setProgress(frameIndexRef.current / expectedNumberOfFrames.current);
+      updateProgress(
+        frameIndexRef.current / expectedNumberOfFrames.current,
+        'Extracting video frames ...'
+      );
       videoRef.current!.currentTime += videoRef.current!.duration / expectedNumberOfFrames.current;
     } else {
-      setProgress(1);
+      updateProgress(1);
     }
   };
 
@@ -103,7 +108,7 @@ export const ImageSequenceExtractor: SequenceProcessorInfo = ({
       const img = await loadImage(images[i]);
       const frame = createFrame(img);
       frames.push(frame);
-      setProgress(i / images.length);
+      updateProgress(i / images.length, 'Processing images ...');
     }
 
     setFrames(frames);
@@ -118,7 +123,7 @@ export const ImageSequenceExtractor: SequenceProcessorInfo = ({
     }
 
     if (files?.[0]) {
-      setProgress(0);
+      updateProgress(0, 'Extracting video frames ...');
       setFrames(NoFrames);
 
       if (files[0].type.startsWith('video/')) {
