@@ -1,26 +1,26 @@
 import { FC, useState, useEffect } from 'react';
 
 import { IconButton } from '@components/common/IconButton';
+import { useSource } from '@components/hooks/useSource';
 
 import { QuiltImage } from './QuiltImage';
 import { QuiltImageSaveButton } from './QuiltImageSaveButton';
 import { QuiltImageViewOnDeviceButton } from './QuiltImageViewOnDeviceButton';
-import { SourceInfo } from './types';
 
 export interface QuiltImagePreviewProps {
   sequence?: HTMLCanvasElement[];
   focus?: number;
-  sourceInfo?: SourceInfo;
   onRestart?: () => void;
 }
 
 export const QuiltImagePreview: FC<QuiltImagePreviewProps> = ({
   sequence,
   focus = 0,
-  sourceInfo,
   onRestart,
 }) => {
   const [quiltImage, setQuiltImage] = useState<HTMLCanvasElement | undefined>();
+
+  const { sourceInfo } = useSource();
 
   useEffect(() => {
     if (sourceInfo) {

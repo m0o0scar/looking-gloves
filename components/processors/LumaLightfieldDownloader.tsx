@@ -4,15 +4,16 @@ import { FC, useState } from 'react';
 import { unzip } from 'unzipit';
 
 import { useProgress } from '@components/hooks/useProgress';
+import { useSource } from '@components/hooks/useSource';
 import { SequenceProcessorInfo } from '@components/lightfield/types';
 
 export const LumaLightfieldDownloader: SequenceProcessorInfo = ({
-  setSource,
   setRawSequence,
   activated,
   onDone,
 }) => {
   const { updateProgress } = useProgress();
+  const { setSourceInfo } = useSource();
 
   const [url, setUrl] = useState('');
   const [fetching, setFetching] = useState(false);
@@ -46,17 +47,16 @@ export const LumaLightfieldDownloader: SequenceProcessorInfo = ({
         pageProps: {
           props: {
             pageProps: {
-              artifacts: { light_field },
+              artifacts: { light_field: lightFieldZipUrl },
               captureMeta: { captureName, username },
             },
           },
         },
       } = json;
 
-      setSource({ title: captureName, author: username, url, sourceType: 'Luma' });
+      setSourceInfo({ title: captureName, author: username, url, sourceType: 'Luma' });
 
       // download light field photos zip
-      const lightFieldZipUrl = json.pageProps.props.pageProps.artifacts.light_field;
       const zipFileName = lightFieldZipUrl.split('/').pop()!;
       const zipDownloadUrl = `/luma/lightfield/${zipFileName}`;
 

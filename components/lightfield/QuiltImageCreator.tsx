@@ -3,11 +3,12 @@ import { FC, useState, useMemo, useEffect, useCallback } from 'react';
 
 import { useCurrentStep } from '@components/hooks/useCurrentStep';
 import { useProgress } from '@components/hooks/useProgress';
+import { useSource } from '@components/hooks/useSource';
 
 import { ProgressBar } from '../common/ProgressBar';
 import { QuiltImageCreatorSteps } from './QuiltImageCreatorSteps';
 import { QuiltImagePreview } from './QuiltImagePreview';
-import { SequenceProcessorInfo, SourceInfo } from './types';
+import { SequenceProcessorInfo } from './types';
 
 export interface QuiltImageCreatorProps {
   processors?: SequenceProcessorInfo[];
@@ -19,7 +20,7 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors, prog
     processors?.length || 0
   );
   const { progress, progressMessage, reset: resetProgress } = useProgress();
-  const [source, setSource] = useState<SourceInfo | undefined>();
+  const { sourceInfo, setSourceInfo } = useSource();
   const [rawSequence, setRawSequence] = useState<HTMLCanvasElement[] | undefined>();
   const [sequence, setSequence] = useState<HTMLCanvasElement[] | undefined>();
   const [enforceOrder, setEnforceOrder] = useState(false);
@@ -73,8 +74,6 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors, prog
       {processors?.map((processor, index) => (
         <div key={index} className="contents">
           {processor({
-            source,
-            setSource,
             rawSequence,
             setRawSequence: setRawSequenceCallback,
             sequence,
@@ -92,12 +91,7 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors, prog
 
       {/* quilt image preview */}
       {hasReachedEnd && (
-        <QuiltImagePreview
-          sequence={sequence}
-          focus={focus}
-          sourceInfo={source}
-          onRestart={backToBeginning}
-        />
+        <QuiltImagePreview sequence={sequence} focus={focus} onRestart={backToBeginning} />
       )}
     </>
   );
