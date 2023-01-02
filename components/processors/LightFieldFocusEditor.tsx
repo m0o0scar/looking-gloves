@@ -4,19 +4,16 @@ import { FC, useState, useEffect } from 'react';
 import { DataArrayTexture, ShaderMaterial } from 'three';
 
 import { IconButton } from '@components/common/IconButton';
+import { useSequence } from '@components/hooks/useSequence';
 
 import { createLightFieldMaterial } from '../common/LightFieldMaterial';
 import { SequenceProcessorInfo } from '../lightfield/types';
 
 const SCALE = 10;
 
-export const LightFieldFocusEditor: SequenceProcessorInfo = ({
-  focus = 0,
-  setFocus,
-  sequence,
-  activated,
-  onDone,
-}) => {
+export const LightFieldFocusEditor: SequenceProcessorInfo = ({ activated, onDone }) => {
+  const { focus, setFocus, frames } = useSequence();
+
   const [adjustedFocus, setAdjustedFocus] = useState(0);
 
   const [lightFieldMaterial, setLightFieldMaterial] = useState<ShaderMaterial>();
@@ -40,14 +37,14 @@ export const LightFieldFocusEditor: SequenceProcessorInfo = ({
   }, [focus]);
 
   useEffect(() => {
-    if (sequence?.length) {
-      const numberOfFrames = sequence.length;
-      const frameWidth = sequence[0].width;
-      const frameHeight = sequence[0].height;
+    if (frames?.length) {
+      const numberOfFrames = frames.length;
+      const frameWidth = frames[0].width;
+      const frameHeight = frames[0].height;
 
       let offset = 0;
       const data = new Uint8Array(frameWidth * frameHeight * 4 * numberOfFrames);
-      for (const frame of [...sequence].reverse()) {
+      for (const frame of [...frames].reverse()) {
         const imgData = frame.getContext('2d')!.getImageData(0, 0, frameWidth, frameHeight);
         data.set(imgData.data, offset);
         offset += imgData.data.byteLength;
@@ -61,7 +58,7 @@ export const LightFieldFocusEditor: SequenceProcessorInfo = ({
 
       scrollToBottom();
     }
-  }, [sequence]);
+  }, [frames]);
 
   useEffect(() => {
     if (lightFieldMaterial) {
@@ -69,7 +66,7 @@ export const LightFieldFocusEditor: SequenceProcessorInfo = ({
     }
   }, [adjustedFocus, lightFieldMaterial]);
 
-  if (!activated || !sequence?.length) return null;
+  if (!activated || !frames?.length) return null;
 
   return (
     <div className="flex flex-col items-center gap-2 max-w-full">

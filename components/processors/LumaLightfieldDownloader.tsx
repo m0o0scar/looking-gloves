@@ -4,16 +4,14 @@ import { FC, useState } from 'react';
 import { unzip } from 'unzipit';
 
 import { useProgress } from '@components/hooks/useProgress';
+import { useSequence } from '@components/hooks/useSequence';
 import { useSource } from '@components/hooks/useSource';
 import { SequenceProcessorInfo } from '@components/lightfield/types';
 
-export const LumaLightfieldDownloader: SequenceProcessorInfo = ({
-  setRawSequence,
-  activated,
-  onDone,
-}) => {
+export const LumaLightfieldDownloader: SequenceProcessorInfo = ({ activated, onDone }) => {
   const { updateProgress } = useProgress();
   const { setSourceInfo } = useSource();
+  const { setSequence } = useSequence();
 
   const [url, setUrl] = useState('');
   const [fetching, setFetching] = useState(false);
@@ -86,7 +84,7 @@ export const LumaLightfieldDownloader: SequenceProcessorInfo = ({
 
       updateProgress(1, `Downloaded. There are ${names.length} frames in total.`);
 
-      setRawSequence(frames);
+      setSequence(frames, true);
       onDone();
     } catch (e) {
       // TODO show toast

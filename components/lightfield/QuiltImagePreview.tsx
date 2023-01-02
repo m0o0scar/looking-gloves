@@ -8,16 +8,10 @@ import { QuiltImageSaveButton } from './QuiltImageSaveButton';
 import { QuiltImageViewOnDeviceButton } from './QuiltImageViewOnDeviceButton';
 
 export interface QuiltImagePreviewProps {
-  sequence?: HTMLCanvasElement[];
-  focus?: number;
   onRestart?: () => void;
 }
 
-export const QuiltImagePreview: FC<QuiltImagePreviewProps> = ({
-  sequence,
-  focus = 0,
-  onRestart,
-}) => {
+export const QuiltImagePreview: FC<QuiltImagePreviewProps> = ({ onRestart }) => {
   const [quiltImage, setQuiltImage] = useState<HTMLCanvasElement | undefined>();
 
   const { sourceInfo } = useSource();
@@ -44,14 +38,10 @@ export const QuiltImagePreview: FC<QuiltImagePreviewProps> = ({
 
       <div className="flex gap-4">
         {/* view on looking glass device */}
-        <QuiltImageViewOnDeviceButton
-          quiltImage={quiltImage}
-          numberOfFrames={sequence?.length}
-          autoShow
-        />
+        <QuiltImageViewOnDeviceButton quiltImage={quiltImage} autoShow />
 
         {/* download quilt image */}
-        <QuiltImageSaveButton quiltImage={quiltImage} numberOfFrames={sequence?.length} />
+        <QuiltImageSaveButton quiltImage={quiltImage} />
 
         {/* TODO upload to Looking Glass Blocks directly with their API */}
         {/* use sourceInfo to fill in the title and description */}
@@ -60,7 +50,7 @@ export const QuiltImagePreview: FC<QuiltImagePreviewProps> = ({
         <IconButton tooltip="Make another one" iconType="reload" onClick={onRestart} />
       </div>
 
-      <QuiltImage focus={focus} frames={sequence} onRendered={setQuiltImage} />
+      <QuiltImage onRendered={setQuiltImage} />
     </>
   );
 };

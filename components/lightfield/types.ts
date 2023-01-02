@@ -1,15 +1,6 @@
-import { ReactNode, FC } from 'react';
+import { FC } from 'react';
 
 export interface SequenceProcessorProps {
-  rawSequence?: HTMLCanvasElement[];
-  setRawSequence: (sequence?: HTMLCanvasElement[]) => void;
-
-  sequence?: HTMLCanvasElement[];
-  setSequence: (sequence?: HTMLCanvasElement[], enforceOrder?: boolean) => void;
-
-  focus?: number;
-  setFocus: (focus: number) => void;
-
   activated?: boolean;
   onDone: () => void;
 }

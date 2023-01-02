@@ -1,9 +1,8 @@
-import cls from 'classnames';
-import { FC, useState, useMemo, useEffect, useCallback } from 'react';
+import { FC, useEffect } from 'react';
 
 import { useCurrentStep } from '@components/hooks/useCurrentStep';
 import { useProgress } from '@components/hooks/useProgress';
-import { useSource } from '@components/hooks/useSource';
+import { useSequence } from '@components/hooks/useSequence';
 
 import { ProgressBar } from '../common/ProgressBar';
 import { QuiltImageCreatorSteps } from './QuiltImageCreatorSteps';
@@ -19,50 +18,14 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors, prog
   const { currentStep, nextStep, hasReachedEnd, backToBeginning } = useCurrentStep(
     processors?.length || 0
   );
-  const { progress, progressMessage, reset: resetProgress } = useProgress();
-  const { sourceInfo, setSourceInfo } = useSource();
-  const [rawSequence, setRawSequence] = useState<HTMLCanvasElement[] | undefined>();
-  const [sequence, setSequence] = useState<HTMLCanvasElement[] | undefined>();
-  const [enforceOrder, setEnforceOrder] = useState(false);
-  const [focus, setFocus] = useState(0);
+  const { progress, progressMessage } = useProgress();
+  const { reset } = useSequence();
 
-  const reset = () => {
-    resetProgress();
-    setRawSequence(undefined);
-    setSequence(undefined);
-    setEnforceOrder(false);
-    setFocus(0);
-  };
-
-  const setRawSequenceCallback = useCallback((sequence?: HTMLCanvasElement[]) => {
-    setRawSequence(sequence);
-    setSequence(sequence);
-  }, []);
-
-  const setSequenceCallback = useCallback(
-    (sequence?: HTMLCanvasElement[], enforceOrder?: boolean) => {
-      setSequence(sequence);
-      setEnforceOrder(enforceOrder || false);
-    },
-    []
-  );
-
-  const setFocusCallback = useCallback(
-    (value: number) => {
-      if (!enforceOrder) {
-        setFocus(Math.abs(value));
-        if (value < 0 && sequence?.length) setSequence([...sequence].reverse());
-      } else {
-        setFocus(value);
-      }
-    },
-    [enforceOrder, sequence]
-  );
-
-  // reset the state when we're back to the first step
   useEffect(() => {
-    if (currentStep === 0) reset();
-  }, [currentStep]);
+    if (currentStep === 0) {
+      reset();
+    }
+  }, [currentStep, reset]);
 
   return (
     <>
@@ -74,12 +37,6 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors, prog
       {processors?.map((processor, index) => (
         <div key={index} className="contents">
           {processor({
-            rawSequence,
-            setRawSequence: setRawSequenceCallback,
-            sequence,
-            setSequence: setSequenceCallback,
-            focus,
-            setFocus: setFocusCallback,
             activated: index === currentStep,
             onDone: nextStep,
           })}
@@ -90,9 +47,7 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors, prog
       <ProgressBar progress={progress} message={progressMessage} width={progressBarWidth} />
 
       {/* quilt image preview */}
-      {hasReachedEnd && (
-        <QuiltImagePreview sequence={sequence} focus={focus} onRestart={backToBeginning} />
-      )}
+      {hasReachedEnd && <QuiltImagePreview onRestart={backToBeginning} />}
     </>
   );
 };

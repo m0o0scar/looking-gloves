@@ -3,18 +3,16 @@ import { loadImage } from '@utils/image';
 import React, { useState, useEffect, useRef } from 'react';
 
 import { useProgress } from '@components/hooks/useProgress';
+import { useSequence } from '@components/hooks/useSequence';
 import { SequenceProcessorInfo } from '@components/lightfield/types';
 
 const NoFrames: HTMLCanvasElement[] = [];
 
 const maxFrameWidth = 1000;
 
-export const ImageSequenceExtractor: SequenceProcessorInfo = ({
-  setRawSequence,
-  activated,
-  onDone,
-}) => {
+export const ImageSequenceExtractor: SequenceProcessorInfo = ({ activated, onDone }) => {
   const { updateProgress } = useProgress();
+  const { setSequence } = useSequence();
 
   // input element to select video file
   const inputRef = useRef<HTMLInputElement>(null);
@@ -117,9 +115,9 @@ export const ImageSequenceExtractor: SequenceProcessorInfo = ({
   // when video file is selected, start extracting frames from it
   useEffect(() => {
     // clean up first
-    if (videoRef.current!.src) {
-      URL.revokeObjectURL(videoRef.current!.src);
-      videoRef.current!.src = '';
+    if (videoRef.current?.src) {
+      URL.revokeObjectURL(videoRef.current.src);
+      videoRef.current.src = '';
     }
 
     if (files?.[0]) {
@@ -129,7 +127,7 @@ export const ImageSequenceExtractor: SequenceProcessorInfo = ({
       if (files[0].type.startsWith('video/')) {
         const file = files[0];
         const url = URL.createObjectURL(file);
-        videoRef.current!.src = url;
+        videoRef.current && (videoRef.current.src = url);
       } else {
         const images = Array.from(files).filter((file) => file.type.startsWith('image/'));
         images.sort((a, b) => a.name.localeCompare(b.name));
@@ -141,7 +139,7 @@ export const ImageSequenceExtractor: SequenceProcessorInfo = ({
   // invoke callback when all frames are extracted
   useEffect(() => {
     if (frames.length > 0 && frames.length >= expectedNumberOfFrames.current) {
-      setRawSequence(frames);
+      setSequence(frames);
       onDone();
     }
   }, [frames]);

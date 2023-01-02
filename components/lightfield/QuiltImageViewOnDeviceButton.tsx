@@ -4,28 +4,30 @@ import { debounce } from 'lodash';
 import { FC, useEffect, useState } from 'react';
 
 import { IconButton } from '@components/common/IconButton';
+import { useSequence } from '@components/hooks/useSequence';
 
 export interface QuiltImageViewOnDeviceButtonProps {
   quiltImage?: HTMLCanvasElement;
-  numberOfFrames?: number;
   autoShow?: boolean;
 }
 
 export const QuiltImageViewOnDeviceButton: FC<QuiltImageViewOnDeviceButtonProps> = ({
   quiltImage,
-  numberOfFrames,
   autoShow,
 }) => {
   const [pending, setPending] = useState(false);
 
+  const { frames } = useSequence();
+  const numberOfFrames = frames?.length || 0;
+
   const autoShowQuiltOnDevice = async () => {
     setPending(true);
-    await holoplayClient.showQuiltImage(quiltImage!, numberOfFrames!, { silent: true });
+    await holoplayClient.showQuiltImage(quiltImage!, numberOfFrames, { silent: true });
     setPending(false);
   };
 
   const _onClick = debounce(async () => {
-    await holoplayClient.showQuiltImage(quiltImage!, numberOfFrames!);
+    await holoplayClient.showQuiltImage(quiltImage!, numberOfFrames);
     setPending(false);
   }, 300);
 
