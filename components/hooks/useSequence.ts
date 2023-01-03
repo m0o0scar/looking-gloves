@@ -42,8 +42,8 @@ export const useSequence = () => {
     setRange(undefined);
   };
 
-  const setSequence = (sequence?: HTMLCanvasElement[], enforceOrder = false) => {
-    setAllFrames(sequence);
+  const setAllFramesValue = (allFrames?: HTMLCanvasElement[], enforceOrder = false) => {
+    setAllFrames(allFrames);
     setEnforceOrder(enforceOrder);
   };
 
@@ -85,7 +85,7 @@ export const useSequence = () => {
     focus,
     range,
     reset,
-    setSequence,
+    setAllFrames: setAllFramesValue,
     setFocus: setFocusValue,
     setRange,
   };

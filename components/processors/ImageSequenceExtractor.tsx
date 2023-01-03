@@ -12,7 +12,7 @@ const maxFrameWidth = 1000;
 
 export const ImageSequenceExtractor: SequenceProcessorInfo = ({ activated, onDone }) => {
   const { updateProgress } = useProgress();
-  const { setSequence } = useSequence();
+  const { setAllFrames } = useSequence();
 
   // input element to select video file
   const inputRef = useRef<HTMLInputElement>(null);
@@ -139,7 +139,7 @@ export const ImageSequenceExtractor: SequenceProcessorInfo = ({ activated, onDon
   // invoke callback when all frames are extracted
   useEffect(() => {
     if (frames.length > 0 && frames.length >= expectedNumberOfFrames.current) {
-      setSequence(frames);
+      setAllFrames(frames);
       onDone();
     }
   }, [frames]);
