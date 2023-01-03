@@ -1,3 +1,4 @@
+import { drawSourceToCanvas } from '@utils/canvas';
 import { COLS } from '@utils/constant';
 import { loadImage } from '@utils/image';
 import React, { useState, useEffect, useRef } from 'react';
@@ -28,24 +29,7 @@ export const ImageSequenceExtractor: SequenceProcessorInfo = ({ activated, onDon
   const frameHeight = useRef(0);
 
   const createFrame = (source: CanvasImageSource) => {
-    const frame = document.createElement('canvas');
-    frame.width = frameWidth.current;
-    frame.height = frameHeight.current;
-
-    let sw = 0,
-      sh = 0;
-    if (source instanceof HTMLVideoElement) {
-      sw = source.videoWidth;
-      sh = source.videoHeight;
-    } else if (source instanceof HTMLImageElement) {
-      sw = source.naturalWidth;
-      sh = source.naturalHeight;
-    }
-
-    const ctx = frame.getContext('2d')!;
-    ctx.drawImage(source, 0, 0, sw, sh, 0, 0, frameWidth.current, frameHeight.current);
-
-    return frame;
+    return drawSourceToCanvas(source, frameWidth.current, frameHeight.current);
   };
 
   // start seeking frames when video loaded

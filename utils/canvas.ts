@@ -62,6 +62,27 @@ export const drawSourceOntoDest = (
   );
 };
 
+export const drawSourceToCanvas = (source: CanvasImageSource, width: number, height: number) => {
+  const frame = document.createElement('canvas');
+  frame.width = width;
+  frame.height = height;
+
+  let sw = 0,
+    sh = 0;
+  if (source instanceof HTMLVideoElement) {
+    sw = source.videoWidth;
+    sh = source.videoHeight;
+  } else if (source instanceof HTMLImageElement) {
+    sw = source.naturalWidth;
+    sh = source.naturalHeight;
+  }
+
+  const ctx = frame.getContext('2d')!;
+  ctx.drawImage(source, 0, 0, sw, sh, 0, 0, width, height);
+
+  return frame;
+};
+
 export const drawBlobToCanvas = (blob: Blob) => {
   return new Promise<HTMLCanvasElement>((resolve, reject) => {
     const url = URL.createObjectURL(blob);
