@@ -22,6 +22,12 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors, prog
   const { reset } = useSequence();
 
   useEffect(() => {
+    return () => {
+      reset();
+    };
+  }, []);
+
+  useEffect(() => {
     if (currentStep === 0) {
       reset();
     }

@@ -87,17 +87,29 @@ export const drawBlobToCanvas = (blob: Blob) => {
   return new Promise<HTMLCanvasElement>((resolve, reject) => {
     const url = URL.createObjectURL(blob);
     const img = new Image();
+
+    const cleanup = () => {
+      img.onload = null;
+      img.onerror = null;
+      URL.revokeObjectURL(url);
+    };
+
     img.src = url;
+
     img.onload = () => {
       const canvas = document.createElement('canvas');
       canvas.width = img.naturalWidth;
       canvas.height = img.naturalHeight;
       const ctx = canvas.getContext('2d')!;
       ctx.drawImage(img, 0, 0);
-      URL.revokeObjectURL(url);
+      cleanup();
       resolve(canvas);
     };
-    img.onerror = reject;
+
+    img.onerror = (error) => {
+      cleanup();
+      reject(error);
+    };
   });
 };
 

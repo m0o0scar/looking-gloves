@@ -16,7 +16,7 @@ export const LightFieldFocusEditor: SequenceProcessorInfo = ({ activated, onDone
 
   const [adjustedFocus, setAdjustedFocus] = useState(0);
 
-  const [lightFieldMaterial, setLightFieldMaterial] = useState<ShaderMaterial>();
+  const [lightFieldMaterial, setLightFieldMaterial] = useState<ShaderMaterial | undefined>();
 
   const fov = 75;
   const planeSize = 1;
@@ -32,11 +32,26 @@ export const LightFieldFocusEditor: SequenceProcessorInfo = ({ activated, onDone
     onDone();
   };
 
+  const cleanup = () => {
+    if (lightFieldMaterial) {
+      lightFieldMaterial.dispose();
+      setLightFieldMaterial(undefined);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      cleanup();
+    };
+  }, []);
+
   useEffect(() => {
     setAdjustedFocus(focus / SCALE);
   }, [focus]);
 
   useEffect(() => {
+    cleanup();
+
     if (frames?.length) {
       const numberOfFrames = frames.length;
       const frameWidth = frames[0].width;
