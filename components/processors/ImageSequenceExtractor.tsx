@@ -2,6 +2,7 @@ import { drawSourceToCanvas } from '@utils/canvas';
 import { COLS } from '@utils/constant';
 import { loadImage } from '@utils/image';
 import React, { useState, useEffect, useRef } from 'react';
+import { toast } from 'react-toastify';
 
 import { useProgress } from '@components/hooks/useProgress';
 import { useSequence } from '@components/hooks/useSequence';
@@ -76,6 +77,11 @@ export const ImageSequenceExtractor: SequenceProcessorInfo = ({ activated, onDon
   };
 
   const onImageFilesSelected = async (images: File[]) => {
+    if (images.length <= 1) {
+      toast.error("I can't work with just 1 image 😢");
+      return;
+    }
+
     expectedNumberOfFrames.current = images.length;
     console.log('[Image] expected number of frames', images.length);
 
