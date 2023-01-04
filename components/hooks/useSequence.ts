@@ -1,5 +1,4 @@
-import { useLogStateChanges } from '@utils/react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { atom, useRecoilState } from 'recoil';
 
 const allFramesAtom = atom<HTMLCanvasElement[] | undefined>({

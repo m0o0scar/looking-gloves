@@ -1,12 +1,17 @@
-import { Canvas } from '@react-three/fiber';
+import { Canvas, dispose } from '@react-three/fiber';
 import { scrollToBottom } from '@utils/dom';
-import { FC, useState, useEffect } from 'react';
-import { DataArrayTexture, ShaderMaterial } from 'three';
+import { useState, useEffect } from 'react';
+import { DataArrayTexture } from 'three';
 
 import { IconButton } from '@components/common/IconButton';
 import { useSequence } from '@components/hooks/useSequence';
 
-import { createLightFieldMaterial } from '../common/LightFieldMaterial';
+import {
+  material,
+  setTexture,
+  setTextureFocus,
+  disposeTexture,
+} from '../common/LightFieldMaterial';
 import { SequenceProcessorInfo } from '../lightfield/types';
 
 const SCALE = 10;
@@ -14,45 +19,52 @@ const SCALE = 10;
 export const LightFieldFocusEditor: SequenceProcessorInfo = ({ activated, onDone }) => {
   const { focus, setFocus, frames } = useSequence();
 
+  // for holding the adjusted focus value from the slider
   const [adjustedFocus, setAdjustedFocus] = useState(0);
-
-  const [lightFieldMaterial, setLightFieldMaterial] = useState<ShaderMaterial | undefined>();
 
   const fov = 75;
   const planeSize = 1;
   const cameraZ = planeSize / (2 * Math.tan((fov * Math.PI) / 360));
   const canvasSize = 600;
 
+  // when cancel, discard focus value change and exit the editor
   const onCancel = () => {
     onDone();
   };
 
+  // when confirm, save the focus value and exit the editor
   const onConfirm = () => {
     setFocus(adjustedFocus * SCALE);
     onDone();
   };
 
-  const cleanup = () => {
-    if (lightFieldMaterial) {
-      lightFieldMaterial.dispose();
-      setLightFieldMaterial(undefined);
-    }
+  // when the slider value changes, update the focus state and the texture
+  const onFocusChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Number(e.target.value);
+    setAdjustedFocus(value);
   };
 
+  // when deactivated, dispose the texture to prevent memory leak
   useEffect(() => {
-    return () => {
-      cleanup();
-    };
-  }, []);
+    if (!activated) {
+      disposeTexture();
+    }
+  }, [activated]);
 
+  // sync focus from props to state
   useEffect(() => {
-    setAdjustedFocus(focus / SCALE);
+    const value = focus / SCALE;
+    setAdjustedFocus(value);
   }, [focus]);
 
+  // when the focus changes, update the texture
   useEffect(() => {
-    cleanup();
+    setTextureFocus(adjustedFocus);
+  }, [adjustedFocus]);
 
-    if (frames?.length) {
+  // when the frames change, update the texture
+  useEffect(() => {
+    if (frames?.length && activated) {
       const numberOfFrames = frames.length;
       const frameWidth = frames[0].width;
       const frameHeight = frames[0].height;
@@ -66,20 +78,11 @@ export const LightFieldFocusEditor: SequenceProcessorInfo = ({ activated, onDone
       }
 
       const texture = new DataArrayTexture(data, frameWidth, frameHeight, numberOfFrames);
-      texture.needsUpdate = true;
-
-      const material = createLightFieldMaterial(texture, numberOfFrames);
-      setLightFieldMaterial(material);
+      setTexture(texture, numberOfFrames);
 
       scrollToBottom();
     }
-  }, [frames]);
-
-  useEffect(() => {
-    if (lightFieldMaterial) {
-      lightFieldMaterial.uniforms.focus.value = adjustedFocus;
-    }
-  }, [adjustedFocus, lightFieldMaterial]);
+  }, [frames, activated]);
 
   if (!activated || !frames?.length) return null;
 
@@ -96,7 +99,7 @@ export const LightFieldFocusEditor: SequenceProcessorInfo = ({ activated, onDone
           max="0.025"
           step="0.0001"
           value={adjustedFocus}
-          onChange={(e) => setAdjustedFocus(parseFloat(e.target.value))}
+          onChange={onFocusChange}
         />
         <IconButton
           tooltip="Cancel"
@@ -115,11 +118,12 @@ export const LightFieldFocusEditor: SequenceProcessorInfo = ({ activated, onDone
       <Canvas
         flat
         linear
+        frameloop="demand"
         camera={{ position: [0, 0, cameraZ] }}
         className="rounded-lg max-w-full aspect-square"
         style={{ width: canvasSize }}
       >
-        <mesh material={lightFieldMaterial}>
+        <mesh material={material!}>
           <planeGeometry args={[planeSize, planeSize, 1, 1]} />
         </mesh>
       </Canvas>

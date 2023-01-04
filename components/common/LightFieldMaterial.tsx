@@ -58,14 +58,28 @@ void main() {
 }
 `;
 
-export const createLightFieldMaterial = (texture: DataArrayTexture, numberOfFrames: number) =>
-  new ShaderMaterial({
-    uniforms: {
-      field: { value: texture },
-      numberOfFrames: { value: numberOfFrames },
-      aperture: { value: 5.0 },
-      focus: { value: 0.0 },
-    },
-    vertexShader,
-    fragmentShader,
-  });
+export const material = new ShaderMaterial({
+  uniforms: {
+    field: { value: undefined },
+    numberOfFrames: { value: 0 },
+    aperture: { value: 5.0 },
+    focus: { value: 0.0 },
+  },
+  vertexShader,
+  fragmentShader,
+});
+
+export const setTexture = (texture: DataArrayTexture, numberOfFrames: number) => {
+  material.uniforms.field.value = texture;
+  material.uniforms.numberOfFrames.value = numberOfFrames;
+  texture.needsUpdate = true;
+};
+
+export const setTextureFocus = (focus: number) => {
+  material.uniforms.focus.value = focus;
+};
+
+export const disposeTexture = () => {
+  material.uniforms.field.value?.dispose();
+  material.uniforms.field.value = undefined;
+};
