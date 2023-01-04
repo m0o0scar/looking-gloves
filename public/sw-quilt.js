@@ -1,5 +1,5 @@
 const addResourcesToCache = async (resources) => {
-  const cache = await caches.open("v1");
+  const cache = await caches.open("quilt-v1");
   await cache.addAll(resources);
 };
 

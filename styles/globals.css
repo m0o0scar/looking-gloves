@@ -30,3 +30,11 @@ mark {
   border-top-color: transparent;
   border-left-color: transparent;
 }
+
+/* hide pyscript related stuff */
+py-config,
+py-script,
+py-splashscreen,
+py-terminal {
+  display: none;
+}
