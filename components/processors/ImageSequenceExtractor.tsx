@@ -1,19 +1,20 @@
+import { drawSourceToCanvas } from '@utils/canvas';
 import { COLS } from '@utils/constant';
 import { loadImage } from '@utils/image';
-import React, { FC, useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
+import { useProgress } from '@components/hooks/useProgress';
+import { useSequence } from '@components/hooks/useSequence';
 import { SequenceProcessorInfo } from '@components/lightfield/types';
 
 const NoFrames: HTMLCanvasElement[] = [];
 
 const maxFrameWidth = 1000;
 
-export const ImageSequenceExtractor: SequenceProcessorInfo = ({
-  setRawSequence,
-  setProgress,
-  activated,
-  onDone,
-}) => {
+export const ImageSequenceExtractor: SequenceProcessorInfo = ({ activated, onDone }) => {
+  const { updateProgress } = useProgress();
+  const { setAllFrames } = useSequence();
+
   // input element to select video file
   const inputRef = useRef<HTMLInputElement>(null);
   const [files, setFiles] = useState<FileList | null>(null);
@@ -28,24 +29,7 @@ export const ImageSequenceExtractor: SequenceProcessorInfo = ({
   const frameHeight = useRef(0);
 
   const createFrame = (source: CanvasImageSource) => {
-    const frame = document.createElement('canvas');
-    frame.width = frameWidth.current;
-    frame.height = frameHeight.current;
-
-    let sw = 0,
-      sh = 0;
-    if (source instanceof HTMLVideoElement) {
-      sw = source.videoWidth;
-      sh = source.videoHeight;
-    } else if (source instanceof HTMLImageElement) {
-      sw = source.naturalWidth;
-      sh = source.naturalHeight;
-    }
-
-    const ctx = frame.getContext('2d')!;
-    ctx.drawImage(source, 0, 0, sw, sh, 0, 0, frameWidth.current, frameHeight.current);
-
-    return frame;
+    return drawSourceToCanvas(source, frameWidth.current, frameHeight.current);
   };
 
   // start seeking frames when video loaded
@@ -81,10 +65,13 @@ export const ImageSequenceExtractor: SequenceProcessorInfo = ({
     // continue to seek for next frame, or callback when collected enough frames
     if (frameIndexRef.current < expectedNumberOfFrames.current - 1) {
       frameIndexRef.current += 1;
-      setProgress(frameIndexRef.current / expectedNumberOfFrames.current);
+      updateProgress(
+        frameIndexRef.current / expectedNumberOfFrames.current,
+        'Extracting video frames ...'
+      );
       videoRef.current!.currentTime += videoRef.current!.duration / expectedNumberOfFrames.current;
     } else {
-      setProgress(1);
+      updateProgress(1);
     }
   };
 
@@ -103,34 +90,28 @@ export const ImageSequenceExtractor: SequenceProcessorInfo = ({
       const img = await loadImage(images[i]);
       const frame = createFrame(img);
       frames.push(frame);
-      setProgress(i / images.length);
+      updateProgress(i / images.length, 'Processing images ...');
     }
 
     setFrames(frames);
   };
 
-  useEffect(() => {
-    if (activated) {
-      inputRef.current!.value = '';
-    }
-  }, [activated]);
-
   // when video file is selected, start extracting frames from it
   useEffect(() => {
     // clean up first
-    if (videoRef.current!.src) {
-      URL.revokeObjectURL(videoRef.current!.src);
-      videoRef.current!.src = '';
+    if (videoRef.current?.src) {
+      URL.revokeObjectURL(videoRef.current.src);
+      videoRef.current.src = '';
     }
 
     if (files?.[0]) {
-      setProgress(0);
+      updateProgress(0, 'Extracting video frames ...');
       setFrames(NoFrames);
 
       if (files[0].type.startsWith('video/')) {
         const file = files[0];
         const url = URL.createObjectURL(file);
-        videoRef.current!.src = url;
+        videoRef.current && (videoRef.current.src = url);
       } else {
         const images = Array.from(files).filter((file) => file.type.startsWith('image/'));
         images.sort((a, b) => a.name.localeCompare(b.name));
@@ -142,10 +123,12 @@ export const ImageSequenceExtractor: SequenceProcessorInfo = ({
   // invoke callback when all frames are extracted
   useEffect(() => {
     if (frames.length > 0 && frames.length >= expectedNumberOfFrames.current) {
-      setRawSequence(frames);
+      setAllFrames(frames);
       onDone();
     }
   }, [frames]);
+
+  if (!activated) return null;
 
   return (
     <>

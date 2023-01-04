@@ -6,17 +6,17 @@ import { debounce } from 'lodash';
 import { FC, useState } from 'react';
 
 import { IconButton } from '@components/common/IconButton';
+import { useSequence } from '@components/hooks/useSequence';
 
 export interface QuiltImageSaveButtonProps {
   quiltImage?: HTMLCanvasElement;
-  numberOfFrames?: number;
 }
 
-export const QuiltImageSaveButton: FC<QuiltImageSaveButtonProps> = ({
-  quiltImage,
-  numberOfFrames = 0,
-}) => {
+export const QuiltImageSaveButton: FC<QuiltImageSaveButtonProps> = ({ quiltImage }) => {
   const [pending, setPending] = useState(false);
+
+  const { frames } = useSequence();
+  const numberOfFrames = frames?.length || 0;
 
   const _saveQuiltImage = debounce(() => {
     if (!quiltImage || !numberOfFrames) return;

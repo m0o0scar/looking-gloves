@@ -3,12 +3,21 @@ export const loadImage = (source: string | File) => {
     const isFile = source instanceof File;
     const url = isFile ? URL.createObjectURL(source) : source;
 
+    const cleanup = () => {
+      if (isFile) URL.revokeObjectURL(url);
+      image.onload = null;
+      image.onerror = null;
+    };
+
     const image = new Image();
     image.onload = () => {
-      if (isFile) URL.revokeObjectURL(url);
+      cleanup();
       resolve(image);
     };
-    image.onerror = reject;
+    image.onerror = (error) => {
+      cleanup();
+      reject(error);
+    };
     image.src = url;
   });
 };

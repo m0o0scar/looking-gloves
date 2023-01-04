@@ -1,10 +1,13 @@
-import cls from 'classnames';
-import { FC, useState, useMemo, useEffect, useCallback } from 'react';
+import { FC, useEffect } from 'react';
+
+import { useCurrentStep } from '@components/hooks/useCurrentStep';
+import { useProgress } from '@components/hooks/useProgress';
+import { useSequence } from '@components/hooks/useSequence';
 
 import { ProgressBar } from '../common/ProgressBar';
 import { QuiltImageCreatorSteps } from './QuiltImageCreatorSteps';
 import { QuiltImagePreview } from './QuiltImagePreview';
-import { SequenceProcessorInfo, SourceInfo } from './types';
+import { SequenceProcessorInfo } from './types';
 
 export interface QuiltImageCreatorProps {
   processors?: SequenceProcessorInfo[];
@@ -12,84 +15,35 @@ export interface QuiltImageCreatorProps {
 }
 
 export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors, progressBarWidth }) => {
-  const [step, setStep] = useState(0);
-  const [progressMessage, setProgressMessage] = useState<string | undefined>();
-  const [progress, setProgress] = useState(0);
-  const [source, setSource] = useState<SourceInfo | undefined>();
-  const [rawSequence, setRawSequence] = useState<HTMLCanvasElement[] | undefined>();
-  const [sequence, setSequence] = useState<HTMLCanvasElement[] | undefined>();
-  const [enforceOrder, setEnforceOrder] = useState(false);
-  const [focus, setFocus] = useState(0);
+  const { currentStep, nextStep, hasReachedEnd, backToBeginning } = useCurrentStep(
+    processors?.length || 0
+  );
+  const { progress, progressMessage } = useProgress();
+  const { reset } = useSequence();
 
-  const reset = () => {
-    setProgressMessage(undefined);
-    setProgress(0);
-    setRawSequence(undefined);
-    setSequence(undefined);
-    setEnforceOrder(false);
-    setFocus(0);
-  };
-
-  // move to the next step
-  const nextStep = () => {
-    setStep((step) => step + 1);
-  };
-
-  // check if the last step has been reached, if yes then we can show quilt image here
-  const reachedTheEnd = step === (processors?.length || 0);
-
-  const setRawSequenceCallback = useCallback((sequence?: HTMLCanvasElement[]) => {
-    setRawSequence(sequence);
-    setSequence(sequence);
+  useEffect(() => {
+    return () => {
+      reset();
+    };
   }, []);
 
-  const setSequenceCallback = useCallback(
-    (sequence?: HTMLCanvasElement[], enforceOrder?: boolean) => {
-      setSequence(sequence);
-      setEnforceOrder(enforceOrder || false);
-    },
-    []
-  );
-
-  const setFocusCallback = useCallback(
-    (value: number) => {
-      if (!enforceOrder) {
-        setFocus(Math.abs(value));
-        if (value < 0 && sequence?.length) setSequence([...sequence].reverse());
-      } else {
-        setFocus(value);
-      }
-    },
-    [enforceOrder, sequence]
-  );
-
-  // reset the state when we're back to the first step
   useEffect(() => {
-    if (step === 0) reset();
-  }, [step]);
+    if (currentStep === 0) {
+      reset();
+    }
+  }, [currentStep, reset]);
 
   return (
     <>
       {/* steps */}
-      <QuiltImageCreatorSteps processors={processors} currentStep={step} onStepClick={setStep} />
+      <QuiltImageCreatorSteps processors={processors} />
       <div className="divider my-0"></div>
 
       {/* sequence processor of the current step */}
       {processors?.map((processor, index) => (
-        <div key={index} className={cls('contents', { hidden: index !== step })}>
+        <div key={index} className="contents">
           {processor({
-            source,
-            setSource,
-            rawSequence,
-            setRawSequence: setRawSequenceCallback,
-            sequence,
-            setSequence: setSequenceCallback,
-            focus,
-            setFocus: setFocusCallback,
-            progressMessage,
-            setProgressMessage,
-            setProgress,
-            activated: index === step,
+            activated: index === currentStep,
             onDone: nextStep,
           })}
         </div>
@@ -99,14 +53,7 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors, prog
       <ProgressBar progress={progress} message={progressMessage} width={progressBarWidth} />
 
       {/* quilt image preview */}
-      {reachedTheEnd && (
-        <QuiltImagePreview
-          sequence={sequence}
-          focus={focus}
-          sourceInfo={source}
-          onRestart={() => setStep(0)}
-        />
-      )}
+      {hasReachedEnd && <QuiltImagePreview onRestart={backToBeginning} />}
     </>
   );
 };

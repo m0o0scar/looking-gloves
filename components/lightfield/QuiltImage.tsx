@@ -2,28 +2,21 @@ import { drawSourceOntoDest } from '@utils/canvas';
 import cls from 'classnames';
 import { FC, useEffect, useRef, HTMLAttributes } from 'react';
 
+import { useSequence } from '@components/hooks/useSequence';
+
 import { COLS, FRAME_WIDTH, FRAME_HEIGHT } from '../../utils/constant';
 
 export interface QuiltImageProps extends HTMLAttributes<HTMLCanvasElement> {
-  focus?: number;
-  frames?: HTMLCanvasElement[];
   onRendered?: (canvas: HTMLCanvasElement) => void;
 }
 
-export const QuiltImage: FC<QuiltImageProps> = ({
-  focus = 0,
-  frames,
-  className,
-  onRendered,
-  ...props
-}) => {
+export const QuiltImage: FC<QuiltImageProps> = ({ className, onRendered, ...props }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  const { focus, frames } = useSequence();
+
   useEffect(() => {
-    if (!frames?.length) {
-      canvasRef.current!.width = 0;
-      canvasRef.current!.height = 0;
-    } else {
+    if (frames?.length && onRendered) {
       // update canvas size
       const rows = Math.ceil(frames.length / COLS);
       canvasRef.current!.width = COLS * FRAME_WIDTH;
@@ -59,7 +52,9 @@ export const QuiltImage: FC<QuiltImageProps> = ({
 
       onRendered?.(canvasRef.current!);
     }
-  }, [frames]);
+  }, [frames, focus, onRendered]);
+
+  if (!frames?.length) return null;
 
   return (
     <div className="max-w-2xl">

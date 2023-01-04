@@ -3,15 +3,16 @@ import { fetchWithProgress } from '@utils/fetch';
 import { FC, useState } from 'react';
 import { unzip } from 'unzipit';
 
+import { useProgress } from '@components/hooks/useProgress';
+import { useSequence } from '@components/hooks/useSequence';
+import { useSource } from '@components/hooks/useSource';
 import { SequenceProcessorInfo } from '@components/lightfield/types';
 
-export const LumaLightfieldDownloader: SequenceProcessorInfo = ({
-  setSource,
-  setRawSequence,
-  setProgress,
-  setProgressMessage,
-  onDone,
-}) => {
+export const LumaLightfieldDownloader: SequenceProcessorInfo = ({ activated, onDone }) => {
+  const { updateProgress } = useProgress();
+  const { setSourceInfo } = useSource();
+  const { setAllFrames } = useSequence();
+
   const [url, setUrl] = useState('');
   const [fetching, setFetching] = useState(false);
 
@@ -32,12 +33,10 @@ export const LumaLightfieldDownloader: SequenceProcessorInfo = ({
     if (!url || fetching) return;
 
     setFetching(true);
-    setProgress(-1);
-    setProgressMessage('');
 
     try {
       // fetch luma page
-      setProgressMessage('Fetching info ...');
+      updateProgress(-1, 'Fetching info ...');
       const resp = await fetch(`/api/luma/getInfo?url=${encodeURIComponent(url)}`);
       const json = await resp.json();
 
@@ -46,32 +45,32 @@ export const LumaLightfieldDownloader: SequenceProcessorInfo = ({
         pageProps: {
           props: {
             pageProps: {
-              artifacts: { light_field },
+              artifacts: { light_field: lightFieldZipUrl },
               captureMeta: { captureName, username },
             },
           },
         },
       } = json;
 
-      setSource({ title: captureName, author: username, url, sourceType: 'Luma' });
+      setSourceInfo({ title: captureName, author: username, url, sourceType: 'Luma' });
 
       // download light field photos zip
-      const lightFieldZipUrl = json.pageProps.props.pageProps.artifacts.light_field;
       const zipFileName = lightFieldZipUrl.split('/').pop()!;
       const zipDownloadUrl = `/luma/lightfield/${zipFileName}`;
 
       // download and unzip the light field photos
-      setProgressMessage('Downloading light field photos ...');
+      updateProgress(-1, 'Downloading light field photos ...');
       const zipFile = await fetchWithProgress(zipDownloadUrl, undefined, (received, total) => {
         const progress = received / total;
         const receivedInMB = (received / 1024 / 1024).toFixed(2);
         const totalInMB = (total / 1024 / 1024).toFixed(2);
-        setProgressMessage(`Downloading light field photos ${receivedInMB}MB / ${totalInMB}MB ...`);
-        setProgress(progress * 0.9);
+        updateProgress(
+          progress * 0.9,
+          `Downloading light field photos ${receivedInMB}MB / ${totalInMB}MB ...`
+        );
       });
 
       // draw all the frames into canvas
-      setProgressMessage('Processing ...');
       const frames: HTMLCanvasElement[] = [];
       const { entries } = await unzip(zipFile);
       const names = Object.keys(entries).sort().reverse();
@@ -80,24 +79,24 @@ export const LumaLightfieldDownloader: SequenceProcessorInfo = ({
         const blob = await entries[name].blob('image/jpg');
         const frame = await drawBlobToCanvas(blob);
         frames.push(frame);
-        setProgress(0.9 + ((i + 1) / names.length) * 0.1);
+        updateProgress(0.9 + ((i + 1) / names.length) * 0.1, 'Processing ...');
       }
 
-      setProgressMessage(`Downloaded. There are ${names.length} frames in total.`);
-      setProgress(1);
+      updateProgress(1, `Downloaded. There are ${names.length} frames in total.`);
 
-      setRawSequence(frames);
+      setAllFrames(frames, true);
       onDone();
     } catch (e) {
       // TODO show toast
-      setProgressMessage('Failed to fetch from Luma.');
+      updateProgress(0, 'Failed to fetch from Luma.');
       console.error(e);
-      setProgress(0);
       onDone();
     } finally {
       setFetching(false);
     }
   };
+
+  if (!activated) return null;
 
   return (
     <>

@@ -62,21 +62,54 @@ export const drawSourceOntoDest = (
   );
 };
 
+export const drawSourceToCanvas = (source: CanvasImageSource, width: number, height: number) => {
+  const frame = document.createElement('canvas');
+  frame.width = width;
+  frame.height = height;
+
+  let sw = 0,
+    sh = 0;
+  if (source instanceof HTMLVideoElement) {
+    sw = source.videoWidth;
+    sh = source.videoHeight;
+  } else if (source instanceof HTMLImageElement) {
+    sw = source.naturalWidth;
+    sh = source.naturalHeight;
+  }
+
+  const ctx = frame.getContext('2d')!;
+  ctx.drawImage(source, 0, 0, sw, sh, 0, 0, width, height);
+
+  return frame;
+};
+
 export const drawBlobToCanvas = (blob: Blob) => {
   return new Promise<HTMLCanvasElement>((resolve, reject) => {
     const url = URL.createObjectURL(blob);
     const img = new Image();
+
+    const cleanup = () => {
+      img.onload = null;
+      img.onerror = null;
+      URL.revokeObjectURL(url);
+    };
+
     img.src = url;
+
     img.onload = () => {
       const canvas = document.createElement('canvas');
       canvas.width = img.naturalWidth;
       canvas.height = img.naturalHeight;
       const ctx = canvas.getContext('2d')!;
       ctx.drawImage(img, 0, 0);
-      URL.revokeObjectURL(url);
+      cleanup();
       resolve(canvas);
     };
-    img.onerror = reject;
+
+    img.onerror = (error) => {
+      cleanup();
+      reject(error);
+    };
   });
 };
 

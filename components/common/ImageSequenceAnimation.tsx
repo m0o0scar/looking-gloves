@@ -16,6 +16,7 @@ export const ImageSequenceAnimation = forwardRef(function ImageSequenceAnimation
   const { className, style, frames, start = -1, end = -1, ...rest } = props;
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const ctx = canvasRef.current?.getContext('2d')!;
   useImperativeHandle(ref, () => canvasRef.current!);
 
   const currentIndexRef = useRef(0);
@@ -25,7 +26,6 @@ export const ImageSequenceAnimation = forwardRef(function ImageSequenceAnimation
   const drawCurrentFrame = () => {
     const frame = frames?.[currentIndexRef.current];
     if (!frame || !canvasRef.current) return;
-    const ctx = canvasRef.current?.getContext('2d')!;
     ctx.drawImage(
       frame,
       0,
@@ -64,6 +64,12 @@ export const ImageSequenceAnimation = forwardRef(function ImageSequenceAnimation
     clearInterval(animationIntervalRef.current);
     animationIntervalRef.current = 0;
   };
+
+  useEffect(() => {
+    return () => {
+      stopAnimation();
+    };
+  }, []);
 
   // update canvas size when frames/width/height change
   useEffect(() => {

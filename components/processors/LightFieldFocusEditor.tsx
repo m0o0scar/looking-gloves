@@ -1,77 +1,85 @@
 import { Canvas } from '@react-three/fiber';
 import { scrollToBottom } from '@utils/dom';
-import { FC, useState, useEffect } from 'react';
-import { DataArrayTexture, ShaderMaterial } from 'three';
+import { useState, useEffect } from 'react';
+import { DataArrayTexture } from 'three';
 
 import { IconButton } from '@components/common/IconButton';
+import { useSequence } from '@components/hooks/useSequence';
 
+import {
+  material,
+  setTexture,
+  setTextureFocus,
+  disposeTexture,
+} from '../common/LightFieldMaterial';
 import { SequenceProcessorInfo } from '../lightfield/types';
-import { createLightFieldMaterial } from './LightFieldMaterial';
 
 const SCALE = 10;
 
-export const LightFieldFocusEditor: SequenceProcessorInfo = ({
-  focus = 0,
-  setFocus,
-  sequence,
-  activated,
-  onDone,
-}) => {
-  const [adjustedFocus, setAdjustedFocus] = useState(0);
+export const LightFieldFocusEditor: SequenceProcessorInfo = ({ activated, onDone }) => {
+  const { focus, setFocus, frames } = useSequence();
 
-  const [lightFieldMaterial, setLightFieldMaterial] = useState<ShaderMaterial>();
+  // for holding the adjusted focus value from the slider
+  const [adjustedFocus, setAdjustedFocus] = useState(0);
 
   const fov = 75;
   const planeSize = 1;
   const cameraZ = planeSize / (2 * Math.tan((fov * Math.PI) / 360));
   const canvasSize = 600;
 
-  const onCancel = () => {
-    onDone();
-  };
-
+  // when confirm, save the focus value and exit the editor
   const onConfirm = () => {
     setFocus(adjustedFocus * SCALE);
     onDone();
   };
 
+  // when the slider value changes, update the focus state and the texture
+  const onFocusChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Number(e.target.value);
+    setAdjustedFocus(value);
+  };
+
+  // when deactivated, dispose the texture to prevent memory leak
   useEffect(() => {
-    if (activated) {
-      setAdjustedFocus(focus / SCALE);
+    if (!activated) {
+      disposeTexture();
     }
   }, [activated]);
 
+  // sync focus from props to state
   useEffect(() => {
-    if (sequence?.length) {
-      const numberOfFrames = sequence.length;
-      const frameWidth = sequence[0].width;
-      const frameHeight = sequence[0].height;
+    const value = focus / SCALE;
+    setAdjustedFocus(value);
+  }, [focus]);
+
+  // when the focus changes, update the texture
+  useEffect(() => {
+    setTextureFocus(adjustedFocus);
+  }, [adjustedFocus]);
+
+  // when the frames change, update the texture
+  useEffect(() => {
+    if (frames?.length && activated) {
+      const numberOfFrames = frames.length;
+      const frameWidth = frames[0].width;
+      const frameHeight = frames[0].height;
 
       let offset = 0;
       const data = new Uint8Array(frameWidth * frameHeight * 4 * numberOfFrames);
-      for (const frame of [...sequence].reverse()) {
+      for (const frame of [...frames].reverse()) {
         const imgData = frame.getContext('2d')!.getImageData(0, 0, frameWidth, frameHeight);
         data.set(imgData.data, offset);
         offset += imgData.data.byteLength;
       }
 
       const texture = new DataArrayTexture(data, frameWidth, frameHeight, numberOfFrames);
-      texture.needsUpdate = true;
-
-      const material = createLightFieldMaterial(texture, numberOfFrames);
-      setLightFieldMaterial(material);
+      setTexture(texture, numberOfFrames);
 
       scrollToBottom();
     }
-  }, [sequence]);
+  }, [frames, activated]);
 
-  useEffect(() => {
-    if (lightFieldMaterial) {
-      lightFieldMaterial.uniforms.focus.value = adjustedFocus;
-    }
-  }, [adjustedFocus, lightFieldMaterial]);
-
-  if (!sequence?.length) return null;
+  if (!activated || !frames?.length) return null;
 
   return (
     <div className="flex flex-col items-center gap-2 max-w-full">
@@ -86,13 +94,7 @@ export const LightFieldFocusEditor: SequenceProcessorInfo = ({
           max="0.025"
           step="0.0001"
           value={adjustedFocus}
-          onChange={(e) => setAdjustedFocus(parseFloat(e.target.value))}
-        />
-        <IconButton
-          tooltip="Cancel"
-          iconType="cross"
-          buttonClassName="btn-error"
-          onClick={onCancel}
+          onChange={onFocusChange}
         />
         <IconButton
           tooltip="Confirm"
@@ -105,11 +107,12 @@ export const LightFieldFocusEditor: SequenceProcessorInfo = ({
       <Canvas
         flat
         linear
+        frameloop="demand"
         camera={{ position: [0, 0, cameraZ] }}
         className="rounded-lg max-w-full aspect-square"
         style={{ width: canvasSize }}
       >
-        <mesh material={lightFieldMaterial}>
+        <mesh material={material!}>
           <planeGeometry args={[planeSize, planeSize, 1, 1]} />
         </mesh>
       </Canvas>

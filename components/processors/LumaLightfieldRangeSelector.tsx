@@ -5,6 +5,7 @@ import { FC, useState, useEffect } from 'react';
 
 import { IconButton } from '@components/common/IconButton';
 import { ImageSequenceAnimation } from '@components/common/ImageSequenceAnimation';
+import { useSequence } from '@components/hooks/useSequence';
 import { SequenceProcessorInfo } from '@components/lightfield/types';
 
 const initialNumberOfFrames = 48;
@@ -38,15 +39,10 @@ const StyledSlider = styled(Slider)`
   }
 `;
 
-export const LumaLightfieldRangeSelector: SequenceProcessorInfo = ({
-  rawSequence,
-  sequence,
-  setSequence,
-  activated,
-  onDone,
-}) => {
+export const LumaLightfieldRangeSelector: SequenceProcessorInfo = ({ activated, onDone }) => {
+  const { allFrames, range, setRange } = useSequence();
+
   const [framesRange, setFramesRange] = useState([-1, -1, -1]);
-  const [canCancel, setCanCancel] = useState(false);
 
   // make sure the range is not too large
   const onRangeChange = (newRange: number[]) => {
@@ -75,37 +71,20 @@ export const LumaLightfieldRangeSelector: SequenceProcessorInfo = ({
   };
 
   const onConfirmFrames = () => {
-    if (rawSequence?.length) {
-      setSequence([...rawSequence]?.slice(framesRange[0], framesRange[2]), true);
-      onDone();
-    }
-  };
-
-  const onCancel = () => {
+    setRange([framesRange[0], framesRange[2]]);
     onDone();
   };
 
-  // init range when sequence is loaded
   useEffect(() => {
-    if (activated && rawSequence?.length) {
-      let rangeStart, rangeEnd;
-      if (rawSequence.length !== sequence?.length) {
-        rangeStart = rawSequence.indexOf(sequence?.[0]!);
-        rangeEnd = rawSequence.indexOf(sequence?.[sequence.length - 1]!);
-        setCanCancel(true);
-      } else {
-        rangeStart = Math.floor((rawSequence.length - initialNumberOfFrames) / 2);
-        rangeEnd = rangeStart + initialNumberOfFrames;
-        setCanCancel(false);
-      }
-      rangeStart = roundTo8(rangeStart);
-      rangeEnd = roundTo8(rangeEnd);
-      const middle = (rangeStart + rangeEnd) / 2;
-      setFramesRange([rangeStart, middle, rangeEnd]);
-
+    if (activated && range && isFinite(range[1])) {
+      const [start, end] = range;
+      const middle = (start + end) / 2;
+      setFramesRange([start, middle, end]);
       scrollToBottom();
     }
-  }, [rawSequence, sequence, activated]);
+  }, [range, activated]);
+
+  if (!activated) return null;
 
   return (
     <div className="flex flex-col items-center gap-2 max-w-full">
@@ -118,26 +97,18 @@ export const LumaLightfieldRangeSelector: SequenceProcessorInfo = ({
           onChange={(e, newValue) => onRangeChange(newValue as number[])}
           step={1}
           min={0}
-          max={rawSequence?.length || 0}
+          max={allFrames?.length || 0}
           valueLabelDisplay="auto"
-        />
-        <IconButton
-          iconType="cross"
-          buttonClassName="btn-error"
-          disabled={!canCancel}
-          onClick={onCancel}
         />
         <IconButton iconType="tick" buttonClassName="btn-success" onClick={onConfirmFrames} />
       </div>
 
-      {activated && (
-        <ImageSequenceAnimation
-          frames={rawSequence}
-          start={framesRange[0]}
-          end={framesRange[2]}
-          style={{ width: 600 }}
-        />
-      )}
+      <ImageSequenceAnimation
+        frames={allFrames}
+        start={framesRange[0]}
+        end={framesRange[2]}
+        style={{ width: 600 }}
+      />
     </div>
   );
 };
