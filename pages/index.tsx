@@ -47,7 +47,7 @@ const HomePage: NextPage = () => {
                 >
                   Luma AI
                 </a>{' '}
-                NeRF to light field with just its URL.
+                NeRF to hologram with just a URL.
               </>
             }
             link="/luma"
@@ -57,10 +57,10 @@ const HomePage: NextPage = () => {
           />
 
           <PageCard
-            title="🎥 Video/Images"
+            title="🎥 Video"
             content={
               <>
-                Capture/render a video or images following this{' '}
+                Capture/render a video following this{' '}
                 <a
                   href="https://docs.lookingglassfactory.com/keyconcepts/capturing-a-lightfield/linear-light-field-capture"
                   target="_blank"
@@ -69,14 +69,20 @@ const HomePage: NextPage = () => {
                 >
                   Linear Light Field Capture
                 </a>{' '}
-                method, then convert the video/images to light field.
+                method, then convert the video to hologram.
               </>
             }
-            link="/images"
+            link="/video"
             thumbnail="/assets/cover-images.jpg"
-            alert="🚧 Tutorial coming soon."
-            alertClassName=""
           />
+
+          <PageCard
+            title="🎞️ Images"
+            content="Create hologram from a light field photoset."
+            link="/images"
+          />
+
+          <PageCard title="🕵️ Quilt" content="Refocus a quilt image." link="/quilt" />
 
           <PageCard
             title="🏞️ RGBD"

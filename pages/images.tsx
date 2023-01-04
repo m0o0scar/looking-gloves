@@ -2,19 +2,15 @@ import type { NextPage } from 'next';
 
 import { PageContainer } from '@components/common/PageContainer';
 import { QuiltImageCreator } from '@components/lightfield/QuiltImageCreator';
+import { ImageSequenceProcessor } from '@components/processors/ImageSequenceProcessor';
 import { LightFieldFocusEditor } from '@components/processors/LightFieldFocusEditor';
 
-import { ImageSequenceExtractor } from '../components/processors/ImageSequenceExtractor';
-
-const VideoPage: NextPage = () => {
+const ImageSequencePage: NextPage = () => {
   return (
-    <PageContainer favicon="🎥" title="Image Sequence to Light Field" subtitle="🎥 Images/Video">
-      <QuiltImageCreator
-        processors={[ImageSequenceExtractor, LightFieldFocusEditor]}
-        progressBarWidth={576}
-      />
+    <PageContainer favicon="🎞️" title="Image Sequence to Hologram" subtitle="🎞️ Images">
+      <QuiltImageCreator processors={[ImageSequenceProcessor, LightFieldFocusEditor]} />
     </PageContainer>
   );
 };
 
-export default VideoPage;
+export default ImageSequencePage;

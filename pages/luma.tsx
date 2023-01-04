@@ -8,10 +8,9 @@ import { LumaLightfieldRangeSelector } from '@components/processors/LumaLightfie
 
 const VideoPage: NextPage = () => {
   return (
-    <PageContainer favicon="🔫" title="Luma NeRF to Light Field" subtitle="🔫 Luma NeRF">
+    <PageContainer favicon="🔫" title="Luma NeRF to Hologram" subtitle="🔫 Luma NeRF">
       <QuiltImageCreator
         processors={[LumaLightfieldDownloader, LumaLightfieldRangeSelector, LightFieldFocusEditor]}
-        progressBarWidth={470}
       />
     </PageContainer>
   );

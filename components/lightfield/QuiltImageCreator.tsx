@@ -11,19 +11,24 @@ import { SequenceProcessorInfo } from './types';
 
 export interface QuiltImageCreatorProps {
   processors?: SequenceProcessorInfo[];
-  progressBarWidth?: number;
 }
 
-export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors, progressBarWidth }) => {
+export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors }) => {
   const { currentStep, nextStep, hasReachedEnd, backToBeginning } = useCurrentStep(
     processors?.length || 0
   );
-  const { progress, progressMessage } = useProgress();
-  const { reset } = useSequence();
+  const { progress, progressMessage, reset: resetProgress } = useProgress();
+  const { reset: resetSequence } = useSequence();
+
+  const reset = () => {
+    backToBeginning();
+    resetSequence();
+    resetProgress();
+  };
 
   useEffect(() => {
     return () => {
-      reset();
+      reset;
     };
   }, []);
 
@@ -31,7 +36,7 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors, prog
     if (currentStep === 0) {
       reset();
     }
-  }, [currentStep, reset]);
+  }, [currentStep]);
 
   return (
     <>
@@ -50,7 +55,7 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors, prog
       ))}
 
       {/* progress bar */}
-      <ProgressBar progress={progress} message={progressMessage} width={progressBarWidth} />
+      <ProgressBar progress={progress} message={progressMessage} />
 
       {/* quilt image preview */}
       {hasReachedEnd && <QuiltImagePreview onRestart={backToBeginning} />}
