@@ -1,4 +1,4 @@
-import { Canvas, dispose } from '@react-three/fiber';
+import { Canvas } from '@react-three/fiber';
 import { scrollToBottom } from '@utils/dom';
 import { useState, useEffect } from 'react';
 import { DataArrayTexture } from 'three';
@@ -26,11 +26,6 @@ export const LightFieldFocusEditor: SequenceProcessorInfo = ({ activated, onDone
   const planeSize = 1;
   const cameraZ = planeSize / (2 * Math.tan((fov * Math.PI) / 360));
   const canvasSize = 600;
-
-  // when cancel, discard focus value change and exit the editor
-  const onCancel = () => {
-    onDone();
-  };
 
   // when confirm, save the focus value and exit the editor
   const onConfirm = () => {
@@ -100,12 +95,6 @@ export const LightFieldFocusEditor: SequenceProcessorInfo = ({ activated, onDone
           step="0.0001"
           value={adjustedFocus}
           onChange={onFocusChange}
-        />
-        <IconButton
-          tooltip="Cancel"
-          iconType="cross"
-          buttonClassName="btn-error"
-          onClick={onCancel}
         />
         <IconButton
           tooltip="Confirm"
