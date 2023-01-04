@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Quilt Detector</title>
-    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+    <script defer src="https://pyscript.net/latest/pyscript.min.js"></script>
     <style>
 
       * {
@@ -34,14 +34,26 @@
         document.getElementById('output').innerText = text;
       }
 
-      function pyIsReady() {
+      function createObject(object, variableName){
+        //Bind a variable whose name is the string variableName
+        // to the object called 'object'
+        const execString = variableName + " = object"
+        console.log("Running '" + execString + "'");
+        eval(execString)
+      }
+
+      function onPyReady() {
         document.getElementById('input').removeAttribute('disabled');
         output('Please select a quilt image file');
       }
 
-      function receiveResultFromPyScript(cols, rows) {
-        output(`There are ${cols} columns and ${rows} rows in the quilt image`);
-      }
+      document.getElementById('input').addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const [cols, rows] = await pyodideGlobals.get('getQuiltColsRows')(file);
+          output(`There are ${cols} columns and ${rows} rows in the quilt image`);
+        }
+      });
     </script>
     
     <py-config type="json">
@@ -58,27 +70,22 @@
       }
     </py-config>
     <py-script>
-      from pyodide import to_js, create_proxy
+      from pyodide.ffi import to_js, create_proxy
       import asyncio
       import base64
-      from js import window
-      from js import Math
-      from js import performance
-      from js import Uint8ClampedArray, ImageData
-      from js import document
+      from js import window, document
       from js import console
-      from js import pyIsReady, receiveResultFromPyScript
+      from js import createObject, onPyReady
       import cv2
       import numpy as np
       import matplotlib.pyplot as plt
 
+      #Exporting all Global Python Objects to JavaScript
+      createObject(create_proxy(globals()), "pyodideGlobals")
+
       #setup a function for the event listener to call
-      async def updateImageDisplay(event):
-          console.log('testing the event listener')
-
-          file = event.target.files.item(0)
+      async def getQuiltColsRows(file):
           url = window.URL.createObjectURL(file)
-
           imageElement = document.createElement('img')
           imageElement.src = url;
           await asyncio.sleep(0.25)
@@ -181,23 +188,13 @@
           if best_x == 0: best_x = DIM
           if best_y == 0: best_y = DIM
 
-          views_x = round(DIM / best_x)
-          views_y = round(DIM / best_y)
+          cols = round(DIM / best_x)
+          rows = round(DIM / best_y)
 
-          # output count
-          receiveResultFromPyScript(views_x, views_y)
-
-      def setup():
-        # Create a JsProxy for the callback function
-        input_proxy = create_proxy(updateImageDisplay)
+          # return result
+          return [cols, rows]
       
-        # Set the listener to the callback
-        e = document.getElementById("input")
-        e.addEventListener("change", input_proxy)
-
-        pyIsReady()
-      
-      setup()
+      onPyReady()
     </py-script>
   </body>
 </html>
