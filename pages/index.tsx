@@ -74,8 +74,6 @@ const HomePage: NextPage = () => {
             }
             link="/images"
             thumbnail="/assets/cover-images.jpg"
-            alert="🚧 Tutorial coming soon."
-            alertClassName=""
           />
 
           <PageCard
