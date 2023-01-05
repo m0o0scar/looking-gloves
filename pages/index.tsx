@@ -80,9 +80,16 @@ const HomePage: NextPage = () => {
             title="🎞️ Images"
             content="Create hologram from a light field photoset."
             link="/images"
+            thumbnail="/assets/cover-lightfield.jpg"
           />
 
-          <PageCard title="🕵️ Quilt" content="Refocus a quilt image." link="/quilt" />
+          <PageCard
+            title="🕵️ Quilt"
+            content="Refocus a quilt image."
+            link="/quilt"
+            thumbnail="/assets/cover-quilt.jpg"
+            blurThumbnail
+          />
 
           <PageCard
             title="🏞️ RGBD"
