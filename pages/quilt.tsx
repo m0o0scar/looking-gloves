@@ -8,11 +8,10 @@ import { QuiltImageCreator } from '@components/lightfield/QuiltImageCreator';
 import { LightFieldFocusEditor } from '@components/processors/LightFieldFocusEditor';
 import { QuiltFramesExtractor } from '@components/processors/QuiltFramesExtractor';
 
-initPyScript();
-
 const QuiltPage: NextPage = () => {
   useEffect(() => {
     registerServiceWorker('/sw-quilt.js');
+    initPyScript();
   }, []);
 
   return (
