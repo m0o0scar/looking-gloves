@@ -1,6 +1,6 @@
-const addResourcesToCache = async (resources) => {
+const addResourcesToCache = async (urls) => {
   const cache = await caches.open("quilt-v1");
-  await cache.addAll(resources);
+  await cache.addAll(urls);
 };
 
 const cacheFirst = async (request) => {
@@ -14,7 +14,7 @@ const cacheFirst = async (request) => {
 self.addEventListener("install", event => {
   event.waitUntil(
     addResourcesToCache([
-      'https://pyscript.net/releases/2022.12.1/pyscript.min.js',
+      '/external/pyscript/releases/2022.12.1/pyscript.min.js',
       'https://cdn.jsdelivr.net/pyodide/v0.21.3/full/pyodide.js',
       'https://cdn.jsdelivr.net/pyodide/v0.21.3/full/pyodide_py.tar',
       'https://cdn.jsdelivr.net/pyodide/v0.21.3/full/pyodide.asm.js',

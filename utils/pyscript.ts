@@ -1,5 +1,5 @@
 const loadPyScript = () => {
-  const url = 'https://pyscript.net/releases/2022.12.1/pyscript.min.js';
+  const url = '/external/pyscript/releases/2022.12.1/pyscript.min.js';
   const script = document.createElement('script');
   script.src = url;
   script.async = true;

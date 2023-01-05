@@ -10,9 +10,10 @@ const nextConfig = {
       destination: 'https://cdn-luma.com/:filename',
     },
     {
-      source: '/video',
-      destination: '/images',
-    }
+      // PyScript CORS support
+      source: '/external/pyscript/:path*',
+      destination: 'https://pyscript.net/:path*',
+    },
   ],
 }
 
