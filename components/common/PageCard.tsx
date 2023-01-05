@@ -4,41 +4,50 @@ import Link from 'next/link';
 import { FC, ReactNode, ReactFragment } from 'react';
 
 export interface PageCardProps {
-  thumbnail?: ReactNode;
   title: ReactNode;
   content: ReactNode | ReactFragment;
+  link: string;
+  thumbnail?: string;
+  thumbnailClassName?: string;
+  blurThumbnail?: boolean;
   alert?: ReactNode;
   alertClassName?: string;
-  link: string;
-  linkLabel?: string;
 }
 
 export const PageCard: FC<PageCardProps> = ({
-  thumbnail,
   title,
   content,
+  link,
+  thumbnail,
+  thumbnailClassName,
+  blurThumbnail,
   alert,
   alertClassName,
-  link,
 }) => {
   return (
     <Link href={link}>
       <div
         className={cls(
           'not-porse card card-compact bg-base-100 shadow-lg overflow-hidden cursor-pointer',
-          'transition-all hover:scale-105 hover:shadow-2xl'
+          'transition-all hover:scale-105 hover:shadow-2xl',
+          '[&>.card-cover]:transition-all [&>.card-cover]:hover:scale-110 [&>.card-cover]:hover:blur-none'
         )}
       >
         {/* thumbnail placeholder */}
         {!thumbnail && <div className="max-w-full aspect-[3/2] bg-slate-300" />}
 
         {/* if thumbnail is given as string, show it as image */}
-        {thumbnail && typeof thumbnail === 'string' && (
-          <img src={thumbnail} alt="cover" className="m-0 max-w-full aspect-[3/2] object-cover" />
+        {thumbnail && (
+          <img
+            src={thumbnail}
+            alt="cover"
+            className={cls(
+              'card-cover m-0 max-w-full aspect-[3/2] object-cover',
+              thumbnailClassName,
+              { 'blur-sm': blurThumbnail }
+            )}
+          />
         )}
-
-        {/* if thumbnail is given as ReactNode, show it as is */}
-        {thumbnail && typeof thumbnail !== 'string' && thumbnail}
 
         {/* title & content */}
         <div className="card-body flex flex-col">
