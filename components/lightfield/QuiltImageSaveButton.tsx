@@ -1,7 +1,7 @@
 import { canvasToJpeg } from '@utils/canvas';
 import { COLS } from '@utils/constant';
 import { triggerDownload } from '@utils/download';
-import cls from 'classnames';
+import dayjs from 'dayjs';
 import { debounce } from 'lodash';
 import { FC, useState } from 'react';
 
@@ -27,7 +27,7 @@ export const QuiltImageSaveButton: FC<QuiltImageSaveButtonProps> = ({ quiltImage
     const frameWidth = quiltImage.width / COLS;
     const frameHeight = quiltImage.height / rows;
     const aspectRatio = frameWidth / frameHeight;
-    const name = Date.now();
+    const name = dayjs().format('YYYY-MM-DD_HH-mm-ss');
     const filename = `${name}_qs${COLS}x${rows}a${aspectRatio.toFixed(2)}.jpg`;
 
     const url = canvasToJpeg(quiltImage);

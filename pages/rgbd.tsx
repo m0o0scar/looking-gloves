@@ -3,6 +3,7 @@ import { canvasToJpeg } from '@utils/canvas';
 import { getImageFromClipboard } from '@utils/clipboard';
 import { triggerDownload } from '@utils/download';
 import { convertPhotoToRGBD } from '@utils/rgbd';
+import dayjs from 'dayjs';
 import type { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -18,7 +19,8 @@ const RGBDPhotoPage: NextPage = () => {
 
   const saveRGBDPhoto = () => {
     if (rgbdPhoto) {
-      triggerDownload(rgbdPhoto, `${Date.now()}-rgbd.jpg`);
+      const name = dayjs().format('YYYY-MM-DD_HH-mm-ss');
+      triggerDownload(rgbdPhoto, `${name}-rgbd.jpg`);
     }
   };
 
@@ -35,7 +37,9 @@ const RGBDPhotoPage: NextPage = () => {
         canvas.width = width;
         canvas.height = height;
         ctx.drawImage(img, width, 0, width, height, 0, 0, width, height);
-        triggerDownload(canvasToJpeg(canvas), `${Date.now()}-depth-map.jpg`);
+
+        const name = dayjs().format('YYYY-MM-DD_HH-mm-ss');
+        triggerDownload(canvasToJpeg(canvas), `${name}-depth-map.jpg`);
       };
     }
   };
