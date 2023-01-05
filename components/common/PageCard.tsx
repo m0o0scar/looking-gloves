@@ -50,11 +50,12 @@ export const PageCard: FC<PageCardProps> = ({
         )}
 
         {/* title & content */}
-        <div className="card-body flex flex-col">
+        <div className="card-body flex flex-col bg-white z-10">
           <h2 className="card-title m-0">{title}</h2>
           <div className="text-sm">{content}</div>
-          {alert && <div className={cls('text-xs alert mt-2', alertClassName)}>{alert}</div>}
         </div>
+
+        {alert && <div className={cls('text-xs alert rounded-none', alertClassName)}>{alert}</div>}
       </div>
     </Link>
   );
