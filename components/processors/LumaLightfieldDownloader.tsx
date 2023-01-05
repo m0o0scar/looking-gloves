@@ -56,7 +56,7 @@ export const LumaLightfieldDownloader: SequenceProcessorInfo = ({ activated, onD
 
       // download light field photos zip
       const zipFileName = lightFieldZipUrl.split('/').pop()!;
-      const zipDownloadUrl = `/luma/lightfield/${zipFileName}`;
+      const zipDownloadUrl = `/external/luma/lightfield/${zipFileName}`;
 
       // download and unzip the light field photos
       updateProgress(-1, 'Downloading light field photos ...');
@@ -102,8 +102,8 @@ export const LumaLightfieldDownloader: SequenceProcessorInfo = ({ activated, onD
     <>
       <h2>Please provide Luma NeRF URL</h2>
 
-      <div className="flex gap-2 w-full sm:w-auto">
-        <div className="form-control grow w-auto sm:w-96">
+      <div className="flex gap-2 w-full sm:w-96">
+        <div className="form-control grow">
           <input
             type="url"
             disabled={fetching}

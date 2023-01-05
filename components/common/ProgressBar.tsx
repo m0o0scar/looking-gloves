@@ -18,7 +18,7 @@ export const ProgressBar: FC<ProgressBarProps> = ({ progress = 0, message, width
   const value = progress < 0 ? undefined : progress;
 
   return (
-    <div className="form-control grow w-auto sm:w-80 max-w-full" style={{ width }}>
+    <div className="form-control grow w-full sm:w-96">
       <progress className="progress w-full" value={value} max="1"></progress>
       <label className="label">
         <span className="label-text-alt">{label}</span>
