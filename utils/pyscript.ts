@@ -48,7 +48,7 @@ export const isPyScriptReady = () => {
   return typeof window.pyodideGlobals !== 'undefined';
 };
 
-export const getQuiltColsRows = async (file: File) => {
-  const [cols, rows] = await window.pyodideGlobals.get('getQuiltColsRows')(file);
+export const getQuiltColsRows = async (img: HTMLImageElement) => {
+  const [cols, rows] = await window.pyodideGlobals.get('getQuiltColsRows')(img);
   return { cols, rows };
 };

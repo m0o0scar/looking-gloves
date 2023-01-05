@@ -14,12 +14,7 @@ pyCreateObject(create_proxy(globals()), "pyodideGlobals")
 
 
 # setup a function for the event listener to call
-async def getQuiltColsRows(file):
-    url = window.URL.createObjectURL(file)
-    imageElement = document.createElement('img')
-    imageElement.src = url
-    await asyncio.sleep(0.25)
-
+async def getQuiltColsRows(imageElement):
     # setup the canvas element, draw the quilt to the canvas, at reduced size
     DIM = 512
     canvas = document.createElement('canvas')
@@ -27,7 +22,6 @@ async def getQuiltColsRows(file):
     canvas.height = DIM
     ctx = canvas.getContext('2d')
     ctx.drawImage(imageElement, 0, 0, DIM, DIM)
-    window.URL.revokeObjectURL(url)
 
     # convert the canvas into data! Then take that data and pass it into opencv
     dataurl = canvas.toDataURL()

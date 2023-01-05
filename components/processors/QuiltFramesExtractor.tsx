@@ -1,6 +1,7 @@
 import { drawSourceToCanvas } from '@utils/canvas';
 import { loadImage } from '@utils/image';
 import { getQuiltColsRows, isPyScriptReady } from '@utils/pyscript';
+import { wait } from '@utils/time';
 import React, { useState, useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 
@@ -32,7 +33,7 @@ export const QuiltFramesExtractor: SequenceProcessorInfo = ({ activated, onDone 
     if (ready) {
       setPyReady(true);
     } else {
-      updateProgress(-1, `Please wait while PyScript is loading ...`);
+      updateProgress(-1, `Please wait while loading dependencies ...`);
       document.addEventListener('pyscriptready', onPyReady);
     }
 
@@ -48,13 +49,35 @@ export const QuiltFramesExtractor: SequenceProcessorInfo = ({ activated, onDone 
         setProcessing(true);
         updateProgress(0, 'Extracting frames ...');
 
-        const { cols, rows } = await getQuiltColsRows(files[0]);
+        // convert file into image element
+        const img = await loadImage(files[0]);
+
+        // determine how many columns and rows are there in the image
+        const { cols, rows } = await getQuiltColsRows(img);
+        const totalFrames = cols * rows;
         console.log(`There are ${cols} columns and ${rows} rows in the quilt image`);
 
-        // TODO determine how many columns and rows are there in the image
-        // TODO draw each frame from the quilt image onto a canvas
+        // draw each frame from the quilt image onto a canvas
+        const frameWidth = Math.floor(img.naturalWidth / cols);
+        const frameHeight = Math.floor(img.naturalHeight / rows);
+        const frames: HTMLCanvasElement[] = [];
+        for (let i = 0; i < totalFrames; i += 1) {
+          const x = (i % cols) * frameWidth;
+          const y = (rows - 1 - Math.floor(i / cols)) * frameHeight;
+          const frame = document.createElement('canvas');
+          frame.width = frameWidth;
+          frame.height = frameHeight;
+          const ctx = frame.getContext('2d')!;
+          ctx.drawImage(img, x, y, frameWidth, frameHeight, 0, 0, frameWidth, frameHeight);
+          frames.push(frame);
+          updateProgress(i / totalFrames, 'Extracting frames ...');
+          await wait(10); // give some time for the UI to update
+        }
 
         setProcessing(false);
+        updateProgress(1);
+        setAllFrames(frames);
+        onDone();
       }
     })();
   }, [files]);
