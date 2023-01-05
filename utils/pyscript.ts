@@ -6,6 +6,11 @@ const loadPyScript = () => {
   document.body.appendChild(script);
 };
 
+const pyReadyCallback = () => {
+  console.log('Python is ready!');
+  document.dispatchEvent(new Event('pyscriptready'));
+};
+
 const injectPyConfig = () => {
   const config = {
     splashscreen: {
@@ -27,21 +32,26 @@ const injectQuiltDetectorFn = () => {
     eval(execString);
   };
 
-  window.pyOnReady = () => {
-    console.log('Python is ready!');
-    document.dispatchEvent(new Event('pyscriptready'));
-  };
+  window.pyOnReady = pyReadyCallback;
 
   const tag = document.createElement('py-script');
   tag.setAttribute('src', '/pyscripts/quiltDetector.py');
   document.body.appendChild(tag);
 };
 
+let inited = false;
+
 export const initPyScript = () => {
   if (typeof window === 'undefined') return;
-  injectPyConfig();
-  injectQuiltDetectorFn();
-  loadPyScript();
+
+  if (inited) {
+    pyReadyCallback();
+  } else {
+    inited = true;
+    injectPyConfig();
+    injectQuiltDetectorFn();
+    loadPyScript();
+  }
 };
 
 export const isPyScriptReady = () => {
