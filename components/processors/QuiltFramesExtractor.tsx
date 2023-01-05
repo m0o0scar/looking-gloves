@@ -9,8 +9,6 @@ import { useProgress } from '@components/hooks/useProgress';
 import { useSequence } from '@components/hooks/useSequence';
 import { SequenceProcessorInfo } from '@components/lightfield/types';
 
-const maxFrameWidth = 1000;
-
 export const QuiltFramesExtractor: SequenceProcessorInfo = ({ activated, onDone }) => {
   const { updateProgress } = useProgress();
   const { setAllFrames } = useSequence();

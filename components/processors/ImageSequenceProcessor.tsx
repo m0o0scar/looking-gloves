@@ -40,6 +40,7 @@ export const ImageSequenceProcessor: SequenceProcessorInfo = ({ activated, onDon
     }
 
     setAllFrames(frames);
+    updateProgress(1);
     setProcessing(false);
     onDone();
   };

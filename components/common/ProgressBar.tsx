@@ -1,16 +1,14 @@
+import { isNullish } from '@utils/utils';
 import { FC } from 'react';
-
-import { isNullish } from '../../utils/utils';
 
 export interface ProgressBarProps {
   progress?: number;
   message?: string;
-  width?: number;
 }
 
 const defaultMessage = 'Extracting frames ...';
 
-export const ProgressBar: FC<ProgressBarProps> = ({ progress = 0, message, width }) => {
+export const ProgressBar: FC<ProgressBarProps> = ({ progress = 0, message }) => {
   if (progress === 0 || progress >= 1) return null;
 
   const content = isNullish(message) ? defaultMessage : message;

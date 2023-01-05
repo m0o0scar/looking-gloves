@@ -56,14 +56,14 @@ const HomePage: NextPage = () => {
             thumbnail="/assets/cover-lightfield.jpg"
           />
 
-          <PageCard
+          {/* <PageCard
             title="🕵️ Quilt"
             content="Re-focus a blurry quilt image."
             link="/quilt"
             thumbnail="/assets/cover-quilt.jpg"
             blurThumbnail
             alert="⚠️ Experimental"
-          />
+          /> */}
 
           <PageCard
             title="🏞️ RGBD"
