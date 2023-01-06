@@ -84,7 +84,7 @@ const RGBDPhotoPage: NextPage = () => {
           disabled={pending}
           onClick={onClipboardButtonClick}
         />
-        <div className="form-control min-w-0 grow md:max-w-xs">
+        <div className="form-control min-w-0 grow">
           <input
             type="file"
             disabled={pending}

@@ -1,11 +1,4 @@
-function imageFileToBase64(file: File | Blob) {
-  return new Promise<string>((resolve, error) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (e) => error(e);
-    reader.readAsDataURL(file);
-  });
-}
+import { drawBlobToCanvas } from './canvas';
 
 interface EndpointResponse {
   data: string[];
@@ -13,8 +6,11 @@ interface EndpointResponse {
 }
 
 export const convertPhotoToRGBD = async (file: File | Blob) => {
-  // convert image file into base64 encoded string
-  const base64 = await imageFileToBase64(file);
+  // draw the image file onto canvas
+  const canvas = await drawBlobToCanvas(file);
+
+  // convert canvas to base64 encoded string
+  const base64 = canvas.toDataURL('image/jpeg', 0.9);
 
   const endpoint = 'https://moscartong-lookingglassrgbd.hf.space/run/predict';
   const response = await fetch(endpoint, {
