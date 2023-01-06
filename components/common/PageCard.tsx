@@ -28,7 +28,7 @@ export const PageCard: FC<PageCardProps> = ({
     <Link href={link}>
       <div
         className={cls(
-          'not-porse card card-compact bg-base-100 shadow-lg overflow-hidden cursor-pointer',
+          'not-porse card card-compact shadow-lg overflow-hidden cursor-pointer',
           'transition-all hover:scale-105 hover:shadow-2xl',
           '[&>.card-cover]:transition-all [&>.card-cover]:hover:scale-110 [&>.card-cover]:hover:blur-none'
         )}
@@ -50,7 +50,7 @@ export const PageCard: FC<PageCardProps> = ({
         )}
 
         {/* title & content */}
-        <div className="card-body flex flex-col bg-white z-10">
+        <div className="card-body flex flex-col bg-white dark:bg-slate-700 z-10">
           <h2 className="card-title m-0">{title}</h2>
           <div className="text-sm">{content}</div>
         </div>
