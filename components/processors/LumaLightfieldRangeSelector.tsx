@@ -40,7 +40,7 @@ const StyledSlider = styled(Slider)`
 `;
 
 export const LumaLightfieldRangeSelector: SequenceProcessorInfo = ({ activated, onDone }) => {
-  const { allFrames, range, setRange } = useSequence();
+  const { allFrames, range, setRange, setFrames } = useSequence();
 
   const [framesRange, setFramesRange] = useState([-1, -1, -1]);
 
@@ -72,6 +72,7 @@ export const LumaLightfieldRangeSelector: SequenceProcessorInfo = ({ activated, 
 
   const onConfirmFrames = () => {
     setRange([framesRange[0], framesRange[2]]);
+    setFrames(allFrames!.slice(framesRange[0], framesRange[2]));
     onDone();
   };
 

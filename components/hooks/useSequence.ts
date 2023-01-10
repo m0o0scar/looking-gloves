@@ -66,26 +66,13 @@ export const useSequence = () => {
     }
   }, [allFrames, range, setRange]);
 
-  // slice frames when allFrames & range change
-  useEffect(() => {
-    if (!allFrames) {
-      setFrames(undefined);
-    } else if (!range) {
-      setFrames(allFrames);
-    } else {
-      let [start, end] = range;
-      start = Math.max(0, start);
-      end = Math.min(allFrames.length, end);
-      setFrames(allFrames.slice(start, end));
-    }
-  }, [allFrames, range, setFrames]);
-
   return {
     allFrames,
     frames,
     focus,
     range,
     reset,
+    setFrames,
     setAllFrames: setAllFramesValue,
     setFocus: setFocusValue,
     setRange,
