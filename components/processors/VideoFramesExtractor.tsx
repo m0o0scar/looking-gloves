@@ -12,7 +12,7 @@ const maxFrameWidth = 1000;
 
 export const VideoFramesExtractor: SequenceProcessorInfo = ({ activated, onDone }) => {
   const { updateProgress } = useProgress();
-  const { setAllFrames } = useSequence();
+  const { setAllFrames, setFrames } = useSequence();
 
   // input element to select video file
   const inputRef = useRef<HTMLInputElement>(null);
@@ -20,7 +20,7 @@ export const VideoFramesExtractor: SequenceProcessorInfo = ({ activated, onDone 
 
   // video element for extracting video frames
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [frames, setFrames] = useState<HTMLCanvasElement[]>(NoFrames);
+  const [videoFrames, setVideoFrames] = useState<HTMLCanvasElement[]>(NoFrames);
 
   const [processing, setProcessing] = useState(false);
   const expectedNumberOfFrames = useRef(0);
@@ -60,7 +60,7 @@ export const VideoFramesExtractor: SequenceProcessorInfo = ({ activated, onDone 
   const onVideoSeeked = () => {
     // draw current frame of the video to the canvas
     const frame = createFrame();
-    setFrames((frames) => [...frames, frame]);
+    setVideoFrames((frames) => [...frames, frame]);
 
     // continue to seek for next frame, or callback when collected enough frames
     if (frameIndexRef.current < expectedNumberOfFrames.current - 1) {
@@ -86,7 +86,7 @@ export const VideoFramesExtractor: SequenceProcessorInfo = ({ activated, onDone 
 
     if (files?.[0]) {
       updateProgress(0, 'Extracting video frames ...');
-      setFrames(NoFrames);
+      setVideoFrames(NoFrames);
       setProcessing(true);
 
       const file = files[0];
@@ -97,11 +97,12 @@ export const VideoFramesExtractor: SequenceProcessorInfo = ({ activated, onDone 
 
   // invoke callback when all frames are extracted
   useEffect(() => {
-    if (frames.length > 0 && frames.length >= expectedNumberOfFrames.current) {
-      setAllFrames(frames);
+    if (videoFrames.length > 0 && videoFrames.length >= expectedNumberOfFrames.current) {
+      setAllFrames(videoFrames);
+      setFrames(videoFrames);
       onDone();
     }
-  }, [frames]);
+  }, [videoFrames]);
 
   if (!activated) return null;
 

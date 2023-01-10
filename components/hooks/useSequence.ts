@@ -49,8 +49,9 @@ export const useSequence = () => {
   const setFocusValue = (value: number) => {
     if (!enforceOrder) {
       setFocus(Math.abs(value));
-      if (value < 0 && allFrames?.length) {
-        setAllFrames([...allFrames].reverse());
+      if (value < 0) {
+        if (allFrames?.length) setAllFrames([...allFrames].reverse());
+        if (frames?.length) setFrames([...frames].reverse());
       }
     } else {
       setFocus(value);
