@@ -60,7 +60,9 @@ export const useSequence = () => {
   // reset when allFrames changes
   useEffect(() => {
     if (allFrames && !range) {
-      setRange([0, Math.min(allFrames.length, 96)]);
+      // select the middle 48 frames
+      const middle = Math.floor(allFrames.length / 2 / 8) * 8;
+      setRange([middle - 24, middle + 24]);
     }
   }, [allFrames, range, setRange]);
 
