@@ -16,7 +16,6 @@ export const ImageSequenceAnimation = forwardRef(function ImageSequenceAnimation
   const { className, style, frames, start = -1, end = -1, ...rest } = props;
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const ctx = canvasRef.current?.getContext('2d')!;
   useImperativeHandle(ref, () => canvasRef.current!);
 
   const currentIndexRef = useRef(0);
@@ -26,17 +25,20 @@ export const ImageSequenceAnimation = forwardRef(function ImageSequenceAnimation
   const drawCurrentFrame = () => {
     const frame = frames?.[currentIndexRef.current];
     if (!frame || !canvasRef.current) return;
-    ctx.drawImage(
-      frame,
-      0,
-      0,
-      frame.width,
-      frame.height,
-      0,
-      0,
-      canvasRef.current.width,
-      canvasRef.current.height
-    );
+
+    canvasRef.current
+      ?.getContext('2d')!
+      .drawImage(
+        frame,
+        0,
+        0,
+        frame.width,
+        frame.height,
+        0,
+        0,
+        canvasRef.current.width,
+        canvasRef.current.height
+      );
   };
 
   const _startAnimation = () => {
