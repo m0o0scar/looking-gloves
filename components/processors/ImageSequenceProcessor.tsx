@@ -11,7 +11,7 @@ const maxFrameWidth = 1000;
 
 export const ImageSequenceProcessor: SequenceProcessorInfo = ({ activated, onDone }) => {
   const { updateProgress } = useProgress();
-  const { setSourceFrames, setFrames } = useSequence();
+  const { setSourceFrames, setFrames, setEnforceOrder } = useSequence();
 
   // input element to select video file
   const inputRef = useRef<HTMLInputElement>(null);
@@ -41,6 +41,7 @@ export const ImageSequenceProcessor: SequenceProcessorInfo = ({ activated, onDon
 
     setSourceFrames(frames);
     setFrames(frames);
+    setEnforceOrder(true);
     updateProgress(1);
     setProcessing(false);
     onDone();

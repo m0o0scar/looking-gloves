@@ -4,6 +4,7 @@ import { IconButton } from '@components/common/IconButton';
 import { useSource } from '@components/hooks/useSource';
 
 import { QuiltImage } from './QuiltImage';
+import { QuiltImageFlipOrderButton } from './QuiltImageFlipOrderButton';
 import { QuiltImageSaveButton } from './QuiltImageSaveButton';
 import { QuiltImageViewOnDeviceButton } from './QuiltImageViewOnDeviceButton';
 
@@ -37,8 +38,13 @@ export const QuiltImagePreview: FC<QuiltImagePreviewProps> = ({ onRestart }) => 
       <h2>Done ✌️😎</h2>
 
       <div className="flex gap-4">
+        <QuiltImageFlipOrderButton />
+
         {/* view on looking glass device */}
-        <QuiltImageViewOnDeviceButton quiltImage={quiltImage} autoShow />
+        <QuiltImageViewOnDeviceButton
+          quiltImage={quiltImage}
+          autoShow={process.env.NODE_ENV !== 'development'}
+        />
 
         {/* download quilt image */}
         <QuiltImageSaveButton quiltImage={quiltImage} />
@@ -47,7 +53,7 @@ export const QuiltImagePreview: FC<QuiltImagePreviewProps> = ({ onRestart }) => 
         {/* use sourceInfo to fill in the title and description */}
 
         {/* make another quilt */}
-        <IconButton tooltip="Make another one" iconType="reload" onClick={onRestart} />
+        <IconButton tooltip="Make another one" iconType="new" onClick={onRestart} />
       </div>
 
       <QuiltImage onRendered={setQuiltImage} />
