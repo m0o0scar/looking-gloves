@@ -41,10 +41,7 @@ export const QuiltImagePreview: FC<QuiltImagePreviewProps> = ({ onRestart }) => 
         <QuiltImageFlipOrderButton />
 
         {/* view on looking glass device */}
-        <QuiltImageViewOnDeviceButton
-          quiltImage={quiltImage}
-          autoShow={process.env.NODE_ENV !== 'development'}
-        />
+        <QuiltImageViewOnDeviceButton quiltImage={quiltImage} autoShow />
 
         {/* download quilt image */}
         <QuiltImageSaveButton quiltImage={quiltImage} />
