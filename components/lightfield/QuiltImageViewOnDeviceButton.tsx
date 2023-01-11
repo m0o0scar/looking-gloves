@@ -37,9 +37,9 @@ export const QuiltImageViewOnDeviceButton: FC<QuiltImageViewOnDeviceButtonProps>
 
   useEffect(() => {
     if (quiltImage && autoShow) {
-      autoShowQuiltOnDevice();
+      setTimeout(autoShowQuiltOnDevice, 100);
     }
-  }, [quiltImage, autoShow]);
+  }, [frames, quiltImage, autoShow]);
 
   return (
     <IconButton

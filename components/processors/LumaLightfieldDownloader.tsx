@@ -11,7 +11,7 @@ import { SequenceProcessorInfo } from '@components/lightfield/types';
 export const LumaLightfieldDownloader: SequenceProcessorInfo = ({ activated, onDone }) => {
   const { updateProgress } = useProgress();
   const { setSourceInfo } = useSource();
-  const { setAllFrames } = useSequence();
+  const { setSourceFrames, setEnforceOrder, setRange } = useSequence();
 
   const [url, setUrl] = useState('');
   const [fetching, setFetching] = useState(false);
@@ -84,7 +84,12 @@ export const LumaLightfieldDownloader: SequenceProcessorInfo = ({ activated, onD
 
       updateProgress(1, `Downloaded. There are ${names.length} frames in total.`);
 
-      setAllFrames(frames, true);
+      setSourceFrames(frames);
+      setEnforceOrder(true);
+
+      const middle = Math.floor(frames.length / 2 / 8) * 8;
+      setRange([middle - 24, middle + 24]);
+
       onDone();
     } catch (e) {
       // TODO show toast

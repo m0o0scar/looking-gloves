@@ -6,7 +6,7 @@ import { LightFieldFocusEditor } from '@components/processors/LightFieldFocusEdi
 import { LumaLightfieldDownloader } from '@components/processors/LumaLightfieldDownloader';
 import { LumaLightfieldRangeSelector } from '@components/processors/LumaLightfieldRangeSelector';
 
-const VideoPage: NextPage = () => {
+const LumaPage: NextPage = () => {
   return (
     <PageContainer favicon="🔫" title="Luma NeRF to Hologram" subtitle="🔫 Luma NeRF">
       <QuiltImageCreator
@@ -16,4 +16,4 @@ const VideoPage: NextPage = () => {
   );
 };
 
-export default VideoPage;
+export default LumaPage;
