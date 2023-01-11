@@ -10,6 +10,15 @@ const nextConfig = {
       destination: 'https://cdn-luma.com/:filename',
     },
     {
+      // Replicate API
+      source: '/external/replicate/:path*',
+      destination: 'https://api.replicate.com/:path*',
+    },
+    {
+      source: '/external/replicate.delivery/:path*',
+      destination: 'https://replicate.delivery/:path*',
+    },
+    {
       // PyScript CORS support
       source: '/external/pyscript/:path*',
       destination: 'https://pyscript.net/:path*',
