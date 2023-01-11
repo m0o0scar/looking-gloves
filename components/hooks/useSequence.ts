@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { atom, useRecoilState } from 'recoil';
 
-const allFramesAtom = atom<HTMLCanvasElement[] | undefined>({
-  key: 'processors.allFrames',
+const sourceFramesAtom = atom<HTMLCanvasElement[] | undefined>({
+  key: 'processors.sourceFrames',
   default: undefined,
 });
 
@@ -27,31 +27,25 @@ const rangeAtom = atom<[number, number] | undefined>({
 });
 
 export const useSequence = () => {
-  const [allFrames, setAllFrames] = useRecoilState(allFramesAtom);
+  const [sourceFrames, setSourceFrames] = useRecoilState(sourceFramesAtom);
   const [frames, setFrames] = useRecoilState(framesAtom);
   const [focus, setFocus] = useRecoilState(focusAtom);
   const [enforceOrder, setEnforceOrder] = useRecoilState(enforceOrderAtom);
   const [range, setRange] = useRecoilState(rangeAtom);
 
   const reset = () => {
-    setAllFrames(undefined);
+    setSourceFrames(undefined);
     setFrames(undefined);
     setFocus(0);
     setEnforceOrder(false);
     setRange(undefined);
   };
 
-  const setAllFramesValue = (allFrames?: HTMLCanvasElement[], enforceOrder = false) => {
-    setAllFrames(allFrames);
-    setEnforceOrder(enforceOrder);
-  };
-
   const setFocusValue = (value: number) => {
     if (!enforceOrder) {
       setFocus(Math.abs(value));
-      if (value < 0) {
-        if (allFrames?.length) setAllFrames([...allFrames].reverse());
-        if (frames?.length) setFrames([...frames].reverse());
+      if (value < 0 && frames?.length) {
+        setFrames([...frames].reverse());
       }
     } else {
       setFocus(value);
@@ -60,22 +54,27 @@ export const useSequence = () => {
 
   // reset when allFrames changes
   useEffect(() => {
-    if (allFrames && !range) {
+    if (sourceFrames && !range) {
       // select the middle 48 frames
-      const middle = Math.floor(allFrames.length / 2 / 8) * 8;
+      const middle = Math.floor(sourceFrames.length / 2 / 8) * 8;
       setRange([middle - 24, middle + 24]);
     }
-  }, [allFrames, range, setRange]);
+  }, [sourceFrames, range, setRange]);
 
   return {
-    allFrames,
+    sourceFrames,
+    setSourceFrames,
+
     frames,
-    focus,
-    range,
-    reset,
     setFrames,
-    setAllFrames: setAllFramesValue,
+
+    focus,
     setFocus: setFocusValue,
+
+    range,
     setRange,
+
+    setEnforceOrder,
+    reset,
   };
 };

@@ -11,7 +11,7 @@ import { SequenceProcessorInfo } from '@components/lightfield/types';
 
 export const QuiltFramesExtractor: SequenceProcessorInfo = ({ activated, onDone }) => {
   const { updateProgress } = useProgress();
-  const { setAllFrames } = useSequence();
+  const { setSourceFrames } = useSequence();
 
   // input element to select quilt image file
   const inputRef = useRef<HTMLInputElement>(null);
@@ -74,7 +74,7 @@ export const QuiltFramesExtractor: SequenceProcessorInfo = ({ activated, onDone 
 
         setProcessing(false);
         updateProgress(1);
-        setAllFrames(frames);
+        setSourceFrames(frames);
         onDone();
       }
     })();

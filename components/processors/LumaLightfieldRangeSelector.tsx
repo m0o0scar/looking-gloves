@@ -40,7 +40,7 @@ const StyledSlider = styled(Slider)`
 `;
 
 export const LumaLightfieldRangeSelector: SequenceProcessorInfo = ({ activated, onDone }) => {
-  const { allFrames, range, setRange, setFrames } = useSequence();
+  const { sourceFrames, range, setRange, setFrames } = useSequence();
 
   const [framesRange, setFramesRange] = useState([-1, -1, -1]);
 
@@ -72,7 +72,7 @@ export const LumaLightfieldRangeSelector: SequenceProcessorInfo = ({ activated, 
 
   const onConfirmFrames = () => {
     setRange([framesRange[0], framesRange[2]]);
-    setFrames(allFrames!.slice(framesRange[0], framesRange[2]));
+    setFrames(sourceFrames!.slice(framesRange[0], framesRange[2]));
     onDone();
   };
 
@@ -98,14 +98,14 @@ export const LumaLightfieldRangeSelector: SequenceProcessorInfo = ({ activated, 
           onChange={(e, newValue) => onRangeChange(newValue as number[])}
           step={1}
           min={0}
-          max={allFrames?.length || 0}
+          max={sourceFrames?.length || 0}
           valueLabelDisplay="auto"
         />
         <IconButton iconType="tick" buttonClassName="btn-success" onClick={onConfirmFrames} />
       </div>
 
       <ImageSequenceAnimation
-        frames={allFrames}
+        frames={sourceFrames}
         start={framesRange[0]}
         end={framesRange[2]}
         style={{ width: 600 }}
