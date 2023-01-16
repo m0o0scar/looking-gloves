@@ -1,10 +1,10 @@
-import { drawSourceToCanvas } from '@utils/canvas';
-import { COLS } from '@utils/constant';
 import React, { useState, useEffect, useRef } from 'react';
 
-import { useProgress } from '@components/hooks/useProgress';
-import { useSequence } from '@components/hooks/useSequence';
-import { SequenceProcessorInfo } from '@components/lightfield/types';
+import { useProgress } from '@/components/editor/useProgress';
+import { useSequence } from '@/components/editor/useSequence';
+import { SequenceProcessorInfo } from '@/components/processors/types';
+import { drawSourceToCanvas } from '@/utils/canvas';
+import { COLS } from '@/utils/constant';
 
 const NoFrames: HTMLCanvasElement[] = [];
 

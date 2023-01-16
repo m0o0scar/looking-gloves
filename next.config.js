@@ -15,6 +15,6 @@ const nextConfig = {
       destination: 'https://pyscript.net/:path*',
     },
   ],
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

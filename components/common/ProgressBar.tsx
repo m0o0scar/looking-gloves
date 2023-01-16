@@ -1,5 +1,6 @@
-import { isNullish } from '@utils/utils';
 import { FC } from 'react';
+
+import { isNullish } from '@/utils/utils';
 
 export interface ProgressBarProps {
   progress?: number;

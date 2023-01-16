@@ -1,18 +1,18 @@
 import { Canvas } from '@react-three/fiber';
-import { scrollToBottom } from '@utils/dom';
 import { useState, useEffect } from 'react';
 import { DataArrayTexture } from 'three';
 
-import { IconButton } from '@components/common/IconButton';
-import { useSequence } from '@components/hooks/useSequence';
-
+import { IconButton } from '@/components/common/IconButton';
 import {
   material,
   setTexture,
   setTextureFocus,
   disposeTexture,
-} from '../common/LightFieldMaterial';
-import { SequenceProcessorInfo } from '../lightfield/types';
+} from '@/components/common/LightFieldMaterial';
+import { useSequence } from '@/components/editor/useSequence';
+import { scrollToBottom } from '@/utils/dom';
+
+import { SequenceProcessorInfo } from './types';
 
 const SCALE = 10;
 

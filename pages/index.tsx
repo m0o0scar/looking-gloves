@@ -1,11 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
-import { PRODUCT_DESC_SHORT, PRODUCT_NAME, PRODUCT_NAME_SHORT } from '@utils/constant';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 
-import { ExternalLink } from '@components/common/ExternalLink';
-import { PageCard } from '@components/common/PageCard';
-import { PageContainer } from '@components/common/PageContainer';
+import { ExternalLink } from '@/components/common/ExternalLink';
+import { PageCard } from '@/components/common/PageCard';
+import { PageContainer } from '@/components/common/PageContainer';
+import { PRODUCT_DESC_SHORT, PRODUCT_NAME, PRODUCT_NAME_SHORT } from '@/utils/constant';
 
 const HomePage: NextPage = () => {
   return (

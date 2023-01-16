@@ -1,7 +1,7 @@
 import { FC, useState, useEffect } from 'react';
 
-import { IconButton } from '@components/common/IconButton';
-import { useSource } from '@components/hooks/useSource';
+import { IconButton } from '@/components/common/IconButton';
+import { useSource } from '@/components/editor/useSource';
 
 import { QuiltImage } from './QuiltImage';
 import { QuiltImageFlipOrderButton } from './QuiltImageFlipOrderButton';

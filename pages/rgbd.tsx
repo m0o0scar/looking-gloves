@@ -1,15 +1,15 @@
 /* eslint-disable @next/next/no-img-element */
-import { canvasToJpeg } from '@utils/canvas';
-import { getImageFromClipboard } from '@utils/clipboard';
-import { triggerDownload } from '@utils/download';
-import { convertPhotoToRGBD } from '@utils/rgbd';
 import dayjs from 'dayjs';
 import type { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
-import { IconButton } from '@components/common/IconButton';
-import { PageContainer } from '@components/common/PageContainer';
+import { IconButton } from '@/components/common/IconButton';
+import { PageContainer } from '@/components/common/PageContainer';
+import { canvasToJpeg } from '@/utils/canvas';
+import { getImageFromClipboard } from '@/utils/clipboard';
+import { triggerDownload } from '@/utils/download';
+import { convertPhotoToRGBD } from '@/utils/rgbd';
 
 const RGBDPhotoPage: NextPage = () => {
   const [file, setFile] = useState<File | Blob | null>(null);

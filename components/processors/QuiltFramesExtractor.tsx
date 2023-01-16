@@ -1,13 +1,12 @@
-import { drawSourceToCanvas } from '@utils/canvas';
-import { loadImage } from '@utils/image';
-import { getQuiltColsRows, isPyScriptReady } from '@utils/pyscript';
-import { wait } from '@utils/time';
 import React, { useState, useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 
-import { useProgress } from '@components/hooks/useProgress';
-import { useSequence } from '@components/hooks/useSequence';
-import { SequenceProcessorInfo } from '@components/lightfield/types';
+import { useProgress } from '@/components/editor/useProgress';
+import { useSequence } from '@/components/editor/useSequence';
+import { SequenceProcessorInfo } from '@/components/processors/types';
+import { loadImage } from '@/utils/image';
+import { getQuiltColsRows, isPyScriptReady } from '@/utils/pyscript';
+import { wait } from '@/utils/time';
 
 export const QuiltFramesExtractor: SequenceProcessorInfo = ({ activated, onDone }) => {
   const { updateProgress } = useProgress();

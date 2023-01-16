@@ -1,12 +1,12 @@
-import { canvasToJpeg } from '@utils/canvas';
-import { COLS } from '@utils/constant';
-import { triggerDownload } from '@utils/download';
 import dayjs from 'dayjs';
 import { debounce } from 'lodash';
 import { FC, useState } from 'react';
 
-import { IconButton } from '@components/common/IconButton';
-import { useSequence } from '@components/hooks/useSequence';
+import { IconButton } from '@/components/common/IconButton';
+import { useSequence } from '@/components/editor/useSequence';
+import { canvasToJpeg } from '@/utils/canvas';
+import { COLS } from '@/utils/constant';
+import { triggerDownload } from '@/utils/download';
 
 export interface QuiltImageSaveButtonProps {
   quiltImage?: HTMLCanvasElement;

@@ -1,13 +1,13 @@
 import { FC, useEffect } from 'react';
 
-import { useProgress } from '@components/hooks/useProgress';
-import { useSequence } from '@components/hooks/useSequence';
-import { useCurrentStep } from '@components/processors/useCurrentStep';
+import { ProgressBar } from '@/components/common/ProgressBar';
+import { SequenceProcessorInfo } from '@/components/processors/types';
+import { QuiltImagePreview } from '@/components/quilt/QuiltImagePreview';
 
-import { ProgressBar } from '../common/ProgressBar';
 import { QuiltImageCreatorSteps } from './QuiltImageCreatorSteps';
-import { QuiltImagePreview } from './QuiltImagePreview';
-import { SequenceProcessorInfo } from './types';
+import { useCurrentStep } from './useCurrentStep';
+import { useProgress } from './useProgress';
+import { useSequence } from './useSequence';
 
 export interface QuiltImageCreatorProps {
   processors?: SequenceProcessorInfo[];

@@ -1,11 +1,11 @@
-import { drawSourceToCanvas } from '@utils/canvas';
-import { loadImage } from '@utils/image';
 import React, { useState, useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 
-import { useProgress } from '@components/hooks/useProgress';
-import { useSequence } from '@components/hooks/useSequence';
-import { SequenceProcessorInfo } from '@components/lightfield/types';
+import { useProgress } from '@/components/editor/useProgress';
+import { useSequence } from '@/components/editor/useSequence';
+import { SequenceProcessorInfo } from '@/components/processors/types';
+import { drawSourceToCanvas } from '@/utils/canvas';
+import { loadImage } from '@/utils/image';
 
 const maxFrameWidth = 1000;
 

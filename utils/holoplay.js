@@ -1,5 +1,6 @@
 import * as HoloPlayCore from 'holoplay-core';
 import { toast } from 'react-toastify';
+
 import { canvasToJpeg } from './canvas';
 import { COLS } from './constant';
 
@@ -40,16 +41,16 @@ class HoloPlayClient {
           console.log(TAG, 'HoloPlay client closed');
         },
         false, // debug
-        'com.spoon.lookinggloves', // app id
+        'com.spoon.lookinggloves' // app id
       );
     });
-  }
+  };
 
   /**
    * show quilt image on Looking Glass
-   * @param {HTMLCanvasElement} quiltInCanvas 
-   * @param {number} numberOfFrames 
-   * @param {HoloPlayClientOptions} [options] 
+   * @param {HTMLCanvasElement} quiltInCanvas
+   * @param {number} numberOfFrames
+   * @param {HoloPlayClientOptions} [options]
    */
   showQuiltImage = async (quiltInCanvas, numberOfFrames, options) => {
     try {
@@ -60,8 +61,12 @@ class HoloPlayClient {
       const frameHeight = quiltInCanvas.height / rows;
       const aspect = frameWidth / frameHeight;
 
-      const imageData = canvasToJpeg(quiltInCanvas).replace(/^data:image\/jpeg;base64,/, '')
-      const binaryData = new Uint8Array(atob(imageData).split('').map(c => c.charCodeAt(0)));
+      const imageData = canvasToJpeg(quiltInCanvas).replace(/^data:image\/jpeg;base64,/, '');
+      const binaryData = new Uint8Array(
+        atob(imageData)
+          .split('')
+          .map((c) => c.charCodeAt(0))
+      );
 
       const showCmd = new HoloPlayCore.ShowMessage(
         { vx: COLS, vy: rows, vtotal: numberOfFrames, aspect },
@@ -73,7 +78,7 @@ class HoloPlayClient {
     } catch (error) {
       console.error(TAG, 'error', error);
     }
-  }
+  };
 }
 
 export const holoplayClient = new HoloPlayClient();

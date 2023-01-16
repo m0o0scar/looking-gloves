@@ -1,7 +1,8 @@
-import { PRODUCT_NAME_SHORT } from '@utils/constant';
 import cls from 'classnames';
 import Head from 'next/head';
 import { FC, HTMLAttributes } from 'react';
+
+import { PRODUCT_NAME_SHORT } from '@/utils/constant';
 
 import { HomeBtn } from './HomeBtn';
 

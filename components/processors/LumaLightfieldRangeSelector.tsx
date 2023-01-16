@@ -1,12 +1,12 @@
 import styled from '@emotion/styled';
 import { Slider } from '@mui/material';
-import { scrollToBottom } from '@utils/dom';
 import { FC, useState, useEffect } from 'react';
 
-import { IconButton } from '@components/common/IconButton';
-import { ImageSequenceAnimation } from '@components/common/ImageSequenceAnimation';
-import { useSequence } from '@components/hooks/useSequence';
-import { SequenceProcessorInfo } from '@components/lightfield/types';
+import { IconButton } from '@/components/common/IconButton';
+import { ImageSequenceAnimation } from '@/components/common/ImageSequenceAnimation';
+import { useSequence } from '@/components/editor/useSequence';
+import { SequenceProcessorInfo } from '@/components/processors/types';
+import { scrollToBottom } from '@/utils/dom';
 
 const initialNumberOfFrames = 48;
 const maxNumberOfFrames = 96;

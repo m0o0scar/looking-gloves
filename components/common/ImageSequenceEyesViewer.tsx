@@ -1,12 +1,13 @@
-import { drawSourceOntoDest } from '@utils/canvas';
-import { FRAME_HEIGHT, FRAME_WIDTH } from '@utils/constant';
 import { FC, useRef, useEffect } from 'react';
 
-export interface LightFieldCrossEyesViewerProps {
+import { drawSourceOntoDest } from '@/utils/canvas';
+import { FRAME_HEIGHT, FRAME_WIDTH } from '@/utils/constant';
+
+export interface ImageSequenceEyesViewerProps {
   frames?: HTMLCanvasElement[];
 }
 
-export const LightFieldCrossEyesViewer: FC<LightFieldCrossEyesViewerProps> = ({ frames }) => {
+export const ImageSequenceEyesViewer: FC<ImageSequenceEyesViewerProps> = ({ frames }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const leftCanvasRef = useRef<HTMLCanvasElement>(null);
   const rightCanvasRef = useRef<HTMLCanvasElement>(null);

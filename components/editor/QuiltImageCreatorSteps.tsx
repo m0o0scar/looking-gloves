@@ -1,9 +1,9 @@
 import cls from 'classnames';
 import { FC, useState } from 'react';
 
-import { useCurrentStep } from '@components/processors/useCurrentStep';
+import { SequenceProcessorInfo } from '@/components/processors/types';
 
-import { SequenceProcessorInfo } from './types';
+import { useCurrentStep } from './useCurrentStep';
 
 export interface QuiltImageCreatorStepsProps {
   processors?: SequenceProcessorInfo[];

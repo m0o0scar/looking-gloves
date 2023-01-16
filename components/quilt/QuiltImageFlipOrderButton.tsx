@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { IconButton } from '@components/common/IconButton';
-import { useSequence } from '@components/hooks/useSequence';
+import { IconButton } from '@/components/common/IconButton';
+import { useSequence } from '@/components/editor/useSequence';
 
 export interface QuiltImageFlipOrderButtonProps {}
 

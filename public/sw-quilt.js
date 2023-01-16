@@ -1,5 +1,5 @@
 const addResourcesToCache = async (urls) => {
-  const cache = await caches.open("quilt-v1");
+  const cache = await caches.open('quilt-v1');
   await cache.addAll(urls);
 };
 
@@ -11,7 +11,7 @@ const cacheFirst = async (request) => {
   return fetch(request);
 };
 
-self.addEventListener("install", event => {
+self.addEventListener('install', (event) => {
   event.waitUntil(
     addResourcesToCache([
       '/external/pyscript/releases/2022.12.1/pyscript.min.js',
@@ -39,6 +39,6 @@ self.addEventListener("install", event => {
   );
 });
 
-self.addEventListener("fetch", (event) => {
+self.addEventListener('fetch', (event) => {
   event.respondWith(cacheFirst(event.request));
 });

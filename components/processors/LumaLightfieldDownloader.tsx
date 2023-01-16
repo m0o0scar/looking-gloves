@@ -1,12 +1,12 @@
-import { drawBlobToCanvas } from '@utils/canvas';
-import { fetchWithProgress } from '@utils/fetch';
 import { FC, useState } from 'react';
 import { unzip } from 'unzipit';
 
-import { useProgress } from '@components/hooks/useProgress';
-import { useSequence } from '@components/hooks/useSequence';
-import { useSource } from '@components/hooks/useSource';
-import { SequenceProcessorInfo } from '@components/lightfield/types';
+import { useProgress } from '@/components/editor/useProgress';
+import { useSequence } from '@/components/editor/useSequence';
+import { useSource } from '@/components/editor/useSource';
+import { SequenceProcessorInfo } from '@/components/processors/types';
+import { drawBlobToCanvas } from '@/utils/canvas';
+import { fetchWithProgress } from '@/utils/fetch';
 
 export const LumaLightfieldDownloader: SequenceProcessorInfo = ({ activated, onDone }) => {
   const { updateProgress } = useProgress();

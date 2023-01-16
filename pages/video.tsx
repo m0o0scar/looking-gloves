@@ -1,9 +1,9 @@
 import type { NextPage } from 'next';
 
-import { PageContainer } from '@components/common/PageContainer';
-import { QuiltImageCreator } from '@components/lightfield/QuiltImageCreator';
-import { LightFieldFocusEditor } from '@components/processors/LightFieldFocusEditor';
-import { VideoFramesExtractor } from '@components/processors/VideoFramesExtractor';
+import { PageContainer } from '@/components/common/PageContainer';
+import { QuiltImageCreator } from '@/components/editor/QuiltImageCreator';
+import { LightFieldFocusEditor } from '@/components/processors/LightFieldFocusEditor';
+import { VideoFramesExtractor } from '@/components/processors/VideoFramesExtractor';
 
 const VideoPage: NextPage = () => {
   return (

@@ -1,9 +1,9 @@
-import { holoplayClient } from '@utils/holoplay';
 import { debounce } from 'lodash';
 import { FC, useEffect, useState } from 'react';
 
-import { IconButton } from '@components/common/IconButton';
-import { useSequence } from '@components/hooks/useSequence';
+import { IconButton } from '@/components/common/IconButton';
+import { useSequence } from '@/components/editor/useSequence';
+import { holoplayClient } from '@/utils/holoplay';
 
 export interface QuiltImageViewOnDeviceButtonProps {
   quiltImage?: HTMLCanvasElement;

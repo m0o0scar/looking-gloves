@@ -1,10 +1,9 @@
-import { drawSourceOntoDest } from '@utils/canvas';
 import cls from 'classnames';
 import { FC, useEffect, useRef, HTMLAttributes } from 'react';
 
-import { useSequence } from '@components/hooks/useSequence';
-
-import { COLS, FRAME_WIDTH, FRAME_HEIGHT } from '../../utils/constant';
+import { useSequence } from '@/components/editor/useSequence';
+import { drawSourceOntoDest } from '@/utils/canvas';
+import { COLS, FRAME_WIDTH, FRAME_HEIGHT } from '@/utils/constant';
 
 export interface QuiltImageProps extends HTMLAttributes<HTMLCanvasElement> {
   onRendered?: (canvas: HTMLCanvasElement) => void;

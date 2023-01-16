@@ -14,8 +14,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const title = (pageText.match(/<title>(.*)<\/title>/) || [])[1] || '';
 
     // extract page props from html
-    const pagePropsText = (pageText.match(/<script id="__NEXT_DATA__" type="application\/json">(.*?)<\/script>/s) ||
-      [])[1];
+    const pagePropsText = (pageText.match(
+      /<script id="__NEXT_DATA__" type="application\/json">(.*?)<\/script>/s
+    ) || [])[1];
     const pageProps = JSON.parse(pagePropsText);
 
     const json = { title, pageProps };
