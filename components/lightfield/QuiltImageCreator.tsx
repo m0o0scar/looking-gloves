@@ -1,8 +1,8 @@
 import { FC, useEffect } from 'react';
 
-import { useCurrentStep } from '@components/hooks/useCurrentStep';
 import { useProgress } from '@components/hooks/useProgress';
 import { useSequence } from '@components/hooks/useSequence';
+import { useCurrentStep } from '@components/processors/useCurrentStep';
 
 import { ProgressBar } from '../common/ProgressBar';
 import { QuiltImageCreatorSteps } from './QuiltImageCreatorSteps';

@@ -1,7 +1,7 @@
 import cls from 'classnames';
 import { FC, useState } from 'react';
 
-import { useCurrentStep } from '@components/hooks/useCurrentStep';
+import { useCurrentStep } from '@components/processors/useCurrentStep';
 
 import { SequenceProcessorInfo } from './types';
 
