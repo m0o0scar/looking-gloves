@@ -1,8 +1,5 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import fetch from 'node-fetch';
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const url = req.query.url as string;
+async function handler(req, res) {
+  const { url } = req.query;
   if (!url) res.status(400).json({ error: 'Missing URL' });
 
   // fetch html page from luma
@@ -22,6 +19,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const json = { title, pageProps };
     res.status(200).json(json);
   } catch (error) {
-    res.status(500).end({ error: (error as Error).message });
+    res.status(500).end({ error: error.message });
   }
 }
+
+module.exports = handler;
