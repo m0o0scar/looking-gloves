@@ -36,17 +36,8 @@ export const drawSourceOntoDest = (
   const ctx = dest.getContext('2d')!;
 
   if (fillEdge) {
-    ctx.drawImage(
-      source,
-      sourceOffsetX <= 0 ? sourceX : sourceX + sourceWidth - 1,
-      sourceY,
-      1,
-      sourceHeight,
-      dx,
-      dy,
-      destWidth,
-      destHeight
-    );
+    let edgeX = sourceOffsetX <= 0 ? 0 : source.width - 1;
+    ctx.drawImage(source, edgeX, sourceY, 1, sourceHeight, dx, dy, destWidth, destHeight);
   }
 
   ctx.drawImage(
