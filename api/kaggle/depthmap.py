@@ -2,13 +2,14 @@ from flask import Flask, request
 import os
 import json
 import time
+import tempfile
+
 from kaggle.api.kaggle_api_extended import KaggleApi
 from kaggle.api_client import ApiClient
 
 app = Flask(__name__)
 
-@app.route('/api/kaggle/test', methods=['POST'])
-def test():
+def create_kaggle_client(request):
   # create a new kaggle api instance
   kaggle = KaggleApi(ApiClient())
 
@@ -17,6 +18,11 @@ def test():
   api_key = request.form['key']
   config = {'username': username, 'key': api_key}
   kaggle._load_config(config)
+  return kaggle, username
+
+@app.route('/api/kaggle/depthmap', methods=['POST'])
+def create_new_depthmap_estimate_task():
+  kaggle, username = create_kaggle_client(request)
 
   # use current timestamp as folder name
   project_name = str(round(time.time() * 1000))
@@ -27,7 +33,7 @@ def test():
   notebook_id = '%s/%s' % (username, notebook_title)
 
   # prepare dataset and notebook folders
-  root_folder = "/Users/tangqh/Downloads/kaggle"
+  root_folder = tempfile.gettempdir()
   dataset_folder = os.path.join(root_folder, "datasets", project_name)
   notebook_folder = os.path.join(root_folder, "notebooks", project_name)
   os.makedirs(dataset_folder, exist_ok=True)
@@ -82,5 +88,16 @@ def test():
   kaggle.kernels_push(notebook_folder)
   
   return {
-    'status': 'success',
+    'notebook_id': notebook_id,
+    'notebook_slug': notebook_title,
+  }
+
+@app.route('/api/kaggle/depthmap', methods=['PUT'])
+def check_notebook_status():
+  kaggle, username = create_kaggle_client(request)
+  notebook_slug = request.form['notebook_slug']
+  status = kaggle.kernel_status(username, notebook_slug)
+
+  return {
+    'status': status,
   }
