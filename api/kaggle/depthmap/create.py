@@ -25,10 +25,12 @@ def create_new_depthmap_estimate_task():
   notebook_folder = os.path.join(root_folder, "notebooks", project_name)
   os.makedirs(dataset_folder, exist_ok=True)
   os.makedirs(notebook_folder, exist_ok=True)
+  print('[%s] creating new project ...' % project_name)
 
   # save image to dataset folder
   image_file = request.files['image']
   image_file.save(os.path.join(dataset_folder, image_file.filename))
+  print('[%s] images received' % project_name)
 
   # init dataset
   kaggle.dataset_initialize(dataset_folder)
@@ -42,12 +44,23 @@ def create_new_depthmap_estimate_task():
     f.close()
   
   # create dataset
+  print('[%s] creating dataset ...' % project_name)
   kaggle.dataset_create_new(dataset_folder)
 
+  # check the status of the dataset every 3 seconds, until it is ready
+  while True:
+    time.sleep(3)
+    status = kaggle.dataset_status(dataset_id)
+    print('[%s] dataset status: %s' % (project_name, status))
+    if status == 'ready':
+      break
+
   # pull notebook from kaggle
+  print('[%s] pulling notebook from kaggle ...' % project_name)
   kaggle.kernels_pull('moscartong/boost-monocular-depth', notebook_folder, metadata=True)
 
   # update content of notebook
+  print('[%s] updating notebook script ...' % project_name)
   with open(os.path.join(notebook_folder, 'boost-monocular-depth.ipynb'), 'r+') as f:
     content = f.read()
     content = content.replace('/kaggle/input/rgbd-test-images', '/kaggle/input/%s' % dataset_title)
@@ -57,6 +70,7 @@ def create_new_depthmap_estimate_task():
     f.close()
 
   # update notebook metadata
+  print('[%s] updating notebook metadata ...' % project_name)
   with open(os.path.join(notebook_folder, 'kernel-metadata.json'), 'r+') as f:
     metadata = json.load(f)
     metadata['title'] = notebook_title
@@ -67,14 +81,20 @@ def create_new_depthmap_estimate_task():
     ]
     metadata.pop('id_no', None)
     metadata.pop('keywords', None)
+    
+    # print the metadata to console
+    print(json.dump(metadata, f, indent=2))
+
     f.seek(0)
     json.dump(metadata, f, indent=2)
     f.truncate()
     f.close()
 
   # push notebook to kaggle
+  print('[%s] pushing notebook to kaggle ...' % project_name)
   kaggle.kernels_push(notebook_folder)
   
+  print('[%s] done' % project_name)
   return {
     'notebook_id': notebook_id,
     'notebook_slug': notebook_title,
