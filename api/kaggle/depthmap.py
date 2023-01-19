@@ -3,11 +3,16 @@ import os
 import json
 import time
 import tempfile
+import requests
 
 from kaggle.api.kaggle_api_extended import KaggleApi
 from kaggle.api_client import ApiClient
 
 app = Flask(__name__)
+
+def get_root_folder():
+  # return tempfile.gettempdir()
+  return '/Users/tangqh/Downloads/taggle'
 
 def create_kaggle_client(request):
   # create a new kaggle api instance
@@ -33,7 +38,7 @@ def create_new_depthmap_estimate_task():
   notebook_id = '%s/%s' % (username, notebook_title)
 
   # prepare dataset and notebook folders
-  root_folder = tempfile.gettempdir()
+  root_folder = get_root_folder()
   dataset_folder = os.path.join(root_folder, "datasets", project_name)
   notebook_folder = os.path.join(root_folder, "notebooks", project_name)
   os.makedirs(dataset_folder, exist_ok=True)
@@ -96,9 +101,29 @@ def create_new_depthmap_estimate_task():
 @app.route('/api/kaggle/depthmap', methods=['PUT'])
 def check_notebook_status():
   kaggle, username = create_kaggle_client(request)
-  notebook_slug = request.form['notebook_slug']
-  status = kaggle.kernel_status(username, notebook_slug)
+  notebook_id = request.form['notebook_id']
+
+  # check notebook status
+  status = kaggle.kernels_status(notebook_id)
+
+  if status['status'] == 'complete':
+    # download output
+    root_folder = get_root_folder()
+    download_folder = os.path.join(root_folder, "downloads", notebook_id)
+    kaggle.kernels_output(notebook_id, download_folder, force=True)
+
+    # update all images file to a temporary online storage
+    outputs = []
+    output_folder = os.path.join(download_folder, 'outputs')
+    for file in os.listdir(output_folder):
+      if file.endswith('.png'):
+        with open(os.path.join(output_folder, file), 'rb') as f:
+          response = requests.post('https://tmpfiles.org/api/v1/upload', files={'file': f})
+          download_url = response.json()['data']['url']
+          download_url = download_url.replace('https://tmpfiles.org/', 'https://tmpfiles.org/dl/')
+          outputs.append(download_url)
 
   return {
     'status': status,
+    'outputs': outputs,
   }
