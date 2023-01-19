@@ -1,6 +1,15 @@
 import os
 import tempfile
 
+# detect current environment
+env = os.environ.get('VERCEL_ENV', 'development')
+
+# create a fake kaggle.json file if not in development mode
+if env != 'development':
+  # create a kaggle.json file under /tmp folder
+  with open('/tmp/kaggle.json', 'w') as f:
+    f.write('{"username":"", "key":""}')
+
 class FakePool:
   pass
 
@@ -11,7 +20,6 @@ from kaggle.api.kaggle_api_extended import KaggleApi
 from kaggle.api_client import ApiClient
 
 def get_root_folder():
-  env = os.environ.get('VERCEL_ENV', 'development')
   if env == 'development':
     print('I am in development mode, will use temp folder as root')
     return tempfile.gettempdir()
