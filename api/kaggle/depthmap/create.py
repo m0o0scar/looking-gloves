@@ -3,7 +3,7 @@ import os
 import json
 import time
 
-from api.kaggle.share import get_root_folder, create_kaggle_client
+from ..share import get_root_folder, create_kaggle_client
 
 app = Flask(__name__)
 
