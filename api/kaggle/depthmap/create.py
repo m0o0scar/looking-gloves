@@ -13,7 +13,7 @@ def create_new_depthmap_estimate_task():
 
   # use current timestamp as folder name
   project_name = str(round(time.time() * 1000))
-  project_title = 'boost-monocular-depth-%s' % project_name
+  project_title = 'boost-monocular-depth'
   dataset_title = 'dataset-%s' % project_title
   dataset_id = '%s/%s' % (username, dataset_title)
   notebook_title = 'notebook-%s' % project_title
@@ -44,8 +44,13 @@ def create_new_depthmap_estimate_task():
     f.close()
   
   # create dataset
-  print('[%s] creating dataset ...' % project_name)
-  kaggle.dataset_create_new(dataset_folder)
+  dataset_list = kaggle.dataset_list(mine=True, search=dataset_id)
+  if len(dataset_list) > 0:
+    print('[%s] updating dataset version ...' % project_name)
+    kaggle.dataset_create_version(dataset_folder, version_notes=project_name, delete_old_versions=True)
+  else:
+    print('[%s] creating dataset ...' % project_name)
+    kaggle.dataset_create_new(dataset_folder)
 
   # check the status of the dataset every 3 seconds, until it is ready
   while True:
@@ -83,7 +88,7 @@ def create_new_depthmap_estimate_task():
     metadata.pop('keywords', None)
     
     # print the metadata to console
-    print(json.dump(metadata, f, indent=2))
+    print(metadata)
 
     f.seek(0)
     json.dump(metadata, f, indent=2)
