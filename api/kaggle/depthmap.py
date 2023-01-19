@@ -71,12 +71,13 @@ def create_new_depthmap_estimate_task():
 
   # update notebook metadata
   with open(os.path.join(notebook_folder, 'kernel-metadata.json'), 'r+') as f:
-    content = f.read()
-    content = content.replace('"datasets/', '"')
-    content = content.replace('moscartong/rgbd-test-images', dataset_id)
-    metadata = json.loads(content)
+    metadata = json.load(f)
     metadata['title'] = notebook_title
     metadata['id'] = notebook_id
+    metadata['dataset_sources'] = [
+      "moscartong/boost-monocular-depth-code-and-models",
+      dataset_id,
+    ]
     metadata.pop('id_no', None)
     metadata.pop('keywords', None)
     f.seek(0)
