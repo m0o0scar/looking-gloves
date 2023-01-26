@@ -5,7 +5,7 @@ import Head from 'next/head';
 import { ExternalLink } from '@/components/common/ExternalLink';
 import { PageCard } from '@/components/common/PageCard';
 import { PageContainer } from '@/components/common/PageContainer';
-import { PRODUCT_DESC_SHORT, PRODUCT_NAME, PRODUCT_NAME_SHORT } from '@/utils/constant';
+import { PRODUCT_DESC_SHORT, PRODUCT_NAME_SHORT, PRODUCT_EMOJI } from '@/utils/constant';
 
 const HomePage: NextPage = () => {
   return (
@@ -16,7 +16,10 @@ const HomePage: NextPage = () => {
 
       <div className="flex flex-col items-center gap-2 max-w-5xl">
         <h1 className="text-center">
-          <mark>{PRODUCT_NAME}</mark>
+          <mark className="inline-flex">
+            <span className="block animate-rotate3d">{PRODUCT_EMOJI}</span>
+            <span>{PRODUCT_NAME_SHORT}</span>
+          </mark>
         </h1>
         <h2 className="text-center mt-0">{PRODUCT_DESC_SHORT}</h2>
 
