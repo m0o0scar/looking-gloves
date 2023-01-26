@@ -3,6 +3,7 @@ import { FC, useState, useEffect } from 'react';
 import { IconButton } from '@/components/common/IconButton';
 import { useSource } from '@/components/editor/useSource';
 
+import { PublishToBlocksButton } from '../blocks/PublishToBlocksButton';
 import { QuiltImage } from './QuiltImage';
 import { QuiltImageFlipOrderButton } from './QuiltImageFlipOrderButton';
 import { QuiltImageSaveButton } from './QuiltImageSaveButton';
@@ -45,6 +46,9 @@ export const QuiltImagePreview: FC<QuiltImagePreviewProps> = ({ onRestart }) => 
 
         {/* download quilt image */}
         <QuiltImageSaveButton quiltImage={quiltImage} />
+
+        {/* publish to looking glass blocks */}
+        <PublishToBlocksButton quiltImage={quiltImage} />
 
         {/* TODO upload to Looking Glass Blocks directly with their API */}
         {/* use sourceInfo to fill in the title and description */}
