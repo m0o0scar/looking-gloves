@@ -7,9 +7,13 @@ import useBlocksAuth from './useBlocksAuth';
 export interface LoginToBlocksButtonProps {}
 
 export const LoginToBlocksButton: FC<LoginToBlocksButtonProps> = ({}: LoginToBlocksButtonProps) => {
-  const { loggedIn, login } = useBlocksAuth();
+  const { loggedIn, login, me } = useBlocksAuth();
   const pending = loggedIn === undefined;
-  const label = loggedIn === false ? 'Login' : 'Blocks';
+
+  let label = '';
+  if (!loggedIn) label = 'Login';
+  else if (me?.displayName) label = me.displayName;
+  else label = 'Blocks';
 
   const onClick = () => {
     if (loggedIn === false) {

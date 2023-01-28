@@ -475,9 +475,9 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
-"@lookingglass/blocks.js@https://github.com/Looking-Glass/blocks.js.git#react-setup":
+"@lookingglass/blocks.js@https://github.com/Looking-Glass/blocks.js.git":
   version "0.1.2"
-  resolved "https://github.com/Looking-Glass/blocks.js.git#a2e04380ec9904bf5e8ee9f73fdfb1dfd853f0ef"
+  resolved "https://github.com/Looking-Glass/blocks.js.git#0d2ccbb212eabb29da22630678597ed1ad746bca"
   dependencies:
     "@auth0/auth0-spa-js" "^2.0.0"
     encoding "^0.1.13"
