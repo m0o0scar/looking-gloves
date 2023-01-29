@@ -1,6 +1,7 @@
 import { PrivacyType } from '@lookingglass/blocks.js';
 import cls from 'classnames';
 import React, { FC, useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 import { canvasToBlob } from '@/utils/canvas';
 import { ASPECT_RATIO, COLS } from '@/utils/constant';
@@ -14,6 +15,17 @@ import useBlocksAuth from './useBlocksAuth';
 export interface PublishToBlocksButtonProps {
   quiltImage?: HTMLCanvasElement;
 }
+
+const PublishSuccessToast: FC<{ url: string }> = ({ url }) => {
+  return (
+    <div>
+      Your hologram is published!{' '}
+      <a className="link" href={url} target="_blank" rel="noreferrer">
+        Check it out.
+      </a>
+    </div>
+  );
+};
 
 export const PublishToBlocksButton: FC<PublishToBlocksButtonProps> = ({
   quiltImage,
@@ -54,11 +66,21 @@ export const PublishToBlocksButton: FC<PublishToBlocksButtonProps> = ({
         quiltTileCount: frames.length,
       });
 
-      if (hologram?.createQuiltHologram.permalink) {
-        console.log('Published', hologram.createQuiltHologram.permalink);
+      const url = hologram?.createQuiltHologram.permalink;
+      if (url) {
+        toast.success(<PublishSuccessToast url={url} />, {
+          icon: '🥳',
+          position: 'bottom-right',
+          autoClose: false,
+        });
         modalState.close();
       } else {
-        console.log('Publish failed', hologram);
+        console.error('Publish failed', hologram);
+        toast.error(`Rats! Something went wrong. Please try again later.`, {
+          icon: '😣',
+          position: 'bottom-right',
+          autoClose: false,
+        });
       }
       setPending(false);
     }
@@ -77,6 +99,8 @@ export const PublishToBlocksButton: FC<PublishToBlocksButtonProps> = ({
       setDescription(`Created with Looking Gloves🧤 https://lkg.vercel.app`);
       setPrivacy(PrivacyType.Unlisted);
       setPending(false);
+
+      toast.dismiss();
     }
   }, [modalState.opened, sourceInfo]);
 
@@ -93,11 +117,12 @@ export const PublishToBlocksButton: FC<PublishToBlocksButtonProps> = ({
       <div className={cls('modal not-prose', { 'modal-open': modalState.opened })}>
         <div className="modal-box bg-slate-100">
           <h3 className="font-bold text-lg">Publish to Blocks</h3>
+          <div className="divider"></div>
 
           <div className="flex flex-col gap-2">
             {/* title */}
             <div className="form-control w-full">
-              <label className="label">
+              <label className="label font-bold">
                 <span className="label-text">Title</span>
               </label>
               <input
@@ -112,7 +137,7 @@ export const PublishToBlocksButton: FC<PublishToBlocksButtonProps> = ({
             </div>
             {/* description */}
             <div className="form-control w-full">
-              <label className="label">
+              <label className="label font-bold">
                 <span className="label-text">Description</span>
               </label>
               <textarea
@@ -125,7 +150,7 @@ export const PublishToBlocksButton: FC<PublishToBlocksButtonProps> = ({
             </div>
             {/* privacy */}
             <div className="form-control w-full">
-              <label className="label">
+              <label className="label font-bold">
                 <span className="label-text">Privacy</span>
               </label>
               <select
