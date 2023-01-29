@@ -50,9 +50,6 @@ export const QuiltImagePreview: FC<QuiltImagePreviewProps> = ({ onRestart }) => 
         {/* publish to looking glass blocks */}
         <PublishToBlocksButton quiltImage={quiltImage} />
 
-        {/* TODO upload to Looking Glass Blocks directly with their API */}
-        {/* use sourceInfo to fill in the title and description */}
-
         {/* make another quilt */}
         <IconButton tooltip="Make another one" iconType="new" onClick={onRestart} />
       </div>

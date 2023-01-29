@@ -22,7 +22,7 @@ export default function useBlocksAuth() {
   useEffect(() => {
     (async () => {
       const token = await validateSession(getBlocksAuthClient());
-      console.log(`[Blocks] validated session, token =`, token);
+      // console.log(`[Blocks] validated session, token =`, token);
 
       setToken(token);
 
@@ -42,6 +42,7 @@ export default function useBlocksAuth() {
 
   return {
     token,
+    blocksClient,
     loggedIn,
     login,
     me,

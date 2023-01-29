@@ -11,9 +11,10 @@ export const LoginToBlocksButton: FC<LoginToBlocksButtonProps> = ({}: LoginToBlo
   const pending = loggedIn === undefined;
 
   let label = '';
-  if (!loggedIn) label = 'Login';
+  if (loggedIn === undefined) label = '...';
+  else if (loggedIn === false) label = 'Login';
   else if (me?.displayName) label = me.displayName;
-  else label = 'Blocks';
+  else label = '...';
 
   const onClick = () => {
     if (loggedIn === false) {

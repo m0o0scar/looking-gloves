@@ -107,3 +107,16 @@ export const drawBlobToCanvas = (blob: Blob) => {
 export const canvasToJpeg = (canvas: HTMLCanvasElement, quality = 0.9) => {
   return canvas.toDataURL('image/jpeg', quality);
 };
+
+export const canvasToBlob = (canvas: HTMLCanvasElement, quality = 0.9) => {
+  return new Promise<Blob>((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => {
+        if (blob) resolve(blob);
+        else reject();
+      },
+      'image/jpeg',
+      quality
+    );
+  });
+};

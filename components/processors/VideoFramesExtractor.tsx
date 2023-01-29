@@ -6,6 +6,8 @@ import { SequenceProcessorInfo } from '@/components/processors/types';
 import { drawSourceToCanvas } from '@/utils/canvas';
 import { COLS } from '@/utils/constant';
 
+import { useSource } from '../editor/useSource';
+
 const NoFrames: HTMLCanvasElement[] = [];
 
 const maxFrameWidth = 1000;
@@ -13,6 +15,7 @@ const maxFrameWidth = 1000;
 export const VideoFramesExtractor: SequenceProcessorInfo = ({ activated, onDone }) => {
   const { updateProgress } = useProgress();
   const { setSourceFrames, setFrames } = useSequence();
+  const { setSourceInfo } = useSource();
 
   // input element to select video file
   const inputRef = useRef<HTMLInputElement>(null);
@@ -92,6 +95,8 @@ export const VideoFramesExtractor: SequenceProcessorInfo = ({ activated, onDone 
       const file = files[0];
       const url = URL.createObjectURL(file);
       videoRef.current && (videoRef.current.src = url);
+
+      setSourceInfo({ title: file.name, sourceType: 'file' });
     }
   }, [files]);
 
