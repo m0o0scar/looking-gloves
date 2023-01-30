@@ -72,7 +72,7 @@ export const ImageSequenceEyesViewer: FC<ImageSequenceEyesViewerProps> = ({ fram
       {/* cross-eye 3d how-to modal */}
       <input type="checkbox" id="cross-eyes-how-to-modal" className="modal-toggle" />
       <div className="modal not-prose">
-        <div className="modal-box">
+        <div className="modal-box bg-gray-100 dark:bg-gray-800">
           <h3 className="font-bold text-lg">How to cross-eyes 3d?</h3>
           <p>
             Try to focus your eyes at a point between the screen and your eyes, thus bringing the

@@ -134,7 +134,7 @@ export const PublishToBlocksButton: FC<PublishToBlocksButtonProps> = ({
       />
 
       <div className={cls('modal not-prose', { 'modal-open': modalState.opened })}>
-        <div className="modal-box bg-slate-100">
+        <div className="modal-box bg-gray-100 dark:bg-gray-800">
           <h3 className="font-bold text-lg">Publish to Blocks</h3>
 
           <div className="flex flex-col gap-2 mt-4">
