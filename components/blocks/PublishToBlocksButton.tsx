@@ -136,9 +136,8 @@ export const PublishToBlocksButton: FC<PublishToBlocksButtonProps> = ({
       <div className={cls('modal not-prose', { 'modal-open': modalState.opened })}>
         <div className="modal-box bg-slate-100">
           <h3 className="font-bold text-lg">Publish to Blocks</h3>
-          <div className="divider"></div>
 
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 mt-4">
             {/* title */}
             <div className="form-control w-full">
               <label className="label font-bold">
@@ -160,7 +159,7 @@ export const PublishToBlocksButton: FC<PublishToBlocksButtonProps> = ({
                 <span className="label-text">Description</span>
               </label>
               <textarea
-                className="textarea w-full"
+                className="textarea w-full h-40"
                 placeholder="Description"
                 disabled={pending}
                 value={description}
