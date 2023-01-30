@@ -101,9 +101,21 @@ export const PublishToBlocksButton: FC<PublishToBlocksButtonProps> = ({
 
   useEffect(() => {
     if (modalState.opened) {
-      setTitle(sourceInfo?.title || '');
-      // TODO add luma nerf title and author as description
-      setDescription(`Created with Looking Gloves🧤 https://lkg.vercel.app`);
+      if (sourceInfo?.sourceType === 'Luma') {
+        const title = `${sourceInfo?.title} - by @${sourceInfo?.author}`;
+        const description = [
+          title,
+          sourceInfo.url,
+          '',
+          'Made into Looking Glass hologram with the Looking Gloves 🧤',
+          'https://lkg.vercel.app',
+        ].join('\n');
+        setTitle(title);
+        setDescription(description);
+      } else {
+        setTitle(sourceInfo?.title || '');
+        setDescription(`Made with the Looking Gloves 🧤 https://lkg.vercel.app`);
+      }
       setPrivacy(PrivacyType.Unlisted);
       setPending(false);
 
