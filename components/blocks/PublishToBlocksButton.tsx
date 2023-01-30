@@ -52,34 +52,41 @@ export const PublishToBlocksButton: FC<PublishToBlocksButtonProps> = ({
       const rows = Math.ceil(frames.length / COLS);
 
       // upload quilt image file to Blocks
-      const hologram = await blocksClient?.uploadAndCreateHologram(file, {
-        // blocks related options
-        isPublished: true,
-        privacy,
-        title,
-        description,
+      try {
+        const hologram = await blocksClient?.uploadAndCreateHologram(file, {
+          // blocks related options
+          isPublished: true,
+          privacy,
+          title,
+          description,
 
-        // quilt related options
-        aspectRatio: ASPECT_RATIO,
-        quiltCols: COLS,
-        quiltRows: rows,
-        quiltTileCount: frames.length,
-      });
+          // quilt related options
+          aspectRatio: ASPECT_RATIO,
+          quiltCols: COLS,
+          quiltRows: rows,
+          quiltTileCount: frames.length,
+        });
 
-      const url = hologram?.createQuiltHologram.permalink;
-      if (url) {
+        const url = hologram?.createQuiltHologram.permalink;
+        if (!url) throw new Error('Publish failed');
+
         toast.success(<PublishSuccessToast url={url} />, {
           icon: '🥳',
           position: 'bottom-right',
           autoClose: false,
         });
         modalState.close();
-      } else {
-        console.error('Publish failed', hologram);
+      } catch (error) {
+        console.error('Publish failed', error);
         toast.error(`Rats! Something went wrong. Please try again later.`, {
           icon: '😣',
           position: 'bottom-right',
-          autoClose: false,
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          theme: 'light',
         });
       }
       setPending(false);
