@@ -10,7 +10,7 @@ import { useOpen } from '@/utils/useOpen';
 import { IconButton } from '../common/IconButton';
 import { useSequence } from '../editor/useSequence';
 import { useSource } from '../editor/useSource';
-import useBlocksAuth from './useBlocksAuth';
+import useBlocksAPI from './useBlocksAPI';
 
 export interface PublishToBlocksButtonProps {
   quiltImage?: HTMLCanvasElement;
@@ -30,7 +30,7 @@ const PublishSuccessToast: FC<{ url: string }> = ({ url }) => {
 export const PublishToBlocksButton: FC<PublishToBlocksButtonProps> = ({
   quiltImage,
 }: PublishToBlocksButtonProps) => {
-  const { loggedIn, blocksClient } = useBlocksAuth();
+  const { loggedIn, blocksClient } = useBlocksAPI();
   const { frames } = useSequence();
   const { sourceInfo } = useSource();
 

@@ -2,13 +2,10 @@
 import cls from 'classnames';
 import React, { FC } from 'react';
 
-import useBlocksAuth from './useBlocksAuth';
+import useBlocksAPI from './useBlocksAPI';
 
-export interface LoginToBlocksButtonProps {}
-
-export const LoginToBlocksButton: FC<LoginToBlocksButtonProps> = ({}: LoginToBlocksButtonProps) => {
-  const { loggedIn, login, me } = useBlocksAuth();
-  const pending = loggedIn === undefined;
+export const LoginToBlocksButton: FC = () => {
+  const { loggedIn, login, me } = useBlocksAPI();
 
   let label = '';
   if (loggedIn === undefined) label = '...';
@@ -23,14 +20,8 @@ export const LoginToBlocksButton: FC<LoginToBlocksButtonProps> = ({}: LoginToBlo
   };
 
   return (
-    <button className={cls('btn btn-sm not-prose', { loading: pending })} onClick={onClick}>
-      {!pending && (
-        <img
-          src="/assets/lookingglass-blocks.png"
-          alt="Looking Glass Blocks"
-          className="h-5 mr-1"
-        />
-      )}
+    <button className={cls('btn btn-sm no-animation not-prose')} onClick={onClick}>
+      <img src="/assets/lookingglass-blocks.png" alt="Looking Glass Blocks" className="h-5 mr-1" />
       {label}
     </button>
   );
