@@ -39,26 +39,30 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors }) =>
   }, [currentStep]);
 
   return (
-    <>
+    <div className="flex flex-col gap-4 md:flex-row items-center md:items-start w-full">
       {/* steps */}
       <QuiltImageCreatorSteps processors={processors} />
-      <div className="divider my-0"></div>
+
+      {/* devider between steps and other components */}
+      <div className="divider my-0 md:hidden"></div>
 
       {/* sequence processor of the current step */}
-      {processors?.map((processor, index) => (
-        <div key={index} className="contents">
-          {processor({
-            activated: index === currentStep,
-            onDone: nextStep,
-          })}
-        </div>
-      ))}
+      <div className="flex flex-col gap-2 w-full items-center">
+        {processors?.map((processor, index) => (
+          <div key={index} className="contents">
+            {processor({
+              activated: index === currentStep,
+              onDone: nextStep,
+            })}
+          </div>
+        ))}
 
-      {/* progress bar */}
-      <ProgressBar progress={progress} message={progressMessage} />
+        {/* progress bar */}
+        <ProgressBar progress={progress} message={progressMessage} />
 
-      {/* quilt image preview */}
-      {hasReachedEnd && <QuiltImagePreview onRestart={backToBeginning} />}
-    </>
+        {/* quilt image preview */}
+        {hasReachedEnd && <QuiltImagePreview onRestart={backToBeginning} />}
+      </div>
+    </div>
   );
 };

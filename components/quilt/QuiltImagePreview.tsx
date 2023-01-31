@@ -35,10 +35,10 @@ export const QuiltImagePreview: FC<QuiltImagePreviewProps> = ({ onRestart }) => 
   }, []);
 
   return (
-    <>
-      <h2>Done ✌️😎</h2>
+    <div className="flex flex-col-reverse md:flex-row items-center md:items-start gap-2 md:gap-4">
+      <QuiltImage onRendered={setQuiltImage} />
 
-      <div className="flex gap-4">
+      <div className="flex flex-row md:flex-col gap-4">
         <QuiltImageFlipOrderButton />
 
         {/* view on looking glass device */}
@@ -53,8 +53,6 @@ export const QuiltImagePreview: FC<QuiltImagePreviewProps> = ({ onRestart }) => 
         {/* make another quilt */}
         <IconButton tooltip="Make another one" iconType="new" onClick={onRestart} />
       </div>
-
-      <QuiltImage onRendered={setQuiltImage} />
-    </>
+    </div>
   );
 };

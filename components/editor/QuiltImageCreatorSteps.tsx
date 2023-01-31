@@ -31,14 +31,17 @@ export const QuiltImageCreatorSteps: FC<QuiltImageCreatorStepsProps> = ({ proces
 
   return (
     <>
-      <div className="w-screen flex justify-center">
-        <ul className="steps">
+      <div className="w-screen md:w-auto flex justify-center">
+        <ul className="steps steps-horizontal md:steps-vertical">
           {processors.map((processor, i) => {
             const active = currentStep >= i;
             return (
               <li
                 key={i}
-                className={cls('step', { 'step-primary': active, 'cursor-pointer': active })}
+                className={cls('step md:!text-left', {
+                  'step-primary': active,
+                  'cursor-pointer': active,
+                })}
                 onClick={active ? () => onClick(i) : undefined}
               >
                 {processor.title}
