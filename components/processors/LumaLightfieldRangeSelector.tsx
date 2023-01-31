@@ -37,6 +37,22 @@ const StyledSlider = styled(Slider)`
       box-shadow: none;
     }
   }
+
+  @media (prefers-color-scheme: dark) {
+    .MuiSlider-rail {
+      background-color: #2c3647;
+      opacity: 1;
+    }
+
+    .MuiSlider-track {
+      background-color: #a6adba;
+    }
+
+    .MuiSlider-thumb {
+      border-color: #a6adba;
+      background-color: #2a303c;
+    }
+  }
 `;
 
 export const LumaLightfieldRangeSelector: SequenceProcessorInfo = ({ activated, onDone }) => {

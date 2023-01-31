@@ -4,6 +4,7 @@ import { FC, HTMLAttributes } from 'react';
 
 import { PRODUCT_NAME_SHORT } from '@/utils/constant';
 
+import { LoginToBlocksButton } from '../blocks/LoginToBlocksButton';
 import { HomeBtn } from './HomeBtn';
 
 export interface PageContainerProps extends HTMLAttributes<HTMLDivElement> {
@@ -45,7 +46,12 @@ export const PageContainer: FC<PageContainerProps> = ({
 
       {subtitle && <h1>{subtitle}</h1>}
 
-      {!hideHomeBtn && <HomeBtn />}
+      {/* toolbar on the top right corner */}
+      <div className="fixed z-50 top-2 left-2 right-2 flex gap-1">
+        {!hideHomeBtn && <HomeBtn />}
+        <div className="grow" />
+        <LoginToBlocksButton />
+      </div>
 
       {children}
     </article>

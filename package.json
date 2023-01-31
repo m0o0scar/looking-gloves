@@ -12,6 +12,7 @@
   "dependencies": {
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
+    "@lookingglass/blocks.js": "https://github.com/Looking-Glass/blocks.js.git",
     "@mui/material": "^5.10.15",
     "@react-three/drei": "^9.47.1",
     "@react-three/fiber": "^8.9.1",
