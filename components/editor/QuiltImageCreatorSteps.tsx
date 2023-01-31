@@ -32,7 +32,7 @@ export const QuiltImageCreatorSteps: FC<QuiltImageCreatorStepsProps> = ({ proces
   return (
     <>
       <div className="w-screen md:w-auto flex justify-center">
-        <ul className="steps steps-horizontal md:steps-vertical">
+        <ul className="steps steps-horizontal md:steps-vertical md:pl-0">
           {processors.map((processor, i) => {
             const active = currentStep >= i;
             return (

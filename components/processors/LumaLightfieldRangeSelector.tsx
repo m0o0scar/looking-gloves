@@ -104,7 +104,7 @@ export const LumaLightfieldRangeSelector: SequenceProcessorInfo = ({ activated, 
   if (!activated) return null;
 
   return (
-    <div className="flex flex-col items-center gap-2 max-w-full">
+    <div className="flex flex-col items-center md:items-start gap-2 max-w-full">
       <h2>Select frames</h2>
       <p>Drag the sliders below to select up to 96 frames</p>
 
