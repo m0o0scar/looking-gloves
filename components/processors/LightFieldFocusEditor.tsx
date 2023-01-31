@@ -10,6 +10,7 @@ import {
   disposeTexture,
 } from '@/components/common/LightFieldMaterial';
 import { useSequence } from '@/components/editor/useSequence';
+import { ASPECT_RATIO } from '@/utils/constant';
 import { scrollToBottom } from '@/utils/dom';
 
 import { SequenceProcessorInfo } from './types';
@@ -26,6 +27,20 @@ export const LightFieldFocusEditor: SequenceProcessorInfo = ({ activated, onDone
   const planeSize = 1;
   const cameraZ = planeSize / (2 * Math.tan((fov * Math.PI) / 360));
   const canvasSize = 600;
+
+  // calculate the crop rect ratio
+  const { width = 0, height = 0 } = frames?.[0] || {};
+  const cropRectRatio = (height / width) * ASPECT_RATIO || 1;
+  let cropRectWidth: number, cropRectHeight: number;
+  if (cropRectRatio < 1) {
+    cropRectWidth = cropRectRatio;
+    cropRectHeight = 1;
+  } else {
+    cropRectWidth = 1;
+    cropRectHeight = 1 / cropRectRatio;
+  }
+  const cropRectX = Math.round(((1 - cropRectWidth) / 2) * 100);
+  const cropRectY = Math.round(((1 - cropRectHeight) / 2) * 100);
 
   // when confirm, save the focus value and exit the editor
   const onConfirm = () => {
@@ -104,18 +119,38 @@ export const LightFieldFocusEditor: SequenceProcessorInfo = ({ activated, onDone
         />
       </div>
 
-      <Canvas
-        flat
-        linear
-        frameloop="demand"
-        camera={{ position: [0, 0, cameraZ] }}
-        className="rounded-lg max-w-full aspect-square"
-        style={{ width: canvasSize }}
-      >
-        <mesh material={material!}>
-          <planeGeometry args={[planeSize, planeSize, 1, 1]} />
-        </mesh>
-      </Canvas>
+      <div className="relative max-w-full">
+        <Canvas
+          flat
+          linear
+          frameloop="demand"
+          camera={{ position: [0, 0, cameraZ] }}
+          className="rounded-lg max-w-full aspect-square"
+          style={{ width: canvasSize }}
+        >
+          <mesh material={material!}>
+            <planeGeometry args={[planeSize, planeSize, 1, 1]} />
+          </mesh>
+        </Canvas>
+
+        <div
+          className="absolute top-0 bottom-0 left-0 right-0 rounded-lg bg-white dark:bg-slate-800 opacity-70"
+          style={{
+            clipPath: [
+              `polygon(0% 0%`,
+              `0% 100%`,
+              `${cropRectX}% 100%`,
+              `${cropRectX}% ${cropRectY}%`,
+              `${100 - cropRectX}% ${cropRectY}%`,
+              `${100 - cropRectX}% ${100 - cropRectY}%`,
+              `${cropRectX}% ${100 - cropRectY}%`,
+              `${cropRectX}% 100%`,
+              `100% 100%`,
+              `100% 0%)`,
+            ].join(', '),
+          }}
+        />
+      </div>
     </div>
   );
 };
