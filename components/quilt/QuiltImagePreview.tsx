@@ -16,24 +16,6 @@ export interface QuiltImagePreviewProps {
 export const QuiltImagePreview: FC<QuiltImagePreviewProps> = ({ onRestart }) => {
   const [quiltImage, setQuiltImage] = useState<HTMLCanvasElement | undefined>();
 
-  const { sourceInfo } = useSource();
-
-  useEffect(() => {
-    if (sourceInfo) {
-      const { title, author, url, sourceType } = sourceInfo;
-      const titleText = `${title} by @${author}`;
-      const messageText = [
-        `${title} - Created by @${author} with ${sourceType}`,
-        url,
-        '',
-        'Converted to Looking Glass hologram with Looking Gloves 🧤',
-        'https://lookinggloves.vercel.app/luma',
-      ].join('\n');
-      console.log(titleText);
-      console.log(messageText);
-    }
-  }, []);
-
   return (
     <div className="flex flex-col gap-2 items-center md:items-start">
       <h2>Your hologram is ready 😎</h2>
