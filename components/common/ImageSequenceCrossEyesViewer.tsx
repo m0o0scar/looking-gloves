@@ -3,11 +3,11 @@ import { FC, useRef, useEffect } from 'react';
 import { drawSourceOntoDest } from '@/utils/canvas';
 import { FRAME_HEIGHT, FRAME_WIDTH } from '@/utils/constant';
 
-export interface ImageSequenceEyesViewerProps {
+export interface ImageSequenceCrossEyesViewerProps {
   frames?: HTMLCanvasElement[];
 }
 
-export const ImageSequenceEyesViewer: FC<ImageSequenceEyesViewerProps> = ({ frames }) => {
+export const ImageSequenceCrossEyesViewer: FC<ImageSequenceCrossEyesViewerProps> = ({ frames }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const leftCanvasRef = useRef<HTMLCanvasElement>(null);
   const rightCanvasRef = useRef<HTMLCanvasElement>(null);
