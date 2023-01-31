@@ -1,32 +1,41 @@
 import cls from 'classnames';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { FC, HTMLAttributes } from 'react';
 
 import { PRODUCT_NAME_SHORT } from '@/utils/constant';
 
 import { LoginToBlocksButton } from '../blocks/LoginToBlocksButton';
+import { QuiltImageCreator } from '../editor/QuiltImageCreator';
+import { QuiltImageCreatorSteps } from '../editor/QuiltImageCreatorSteps';
+import { SequenceProcessorInfo } from '../processors/types';
 import { HomeBtn } from './HomeBtn';
 
 export interface PageContainerProps extends HTMLAttributes<HTMLDivElement> {
   favicon?: string;
   title?: string;
   subtitle?: string;
-  hideHomeBtn?: boolean;
+  processors?: SequenceProcessorInfo[];
 }
 
 export const PageContainer: FC<PageContainerProps> = ({
   favicon,
   title,
   subtitle,
-  hideHomeBtn,
   className,
+  processors,
   children,
-  ...props
 }) => {
+  const router = useRouter();
+  const isHomePage = router.pathname === '/';
+
   return (
     <article
       className={cls(
-        'prose max-w-full flex flex-col items-center p-5 gap-2 bg-slate-100 dark:bg-slate-800 min-h-screen overflow-x-hidden',
+        'prose max-w-full min-h-screen overflow-x-hidden p-5',
+        'bg-slate-100 dark:bg-slate-800',
+        'flex gap-4 flex-col', // by default layout vertically
+        'md:gap-8 md:flex-row', // in bigger screen layout horizontally
         className
       )}
     >
@@ -44,16 +53,43 @@ export const PageContainer: FC<PageContainerProps> = ({
         )}
       </Head>
 
-      {subtitle && <h1>{subtitle}</h1>}
+      <div
+        className={cls('flex flex-col items-center md:items-start w-full md:w-56 shrink-0', {
+          '!absolute': isHomePage,
+        })}
+      >
+        {/* navigation buttons */}
+        <div
+          className={cls(
+            'fixed z-50 top-2 left-2 right-2 gap-1 flex md:flex-col md:relative',
+            isHomePage && '!fixed w-auto left-auto'
+          )}
+        >
+          {!isHomePage && <HomeBtn />}
+          <div className="grow md:hidden" />
+          <LoginToBlocksButton />
+        </div>
 
-      {/* toolbar on the top right corner */}
-      <div className="fixed z-50 top-2 left-2 right-2 flex gap-1">
-        {!hideHomeBtn && <HomeBtn />}
-        <div className="grow" />
-        <LoginToBlocksButton />
+        {/* subtitle */}
+        {subtitle && <h1 className="md:hidden">{subtitle}</h1>}
+
+        {/* steps */}
+        <QuiltImageCreatorSteps processors={processors} />
+        <div className="divider md:hidden" />
       </div>
 
-      {children}
+      {/* main app content */}
+      <div
+        className={cls(
+          'flex flex-col items-center md:items-start flex-1 min-w-0',
+          isHomePage && '!items-center'
+        )}
+      >
+        {/* subtitle */}
+        {subtitle && <h1 className="hidden md:block">{subtitle}</h1>}
+
+        {children || <QuiltImageCreator processors={processors} />}
+      </div>
     </article>
   );
 };

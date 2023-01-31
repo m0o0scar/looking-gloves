@@ -35,26 +35,28 @@ export const QuiltImagePreview: FC<QuiltImagePreviewProps> = ({ onRestart }) => 
   }, []);
 
   return (
-    <>
-      <h2>Done ✌️😎</h2>
+    <div className="flex flex-col gap-2 items-center md:items-start">
+      <h2>Your hologram is ready 😎</h2>
+      <p>You can now view it on your looking glass device, or publish it to Blocks.</p>
+      <div className="flex flex-col-reverse md:flex-row items-center md:items-start gap-4">
+        <QuiltImage onRendered={setQuiltImage} />
 
-      <div className="flex gap-4">
-        <QuiltImageFlipOrderButton />
+        <div className="flex flex-row md:flex-col gap-4">
+          <QuiltImageFlipOrderButton />
 
-        {/* view on looking glass device */}
-        <QuiltImageViewOnDeviceButton quiltImage={quiltImage} autoShow />
+          {/* view on looking glass device */}
+          <QuiltImageViewOnDeviceButton quiltImage={quiltImage} autoShow />
 
-        {/* download quilt image */}
-        <QuiltImageSaveButton quiltImage={quiltImage} />
+          {/* download quilt image */}
+          <QuiltImageSaveButton quiltImage={quiltImage} />
 
-        {/* publish to looking glass blocks */}
-        <PublishToBlocksButton quiltImage={quiltImage} />
+          {/* publish to looking glass blocks */}
+          <PublishToBlocksButton quiltImage={quiltImage} />
 
-        {/* make another quilt */}
-        <IconButton tooltip="Make another one" iconType="new" onClick={onRestart} />
+          {/* make another quilt */}
+          <IconButton tooltip="Make another one" iconType="new" onClick={onRestart} />
+        </div>
       </div>
-
-      <QuiltImage onRendered={setQuiltImage} />
-    </>
+    </div>
   );
 };

@@ -4,7 +4,6 @@ import { ProgressBar } from '@/components/common/ProgressBar';
 import { SequenceProcessorInfo } from '@/components/processors/types';
 import { QuiltImagePreview } from '@/components/quilt/QuiltImagePreview';
 
-import { QuiltImageCreatorSteps } from './QuiltImageCreatorSteps';
 import { useCurrentStep } from './useCurrentStep';
 import { useProgress } from './useProgress';
 import { useSequence } from './useSequence';
@@ -39,12 +38,7 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors }) =>
   }, [currentStep]);
 
   return (
-    <>
-      {/* steps */}
-      <QuiltImageCreatorSteps processors={processors} />
-      <div className="divider my-0"></div>
-
-      {/* sequence processor of the current step */}
+    <div className="flex flex-col gap-4 w-full max-w-full items-center md:items-start">
       {processors?.map((processor, index) => (
         <div key={index} className="contents">
           {processor({
@@ -59,6 +53,6 @@ export const QuiltImageCreator: FC<QuiltImageCreatorProps> = ({ processors }) =>
 
       {/* quilt image preview */}
       {hasReachedEnd && <QuiltImagePreview onRestart={backToBeginning} />}
-    </>
+    </div>
   );
 };

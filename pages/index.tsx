@@ -9,12 +9,12 @@ import { PRODUCT_DESC_SHORT, PRODUCT_NAME_SHORT, PRODUCT_EMOJI } from '@/utils/c
 
 const HomePage: NextPage = () => {
   return (
-    <PageContainer className="justify-center" hideHomeBtn favicon="🖼️">
+    <PageContainer className="items-center justify-center" favicon="🖼️">
       <Head>
         <title>{PRODUCT_NAME_SHORT}</title>
       </Head>
 
-      <div className="flex flex-col items-center gap-2 max-w-5xl">
+      <div className="flex flex-col items-center gap-2 max-w-5xl mt-8 sm:mt-0">
         <h1 className="text-center">
           <mark className="inline-flex">
             <span className="block animate-rotate3d">{PRODUCT_EMOJI}</span>

@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import cls from 'classnames';
+import { useRouter } from 'next/router';
 import React, { FC, useState } from 'react';
 
 import { useOnce } from '@/utils/useOnce';
@@ -7,6 +8,9 @@ import { useOnce } from '@/utils/useOnce';
 import useBlocksAPI from './useBlocksAPI';
 
 export const LoginToBlocksButton: FC = () => {
+  const router = useRouter();
+  const isHomePage = router.pathname === '/';
+
   const { loggedIn, login, me } = useBlocksAPI();
 
   // show pending state when user clicks login button,
@@ -57,8 +61,10 @@ export const LoginToBlocksButton: FC = () => {
   if (!loggedIn) {
     return (
       <div
-        className="tooltip tooltip-left tooltip-info [&::before]:top-6"
-        data-tip="Login to Blocks and publish your awesome hologram in just one click 😎"
+        className={cls('tooltip tooltip-left md:tooltip-right tooltip-info [&::before]:top-6', {
+          '!tooltip-left': isHomePage,
+        })}
+        data-tip="Login and publish your hologram to Blocks 😎"
         onMouseOver={showLoginButtonTips.markAsUsed}
       >
         {button}
