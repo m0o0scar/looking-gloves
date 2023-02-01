@@ -26,6 +26,8 @@ const rangeAtom = atom<[number, number] | undefined>({
   default: undefined,
 });
 
+export const focusScale = 10;
+
 export const useSequence = () => {
   const [sourceFrames, setSourceFrames] = useRecoilState(sourceFramesAtom);
   const [frames, setFrames] = useRecoilState(framesAtom);

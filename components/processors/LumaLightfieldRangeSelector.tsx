@@ -108,6 +108,13 @@ export const LumaLightfieldRangeSelector: SequenceProcessorInfo = ({ activated, 
       <h2>Select frames</h2>
       <p>Drag the sliders below to select up to 96 frames</p>
 
+      <ImageSequenceAnimation
+        frames={sourceFrames}
+        start={framesRange[0]}
+        end={framesRange[2]}
+        style={{ width: 600 }}
+      />
+
       <div className="w-full flex items-center gap-4">
         <StyledSlider
           value={framesRange}
@@ -119,13 +126,6 @@ export const LumaLightfieldRangeSelector: SequenceProcessorInfo = ({ activated, 
         />
         <IconButton iconType="tick" buttonClassName="btn-success" onClick={onConfirmFrames} />
       </div>
-
-      <ImageSequenceAnimation
-        frames={sourceFrames}
-        start={framesRange[0]}
-        end={framesRange[2]}
-        style={{ width: 600 }}
-      />
     </div>
   );
 };

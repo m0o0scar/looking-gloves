@@ -3,13 +3,11 @@ import { useState, useEffect } from 'react';
 import { Cropper } from '@/components/common/Cropper';
 import { IconButton } from '@/components/common/IconButton';
 import { LightFieldFocusViewer } from '@/components/common/LightFieldFocusViewer';
-import { useSequence } from '@/components/editor/useSequence';
+import { focusScale, useSequence } from '@/components/editor/useSequence';
 import { ASPECT_RATIO } from '@/utils/constant';
 import { scrollToBottom } from '@/utils/dom';
 
 import { SequenceProcessorInfo } from './types';
-
-const SCALE = 10;
 
 export const LightFieldFocusEditor: SequenceProcessorInfo = ({ activated, onDone }) => {
   const { focus, setFocus, frames } = useSequence();
@@ -19,7 +17,7 @@ export const LightFieldFocusEditor: SequenceProcessorInfo = ({ activated, onDone
 
   // when confirm, save the focus value and exit the editor
   const onConfirm = () => {
-    setFocus(adjustedFocus * SCALE);
+    setFocus(adjustedFocus * focusScale);
     onDone();
   };
 
@@ -31,7 +29,7 @@ export const LightFieldFocusEditor: SequenceProcessorInfo = ({ activated, onDone
 
   // sync focus from props to state
   useEffect(() => {
-    const value = focus / SCALE;
+    const value = focus / focusScale;
     setAdjustedFocus(value);
   }, [focus]);
 
@@ -48,6 +46,10 @@ export const LightFieldFocusEditor: SequenceProcessorInfo = ({ activated, onDone
       <h2>Adjust light field focus</h2>
       <p>Drag the slider below to focus on your target</p>
 
+      <div className="relative max-w-full">
+        <LightFieldFocusViewer focus={adjustedFocus} frames={frames} />
+      </div>
+
       <div className="w-full flex items-center gap-4">
         <input
           type="range"
@@ -63,16 +65,6 @@ export const LightFieldFocusEditor: SequenceProcessorInfo = ({ activated, onDone
           iconType="tick"
           buttonClassName="btn-success"
           onClick={onConfirm}
-        />
-      </div>
-
-      <div className="relative max-w-full">
-        <LightFieldFocusViewer focus={adjustedFocus} />
-
-        <Cropper
-          source={frames?.[0]}
-          targetRatio={ASPECT_RATIO}
-          className="absolute top-0 bottom-0 left-0 right-0 rounded-lg"
         />
       </div>
     </div>

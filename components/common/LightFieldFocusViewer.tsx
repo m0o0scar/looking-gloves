@@ -12,11 +12,10 @@ import { useSequence } from '@/components/editor/useSequence';
 
 export interface LightFieldFocusViewerProps {
   focus?: number;
+  frames?: HTMLCanvasElement[];
 }
 
-export const LightFieldFocusViewer: FC<LightFieldFocusViewerProps> = ({ focus = 0 }) => {
-  const { frames } = useSequence();
-
+export const LightFieldFocusViewer: FC<LightFieldFocusViewerProps> = ({ focus = 0, frames }) => {
   const fov = 75;
   const planeSize = 1;
   const cameraZ = planeSize / (2 * Math.tan((fov * Math.PI) / 360));
