@@ -54,9 +54,12 @@ export const PageContainer: FC<PageContainerProps> = ({
       </Head>
 
       <div
-        className={cls('flex flex-col items-center md:items-start w-full md:w-56 shrink-0', {
-          '!absolute': isHomePage,
-        })}
+        className={cls(
+          'flex flex-col items-center md:items-start w-full md:w-56 shrink-0 md:fixed md:top-5',
+          {
+            '!absolute': isHomePage,
+          }
+        )}
       >
         {/* navigation buttons */}
         <div
@@ -81,8 +84,8 @@ export const PageContainer: FC<PageContainerProps> = ({
       {/* main app content */}
       <div
         className={cls(
-          'flex flex-col items-center md:items-start flex-1 min-w-0',
-          isHomePage && '!items-center'
+          'flex flex-col items-center md:items-start flex-1 min-w-0 md:ml-60',
+          isHomePage && '!items-center !ml-0'
         )}
       >
         {/* subtitle */}
