@@ -29,6 +29,8 @@ export const QuiltImageCreatorSteps: FC<QuiltImageCreatorStepsProps> = ({ proces
     backToBeginning();
   };
 
+  const textStyle = 'step md:!text-left text-xs sm:text-base';
+
   return (
     <>
       <div className="w-screen md:w-auto flex justify-center">
@@ -38,7 +40,7 @@ export const QuiltImageCreatorSteps: FC<QuiltImageCreatorStepsProps> = ({ proces
             return (
               <li
                 key={i}
-                className={cls('step md:!text-left', {
+                className={cls(textStyle, {
                   'step-primary': active,
                   'cursor-pointer': active,
                 })}
@@ -48,7 +50,7 @@ export const QuiltImageCreatorSteps: FC<QuiltImageCreatorStepsProps> = ({ proces
               </li>
             );
           })}
-          <li className={cls('step', { 'step-primary': currentStep >= processors.length })}>
+          <li className={cls(textStyle, { 'step-primary': currentStep >= processors.length })}>
             Done
           </li>
         </ul>
