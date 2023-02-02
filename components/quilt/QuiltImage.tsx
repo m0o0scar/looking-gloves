@@ -12,7 +12,7 @@ export interface QuiltImageProps extends HTMLAttributes<HTMLCanvasElement> {
 export const QuiltImage: FC<QuiltImageProps> = ({ className, onRendered, ...props }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const { focus, frames } = useSequence();
+  const { focus, frames, cropRegion } = useSequence();
 
   useEffect(() => {
     if (frames?.length && onRendered) {
@@ -39,7 +39,7 @@ export const QuiltImage: FC<QuiltImageProps> = ({ className, onRendered, ...prop
         const offset = (i - frames.length / 2) * -focusValue * frame.width;
 
         // draw the actual frame
-        drawSourceOntoDest(frame, canvasRef.current!, {
+        drawSourceOntoDest(frame, canvasRef.current!, cropRegion!, {
           dx: x,
           dy: y,
           dw: FRAME_WIDTH,
@@ -51,7 +51,7 @@ export const QuiltImage: FC<QuiltImageProps> = ({ className, onRendered, ...prop
 
       onRendered?.(canvasRef.current!);
     }
-  }, [frames, focus, onRendered]);
+  }, [frames, focus, cropRegion, onRendered]);
 
   if (!frames?.length) return null;
 

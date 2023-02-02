@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { Crop } from 'react-image-crop';
 import { atom, useRecoilState } from 'recoil';
 
 const sourceFramesAtom = atom<HTMLCanvasElement[] | undefined>({
@@ -26,6 +27,11 @@ const rangeAtom = atom<[number, number] | undefined>({
   default: undefined,
 });
 
+const cropRegionAtom = atom<Crop | undefined>({
+  key: 'processors.cropRegion',
+  default: undefined,
+});
+
 export const focusScale = 10;
 
 export const useSequence = () => {
@@ -34,6 +40,7 @@ export const useSequence = () => {
   const [focus, setFocus] = useRecoilState(focusAtom);
   const [enforceOrder, setEnforceOrder] = useRecoilState(enforceOrderAtom);
   const [range, setRange] = useRecoilState(rangeAtom);
+  const [cropRegion, setCropRegion] = useRecoilState(cropRegionAtom);
 
   const reset = () => {
     setSourceFrames(undefined);
@@ -41,6 +48,7 @@ export const useSequence = () => {
     setFocus(0);
     setEnforceOrder(false);
     setRange(undefined);
+    setCropRegion(undefined);
   };
 
   const setFocusValue = (value: number) => {
@@ -75,6 +83,9 @@ export const useSequence = () => {
 
     range,
     setRange,
+
+    cropRegion,
+    setCropRegion,
 
     setEnforceOrder,
     reset,

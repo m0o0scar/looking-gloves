@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Crop } from 'react-image-crop';
 
 import { Cropper } from '@/components/common/Cropper';
 import { IconButton } from '@/components/common/IconButton';
@@ -10,7 +11,7 @@ import { scrollToBottom } from '@/utils/dom';
 import { SequenceProcessorInfo } from './types';
 
 export const LightFieldCropEditor: SequenceProcessorInfo = ({ activated, onDone }) => {
-  const { focus, frames } = useSequence();
+  const { focus, frames, cropRegion, setCropRegion } = useSequence();
 
   const onConfirm = () => {
     onDone();
@@ -30,12 +31,14 @@ export const LightFieldCropEditor: SequenceProcessorInfo = ({ activated, onDone 
       <p>Drag the handles below to crop</p>
 
       <div className="relative max-w-full">
-        <LightFieldFocusViewer focus={focus / focusScale} frames={frames} />
         <Cropper
           source={frames?.[0]}
           targetRatio={ASPECT_RATIO}
-          className="absolute top-0 bottom-0 left-0 right-0 rounded-lg"
-        />
+          crop={cropRegion}
+          onChange={setCropRegion}
+        >
+          <LightFieldFocusViewer focus={focus / focusScale} frames={frames} />
+        </Cropper>
       </div>
 
       <div className="w-full flex justify-end gap-4">
