@@ -2,6 +2,7 @@ import { FC, useState, useEffect } from 'react';
 
 import { IconButton } from '@/components/common/IconButton';
 import { useSource } from '@/components/editor/useSource';
+import { scrollToBottom } from '@/utils/dom';
 
 import { PublishToBlocksButton } from '../blocks/PublishToBlocksButton';
 import { QuiltImage } from './QuiltImage';
@@ -16,32 +17,18 @@ export interface QuiltImagePreviewProps {
 export const QuiltImagePreview: FC<QuiltImagePreviewProps> = ({ onRestart }) => {
   const [quiltImage, setQuiltImage] = useState<HTMLCanvasElement | undefined>();
 
-  const { sourceInfo } = useSource();
-
   useEffect(() => {
-    if (sourceInfo) {
-      const { title, author, url, sourceType } = sourceInfo;
-      const titleText = `${title} by @${author}`;
-      const messageText = [
-        `${title} - Created by @${author} with ${sourceType}`,
-        url,
-        '',
-        'Converted to Looking Glass hologram with Looking Gloves 🧤',
-        'https://lookinggloves.vercel.app/luma',
-      ].join('\n');
-      console.log(titleText);
-      console.log(messageText);
-    }
+    scrollToBottom();
   }, []);
 
   return (
     <div className="flex flex-col gap-2 items-center md:items-start">
       <h2>Your hologram is ready 😎</h2>
       <p>You can now view it on your looking glass device, or publish it to Blocks.</p>
-      <div className="flex flex-col-reverse md:flex-row items-center md:items-start gap-4">
+      <div className="flex flex-col items-end gap-4">
         <QuiltImage onRendered={setQuiltImage} />
 
-        <div className="flex flex-row md:flex-col gap-4">
+        <div className="flex flex-row gap-4">
           <QuiltImageFlipOrderButton />
 
           {/* view on looking glass device */}

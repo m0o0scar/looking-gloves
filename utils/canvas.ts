@@ -1,3 +1,5 @@
+import { Crop } from 'react-image-crop';
+
 export interface DrawSourceOntoDestOptions {
   dx?: number;
   dy?: number;
@@ -10,28 +12,17 @@ export interface DrawSourceOntoDestOptions {
 export const drawSourceOntoDest = (
   source: HTMLCanvasElement,
   dest: HTMLCanvasElement,
+  cropRegion: Crop,
   options?: DrawSourceOntoDestOptions
 ) => {
   const { dx = 0, dy = 0, dw = 0, dh = 0, sourceOffsetX = 0, fillEdge = false } = options || {};
 
   const destWidth = dw || dest.width;
   const destHeight = dh || dest.height;
-  const destRatio = destWidth / destHeight;
-  const sourceRatio = source.width / source.height;
-
-  // calculate which part from the source to draw onto dest
-  let sourceX, sourceY, sourceWidth, sourceHeight;
-  if (sourceRatio > destRatio) {
-    sourceHeight = source.height;
-    sourceWidth = sourceHeight * destRatio;
-    sourceX = (source.width - sourceWidth) / 2;
-    sourceY = 0;
-  } else {
-    sourceWidth = source.width;
-    sourceHeight = sourceWidth / destRatio;
-    sourceX = 0;
-    sourceY = (source.height - sourceHeight) / 2;
-  }
+  const sourceX = (cropRegion.x / 100) * source.width;
+  const sourceY = (cropRegion.y / 100) * source.height;
+  const sourceWidth = (cropRegion.width / 100) * source.width;
+  const sourceHeight = (cropRegion.height / 100) * source.height;
 
   const ctx = dest.getContext('2d')!;
 

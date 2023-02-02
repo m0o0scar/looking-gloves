@@ -2,16 +2,16 @@ import type { NextPage } from 'next';
 
 import { PageContainer } from '@/components/common/PageContainer';
 import { ImageSequenceProcessor } from '@/components/processors/ImageSequenceProcessor';
+import { LightFieldCropEditor } from '@/components/processors/LightFieldCropEditor';
 import { LightFieldFocusEditor } from '@/components/processors/LightFieldFocusEditor';
 
 const ImageSequencePage: NextPage = () => {
-  const processors = [ImageSequenceProcessor, LightFieldFocusEditor];
   return (
     <PageContainer
       favicon="🎞️"
       title="Image Sequence to Hologram"
       subtitle="🎞️ Images"
-      processors={processors}
+      processors={[ImageSequenceProcessor, LightFieldFocusEditor, LightFieldCropEditor]}
     />
   );
 };
