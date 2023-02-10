@@ -1,4 +1,5 @@
 import { Canvas } from '@react-three/fiber';
+import cls from 'classnames';
 import React, { FC, useEffect } from 'react';
 import { DataArrayTexture } from 'three';
 
@@ -8,7 +9,6 @@ import {
   setTextureFocus,
   disposeTexture,
 } from '@/components/common/LightFieldMaterial';
-import { useSequence } from '@/components/editor/useSequence';
 
 export interface LightFieldFocusViewerProps {
   focus?: number;
@@ -59,7 +59,7 @@ export const LightFieldFocusViewer: FC<LightFieldFocusViewerProps> = ({ focus = 
       linear
       frameloop="demand"
       camera={{ position: [0, 0, cameraZ] }}
-      className="rounded-lg max-w-full aspect-square"
+      className={cls('rounded-lg max-w-full aspect-square m-auto')}
       style={{ width: canvasSize }}
     >
       <mesh material={material!}>
