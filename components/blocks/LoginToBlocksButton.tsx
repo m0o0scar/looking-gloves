@@ -1,31 +1,15 @@
 /* eslint-disable @next/next/no-img-element */
 import cls from 'classnames';
-import { useRouter } from 'next/router';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 
 import useBlocksAPI from './useBlocksAPI';
 
 export const LoginToBlocksButton: FC = () => {
-  const router = useRouter();
-  const isHomePage = router.pathname === '/';
-
   const { loggedIn, login, me } = useBlocksAPI();
 
   // show pending state when user clicks login button,
   // this is because there might be so delay before user is navigated to Blocks website
   const [pending, setPending] = useState(false);
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const redirect = params.get('redirect');
-    if (redirect) router.push(redirect);
-  }, []);
-
-  useEffect(() => {
-    if (!isHomePage && loggedIn === false) {
-      login();
-    }
-  }, [isHomePage, loggedIn]);
 
   // decide what label to show based on login status
   let label = '';
