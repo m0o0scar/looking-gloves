@@ -25,8 +25,9 @@ export default function useBlocksAPI() {
   // perform login
   const login = () => {
     if (!loggedIn) {
-      const { protocol, host } = window.location;
-      const redirectUri = `${protocol}//${host}`;
+      const { protocol, host, pathname } = window.location;
+      const redirect = pathname === '/' ? '' : encodeURIComponent(pathname);
+      const redirectUri = `${protocol}//${host}?redirect=${redirect}`;
       loginWithRedirect(getBlocksAuthClient(), redirectUri);
     }
   };
