@@ -1,9 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import cls from 'classnames';
 import { useRouter } from 'next/router';
-import React, { FC, useState } from 'react';
-
-import { useOnce } from '@/utils/useOnce';
+import React, { FC, useEffect, useState } from 'react';
 
 import useBlocksAPI from './useBlocksAPI';
 
@@ -17,7 +15,17 @@ export const LoginToBlocksButton: FC = () => {
   // this is because there might be so delay before user is navigated to Blocks website
   const [pending, setPending] = useState(false);
 
-  const showLoginButtonTips = useOnce('blocks.loginButtonTips');
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const redirect = params.get('redirect');
+    if (redirect) router.push(redirect);
+  }, []);
+
+  useEffect(() => {
+    if (!isHomePage && loggedIn === false) {
+      login();
+    }
+  }, [isHomePage, loggedIn]);
 
   // decide what label to show based on login status
   let label = '';
@@ -40,12 +48,11 @@ export const LoginToBlocksButton: FC = () => {
     }
   };
 
-  const button = (
+  return (
     <button
       className={cls('btn btn-sm no-animation not-prose hover:animate-none', {
         disabled: pending,
         loading: pending,
-        'animate-bounce': !showLoginButtonTips.used,
       })}
       onClick={onClick}
     >
@@ -57,20 +64,4 @@ export const LoginToBlocksButton: FC = () => {
       {label}
     </button>
   );
-
-  if (!loggedIn) {
-    return (
-      <div
-        className={cls('tooltip tooltip-left md:tooltip-right tooltip-info [&::before]:top-6', {
-          '!tooltip-left': isHomePage,
-        })}
-        data-tip="Login and publish your hologram to Blocks 😎"
-        onMouseOver={showLoginButtonTips.markAsUsed}
-      >
-        {button}
-      </div>
-    );
-  } else {
-    return button;
-  }
 };
