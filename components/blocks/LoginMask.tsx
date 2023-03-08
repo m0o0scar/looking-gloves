@@ -31,8 +31,6 @@ export const LoginMask: FC = () => {
     }
   }, [isHomePage, loggedIn]);
 
-  console.log(isHomePage, redirectPathname);
-
   if (isHomePage && redirectPathname)
     return (
       <div className="fixed left-0 right-0 top-0 bottom-0 z-50 bg-[rgba(0,0,0,0.8)] flex flex-col items-center justify-center">
