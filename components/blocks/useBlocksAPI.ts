@@ -1,5 +1,5 @@
 import { validateSession, loginWithRedirect, BlocksClient, MeQuery } from '@lookingglass/blocks.js';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { atom, useRecoilState } from 'recoil';
 
 import { getBlocksAuthClient } from './blocksAuthClient';
@@ -26,8 +26,7 @@ export default function useBlocksAPI() {
   const login = () => {
     if (!loggedIn) {
       const { protocol, host, pathname } = window.location;
-      const redirect = pathname === '/' ? '' : encodeURIComponent(pathname);
-      const redirectUri = `${protocol}//${host}?redirect=${redirect}`;
+      const redirectUri = `${protocol}//${host}${pathname}`;
       loginWithRedirect(getBlocksAuthClient(), redirectUri);
     }
   };
