@@ -4,9 +4,6 @@ import { atom, useRecoilState } from 'recoil';
 
 import { getBlocksAuthClient } from './blocksAuthClient';
 
-export const isBlocksLoginRequired = (pathname: string) =>
-  ['/luma', '/video', '/images'].includes(pathname);
-
 interface BlocksContext {
   loggedIn: boolean | undefined;
   blocksClient: BlocksClient | undefined;
@@ -29,8 +26,7 @@ export default function useBlocksAPI() {
   const login = () => {
     if (!loggedIn) {
       const { protocol, host, pathname } = window.location;
-      const redirectPathname = isBlocksLoginRequired(pathname) ? pathname : '/';
-      const redirectUri = `${protocol}//${host}${redirectPathname}`;
+      const redirectUri = `${protocol}//${host}${pathname}`;
       loginWithRedirect(getBlocksAuthClient(), redirectUri);
     }
   };

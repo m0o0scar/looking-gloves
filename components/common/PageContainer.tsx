@@ -5,7 +5,6 @@ import { FC, HTMLAttributes } from 'react';
 
 import { PRODUCT_NAME_SHORT } from '@/utils/constant';
 
-import { LoginMask } from '../blocks/LoginMask';
 import { LoginToBlocksButton } from '../blocks/LoginToBlocksButton';
 import { QuiltImageCreator } from '../editor/QuiltImageCreator';
 import { QuiltImageCreatorSteps } from '../editor/QuiltImageCreatorSteps';
@@ -96,7 +95,6 @@ export const PageContainer: FC<PageContainerProps> = ({
           {children || <QuiltImageCreator processors={processors} />}
         </div>
       </article>
-      <LoginMask />
     </>
   );
 };
