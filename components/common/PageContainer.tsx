@@ -2,6 +2,7 @@ import cls from 'classnames';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { FC, HTMLAttributes } from 'react';
+import GithubCorner from 'react-github-corner';
 
 import { PRODUCT_NAME_SHORT } from '@/utils/constant';
 
@@ -65,17 +66,17 @@ export const PageContainer: FC<PageContainerProps> = ({
           {/* navigation buttons */}
           <div
             className={cls(
-              'fixed z-50 top-2 left-2 right-2 gap-1 flex md:flex-col md:relative',
-              isHomePage && '!fixed w-auto left-auto'
+              'fixed z-50 top-2 left-2 gap-1',
+              'flex flex-row md:flex-col', // use veritical layout when in small screen
+              { 'md:relative': !isHomePage }
             )}
           >
             {!isHomePage && <HomeBtn />}
-            <div className="grow md:hidden" />
             <LoginToBlocksButton />
           </div>
 
           {/* subtitle */}
-          {subtitle && <h1 className="md:hidden">{subtitle}</h1>}
+          {subtitle && <h1 className="mt-6 md:hidden">{subtitle}</h1>}
 
           {/* steps */}
           <QuiltImageCreatorSteps processors={processors} />
@@ -95,6 +96,8 @@ export const PageContainer: FC<PageContainerProps> = ({
           {children || <QuiltImageCreator processors={processors} />}
         </div>
       </article>
+
+      <GithubCorner href="https://github.com/m0o0scar/looking-gloves" target="_blank" size={50} />
     </>
   );
 };
