@@ -2,6 +2,7 @@ import cls from 'classnames';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { FC, HTMLAttributes } from 'react';
+import GithubCorner from 'react-github-corner';
 
 import { PRODUCT_NAME_SHORT } from '@/utils/constant';
 
@@ -95,6 +96,8 @@ export const PageContainer: FC<PageContainerProps> = ({
           {children || <QuiltImageCreator processors={processors} />}
         </div>
       </article>
+
+      <GithubCorner href="https://github.com/m0o0scar/looking-gloves" target="_blank" size={50} />
     </>
   );
 };
