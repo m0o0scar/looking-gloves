@@ -1,4 +1,4 @@
-import { validateSession, loginWithRedirect, BlocksClient, MeQuery } from '@lookingglass/blocks.js';
+import { BlocksClient, loginWithRedirect, validateSession } from '@lookingglass/blocks.js';
 import { useEffect } from 'react';
 import { atom, useRecoilState } from 'recoil';
 
@@ -7,7 +7,7 @@ import { getBlocksAuthClient } from './blocksAuthClient';
 interface BlocksContext {
   loggedIn: boolean | undefined;
   blocksClient: BlocksClient | undefined;
-  me: MeQuery['me'] | undefined;
+  me: Awaited<ReturnType<BlocksClient['me']>>;
 }
 
 const blocksContextAtom = atom<BlocksContext>({
@@ -42,8 +42,8 @@ export default function useBlocksAPI() {
 
         if (hasLoggedIn) {
           const client = new BlocksClient({ token });
-          const meQuery = await client.me();
-          setContext((prev) => ({ ...prev, blocksClient: client, me: meQuery.me }));
+          const me = await client.me();
+          setContext((prev) => ({ ...prev, blocksClient: client, me }));
         }
       }
     })();

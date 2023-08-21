@@ -1,6 +1,6 @@
 import { PrivacyType } from '@lookingglass/blocks.js';
 import cls from 'classnames';
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { canvasToBlob } from '@/utils/canvas';
@@ -53,7 +53,7 @@ export const PublishToBlocksButton: FC<PublishToBlocksButtonProps> = ({
 
       // upload quilt image file to Blocks
       try {
-        const hologram = await blocksClient?.uploadAndCreateHologram(file, {
+        const hologram = await blocksClient?.uploadAndCreateQuiltHologram(file, {
           // blocks related options
           isPublished: true,
           privacy,
@@ -67,7 +67,7 @@ export const PublishToBlocksButton: FC<PublishToBlocksButtonProps> = ({
           quiltTileCount: frames.length,
         });
 
-        const url = hologram?.createQuiltHologram.permalink;
+        const url = hologram?.permalink;
         if (!url) throw new Error('Publish failed');
 
         toast.success(<PublishSuccessToast url={url} />, {

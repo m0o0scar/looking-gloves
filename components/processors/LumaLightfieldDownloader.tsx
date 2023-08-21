@@ -55,8 +55,8 @@ export const LumaLightfieldDownloader: SequenceProcessorInfo = ({ activated, onD
       setSourceInfo({ title: captureName, author: username, url, sourceType: 'Luma' });
 
       // download light field photos zip
-      const zipFileName = lightFieldZipUrl.split('/').pop()!;
-      const zipDownloadUrl = `/external/luma/lightfield/${zipFileName}`;
+      const zipFilePath = new URL(lightFieldZipUrl).pathname;
+      const zipDownloadUrl = `/external/luma/lightfield${zipFilePath}`;
 
       // download and unzip the light field photos
       updateProgress(-1, 'Downloading light field photos ...');

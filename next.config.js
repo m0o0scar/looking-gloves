@@ -5,9 +5,9 @@ const nextConfig = {
   rewrites: () => [
     {
       // Fetch light field photoset from Luma CDN
-      // https://cdn-luma.com/719e19928a3baa9730417df0d8664d3bf807f56f38077f921ac70ff389b9d082.zip
-      source: '/external/luma/lightfield/:filename',
-      destination: 'https://cdn-luma.com/:filename',
+      // https://cdn-luma.com/b3b4...89e2/Garden_light_field.zip
+      source: '/external/luma/lightfield/:filename*',
+      destination: 'https://cdn-luma.com/:filename*',
     },
     {
       // PyScript CORS support
